@@ -23,19 +23,21 @@
     game_mode =         "qb-core"
     # packages list (set the packages you want to load)
     packages = [
+        "qb-target",
         "qb-interior",
         "qb-apartments",
+        "qb-houses",
         "qb-multicharacter",
         "qb-spawn",
-        "qb-target",
         "qb-hud",
         "qb-inventory",
         "qb-weapons",
         "qb-smallresources",
         "qb-adminmenu",
-        "qb-houses",
         "qb-radialmenu",
         "qb-minigames",
+        "qb-shops",
+        "qb-banking"
     ]
     # asset packs list (this will additionally load the asset packs you define here)
     assets = [
@@ -49,5 +51,5 @@
     map =               "ecdbd-fh-downtown-tits::RP_Downtown_Tits_v2"
     # banned HELIX account IDs
     banned_ids = [
-        
+
     ]
