@@ -1,62 +1,70 @@
 QBConfig = {}
 QBConfig.UseTarget = true
-QBConfig.Language = "en"
+QBConfig.Language = 'en'
 
 --QBConfig.MaxPlayers = GetConvarInt('sv_maxclients', 48) -- Gets max players from config file, default 48
 QBConfig.DefaultSpawn = Vector(6383.6, 3794.5, -315.8)
-QBConfig.UpdateInterval = 5 -- how often to update player data in minutes
+QBConfig.UpdateInterval = 5    -- how often to update player data in minutes
 QBConfig.StatusInterval = 5000 -- how often to check if hunger/thirst is empty in milliseconds
 
 QBConfig.Money = {}
 QBConfig.Money.MoneyTypes = { cash = 500, bank = 5000, crypto = 0 } -- type = startamount - Add or remove money types for your server (for ex. blackmoney = 0), remember once added it will not be removed from the database!
-QBConfig.Money.DontAllowMinus = { "cash", "crypto" } -- Money that is not allowed going in minus
-QBConfig.Money.PayCheckTimeOut = 10 -- The time in minutes that it will give the paycheck
-QBConfig.Money.PayCheckSociety = false -- If true paycheck will come from the society account that the player is employed at, requires qb-management
+QBConfig.Money.DontAllowMinus = { 'cash', 'crypto' }                -- Money that is not allowed going in minus
+QBConfig.Money.PayCheckTimeOut = 10                                 -- The time in minutes that it will give the paycheck
+QBConfig.Money.PayCheckSociety = false                              -- If true paycheck will come from the society account that the player is employed at, requires qb-management
 
 QBConfig.Player = {}
 QBConfig.Player.HungerRate = 4.2 -- Rate at which hunger goes down.
 QBConfig.Player.ThirstRate = 3.8 -- Rate at which thirst goes down.
-QBConfig.Player.Bloodtypes = { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" }
+QBConfig.Player.Bloodtypes = { 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-' }
 
-QBConfig.Server = {} -- General server config
-QBConfig.Server.Closed = false -- Set server closed (no one can join except people with ace permission 'qbadmin.join')
-QBConfig.Server.ClosedReason = "Server Closed" -- Reason message to display when people can't join the server
-QBConfig.Server.Uptime = 0 -- Time the server has been up.
-QBConfig.Server.Whitelist = false -- Enable or disable whitelist on the server
-QBConfig.Server.WhitelistPermission = "admin" -- Permission that's able to enter the server when the whitelist is on
-QBConfig.Server.Discord = "" -- Discord invite link
-QBConfig.Server.CheckDuplicateLicense = true -- Check for duplicate account id on join
+QBConfig.Server = {}                           -- General server config
+QBConfig.Server.Closed = false                 -- Set server closed (no one can join except people with ace permission 'qbadmin.join')
+QBConfig.Server.ClosedReason = 'Server Closed' -- Reason message to display when people can't join the server
+QBConfig.Server.Uptime = 0                     -- Time the server has been up.
+QBConfig.Server.Whitelist = false              -- Enable or disable whitelist on the server
+QBConfig.Server.WhitelistPermission = 'admin'  -- Permission that's able to enter the server when the whitelist is on
+QBConfig.Server.Discord = ''                   -- Discord invite link
+QBConfig.Server.CheckDuplicateLicense = true   -- Check for duplicate account id on join
 QBConfig.Server.Permissions = {
 	god = {
-		["11ec67d4-bd1f-4f64-98a3-68e0ffd885d0"] = true, -- string for player account id found using GetAccountID()
+		['11ec67d4-bd1f-4f64-98a3-68e0ffd885d0'] = true, -- string for player account id found using GetAccountID()
 
 		-- HELIX
-		["a64b3c45-c026-4a58-b532-f08efb515647"] = true,
+		['a64b3c45-c026-4a58-b532-f08efb515647'] = true,
 
 		-- QA Generic Production
-		["e53c7eac-2c50-4fcf-95c4-cd3315a60c67"] = true,
+		['e53c7eac-2c50-4fcf-95c4-cd3315a60c67'] = true,
 
 		-- QA Production Jen
-		["dc19be29-9981-4a83-af57-4030aa815a3e"] = true,
+		['dc19be29-9981-4a83-af57-4030aa815a3e'] = true,
 
 		-- QA Staging Jen
-		["c9525e76-b49d-4987-b547-de41bc37dd1e"] = true,
+		['c9525e76-b49d-4987-b547-de41bc37dd1e'] = true,
+
+		-- QA Production Francisco
+		['d35e4f3c-4bf2-41b8-8467-2c1d7248e7d4'] = true,
+		['63128f5b-c760-4865-9675-9c43faa469fa'] = true,
+
+		-- QA Staging Francisco
+		['b97768de-2848-4495-a52a-99eb1a98c3fe'] = true,
+		['729bf24b-481d-4894-a954-80c30729936b'] = true,
 
 		-- QA Generic Staging
-		["d95e4660-8cc6-4610-bf6d-ac679f9a088d"] = true,
+		['d95e4660-8cc6-4610-bf6d-ac679f9a088d'] = true,
 
 		-- Tilman
-		["30264629-cb33-4c0d-b15b-512c0ae0a37e"] = true,
+		['30264629-cb33-4c0d-b15b-512c0ae0a37e'] = true,
 
 		-- Tilman (Staging)
-		["20033b66-bfdb-41fa-b3bc-fa17d7dd01ea"] = true,
+		['20033b66-bfdb-41fa-b3bc-fa17d7dd01ea'] = true,
 
 		-- Kakarot
-		["eec65f3f-e5b0-4fb8-922d-75e1ea1575d2"] = true,
-		["d4997d1b-b3ca-499d-9f0b-ffb361a51c4f"] = true,
+		['eec65f3f-e5b0-4fb8-922d-75e1ea1575d2'] = true,
+		['d4997d1b-b3ca-499d-9f0b-ffb361a51c4f'] = true,
 
 		-- Alex (Staging)
-		["883153d8-c83c-4b44-b359-ca37d3d04bba"] = true,
+		['883153d8-c83c-4b44-b359-ca37d3d04bba'] = true,
 	},
 	admin = {},
 	mod = {},
@@ -88,11 +96,11 @@ QBConfig.Player.PlayerDefaults = {
 	end,
 	optin = true,
 	charinfo = {
-		firstname = "Firstname",
-		lastname = "Lastname",
-		birthdate = "00-00-0000",
+		firstname = 'Firstname',
+		lastname = 'Lastname',
+		birthdate = '00-00-0000',
 		gender = 0,
-		nationality = "USA",
+		nationality = 'USA',
 		phone = function()
 			return QBCore.Functions.CreatePhoneNumber()
 		end,
@@ -101,23 +109,23 @@ QBConfig.Player.PlayerDefaults = {
 		end,
 	},
 	job = {
-		name = "unemployed",
-		label = "Civilian",
+		name = 'unemployed',
+		label = 'Civilian',
 		payment = 10,
-		type = "none",
+		type = 'none',
 		onduty = false,
 		isboss = false,
 		grade = {
-			name = "Freelancer",
+			name = 'Freelancer',
 			level = 0,
 		},
 	},
 	gang = {
-		name = "none",
-		label = "No Gang Affiliation",
+		name = 'none',
+		label = 'No Gang Affiliation',
 		isboss = false,
 		grade = {
-			name = "none",
+			name = 'none',
 			level = 0,
 		},
 	},
@@ -136,7 +144,7 @@ QBConfig.Player.PlayerDefaults = {
 		phone = {},
 		rep = {},
 		currentapartment = nil,
-		callsign = "NO CALLSIGN",
+		callsign = 'NO CALLSIGN',
 		bloodtype = function()
 			return QBConfig.Player.Bloodtypes[math.random(1, #QBConfig.Player.Bloodtypes)]
 		end,
