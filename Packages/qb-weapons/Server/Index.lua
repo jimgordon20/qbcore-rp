@@ -34,9 +34,17 @@ Events.Subscribe('qb-weapons:server:equipWeapon', function(source, item_data)
     if not ped then return end
     local holding_item = ped:GetPicked()
     if holding_item then
-        local is_weapon = ped:GetPicked():IsA(Weapon)
+        local is_weapon = holding_item:IsA(Weapon)
         if is_weapon then
-            ped:GetPicked():Destroy()
+            local animation = holding_item:GetAnimationCharacterHolster()
+            if animation then
+                ped:PlayAnimation(animation)
+                Timer.SetTimeout(function()
+                    holding_item:Destroy()
+                end, 500)
+            else
+                holding_item:Destroy()
+            end
             return
         end
     end
