@@ -20,11 +20,6 @@ Config = {
         large_text = '',
     },
 
-    Voice = {
-        range = VOIPSetting.Local, -- VOIPSetting.Global | VOIPSetting.Muted
-        volume = 1.0,
-    },
-
     Time = {
         synced = true,
         multiplier = 5, -- every irl minute is 5 in-game minutes

@@ -1,11 +1,3 @@
--- Voice
-
-Player.Subscribe('Ready', function(self)
-    self:SetVOIPSetting(Config.Voice.range)
-    self:SetVOIPVolume(Config.Voice.volume)
-    self:SetVOIPChannel(0)
-end)
-
 -- Drink
 
 Events.Subscribe('qb-smallresources:server:drink', function(source, item)
