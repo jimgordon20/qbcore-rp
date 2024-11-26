@@ -43,6 +43,14 @@ QBCore.Commands.Add('heal', 'Heal yourself', {}, false, function(source)
     ped:SetHealth(max_health)
 end, 'admin')
 
+QBCore.Commands.Add('kill', 'Kill yourself', {}, false, function(source)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then return end
+    local ped = source:GetControlledCharacter()
+    if not ped then return end
+    ped:SetHealth(0)
+end, 'admin')
+
 QBCore.Commands.Add('revive', 'Revive yourself', {}, false, function(source)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
@@ -54,8 +62,13 @@ QBCore.Commands.Add('revive', 'Revive yourself', {}, false, function(source)
     ped:Respawn(ped:GetLocation(), ped:GetRotation())
 end, 'admin')
 
-QBCore.Commands.Add('reviveall', 'Revive all', {}, false, function(source)
-    -- TO DO
+QBCore.Commands.Add('reviveall', 'Revive all', {}, false, function()
+    local players = HCharacter.GetAll()
+    for i = 1, #players do
+        local ped = players[i]
+        ped:SetHealth(ped:GetMaxHealth())
+        ped:Respawn(ped:GetLocation(), ped:GetRotation())
+    end
 end, 'admin')
 
 QBCore.Commands.Add('tp', Lang:t('command.tp.help'), { { name = Lang:t('command.tp.params.x.name'), help = Lang:t('command.tp.params.x.help') }, { name = Lang:t('command.tp.params.y.name'), help = Lang:t('command.tp.params.y.help') }, { name = Lang:t('command.tp.params.z.name'), help = Lang:t('command.tp.params.z.help') } }, false, function(source, args)

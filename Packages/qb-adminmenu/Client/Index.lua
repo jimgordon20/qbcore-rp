@@ -1,48 +1,48 @@
-local my_webui = WebUI("admin-menu", "file://html/index.html", WidgetVisibility.Hidden)
+local my_webui = WebUI('admin-menu', 'file://html/index.html', WidgetVisibility.Hidden)
 local menu_open = false
 
-my_webui:Subscribe("mouseInput", function(bool)
+my_webui:Subscribe('mouseInput', function(bool)
 	Input.SetMouseEnabled(bool)
 	my_webui:BringToFront()
 end)
 
-my_webui:Subscribe("execute", function(data)
-	Events.CallRemote("QBCore:Console:CallCommand", data.name, data.argsString)
+my_webui:Subscribe('execute', function(data)
+	Events.CallRemote('QBCore:Console:CallCommand', data.name, data.argsString)
 end)
 
-Input.Subscribe("KeyPress", function(key_name)
-	if key_name == "Up" and menu_open then
-		my_webui:CallEvent("navigateUp")
+Input.Subscribe('KeyPress', function(key_name)
+	if key_name == 'Up' and menu_open then
+		my_webui:CallEvent('navigateUp')
 	end
 end)
 
-Input.Subscribe("KeyPress", function(key_name)
-	if key_name == "Down" and menu_open then
-		my_webui:CallEvent("navigateDown")
+Input.Subscribe('KeyPress', function(key_name)
+	if key_name == 'Down' and menu_open then
+		my_webui:CallEvent('navigateDown')
 	end
 end)
 
-Input.Subscribe("KeyPress", function(key_name)
-	if key_name == "Left" and menu_open then
-		my_webui:CallEvent("navigateLeft")
+Input.Subscribe('KeyPress', function(key_name)
+	if key_name == 'Left' and menu_open then
+		my_webui:CallEvent('navigateLeft')
 	end
 end)
 
-Input.Subscribe("KeyPress", function(key_name)
-	if key_name == "Right" and menu_open then
-		my_webui:CallEvent("navigateRight")
+Input.Subscribe('KeyPress', function(key_name)
+	if key_name == 'Right' and menu_open then
+		my_webui:CallEvent('navigateRight')
 	end
 end)
 
-Input.Subscribe("KeyPress", function(key_name)
-	if key_name == "Enter" and menu_open then
-		my_webui:CallEvent("select")
+Input.Subscribe('KeyPress', function(key_name)
+	if key_name == 'Enter' and menu_open then
+		my_webui:CallEvent('select')
 	end
 end)
 
-Input.Subscribe("KeyPress", function(key_name)
-	if key_name == "BackSpace" and menu_open then
-		my_webui:CallEvent("closeMenu")
+Input.Subscribe('KeyPress', function(key_name)
+	if key_name == 'BackSpace' and menu_open then
+		my_webui:CallEvent('closeMenu')
 		if Input.IsMouseEnabled() then
 			Input.SetMouseEnabled(false)
 		end
@@ -51,15 +51,15 @@ Input.Subscribe("KeyPress", function(key_name)
 	end
 end)
 
-Input.Register("AdminMenu", "F9")
+Input.Register('AdminMenu', 'F9')
 
-Input.Bind("AdminMenu", InputEvent.Pressed, function()
+Input.Bind('AdminMenu', InputEvent.Pressed, function()
 	if not menu_open then
-		my_webui:CallEvent("openMenu")
+		my_webui:CallEvent('openMenu')
 		my_webui:SetVisibility(WidgetVisibility.Visible)
 		menu_open = true
 	else
-		my_webui:CallEvent("closeMenu")
+		my_webui:CallEvent('closeMenu')
 		if Input.IsMouseEnabled() then
 			Input.SetMouseEnabled(false)
 		end
@@ -70,7 +70,7 @@ end)
 
 -- Callback
 
-QBCore.Functions.CreateClientCallback("qb-adminmenu:client:getCamera", function(cb)
+QBCore.Functions.CreateClientCallback('qb-adminmenu:client:getCamera', function(cb)
 	local player = Client.GetLocalPlayer()
 	local coords = player:GetCameraLocation()
 	local rotation = player:GetCameraRotation()
@@ -83,7 +83,7 @@ local showing_coords = false
 local my_timer = nil
 local coords_canvas = nil
 
-Events.SubscribeRemote("qb-adminmenu:client:showCoords", function()
+Events.SubscribeRemote('qb-adminmenu:client:showCoords', function()
 	local ped = Client.GetLocalPlayer():GetControlledCharacter()
 	if not ped then
 		return
@@ -92,22 +92,22 @@ Events.SubscribeRemote("qb-adminmenu:client:showCoords", function()
 		showing_coords = true
 		coords_canvas = Canvas(true, Color.TRANSPARENT, 0, true)
 		coords_canvas:SetVisibility(true)
-		coords_canvas:Subscribe("Update", function(self, width, height)
+		coords_canvas:Subscribe('Update', function(self, width, height)
 			local pos = ped:GetLocation()
 			local rot = ped:GetRotation()
-			local coords = "Vector("
-				.. string.format("%.2f", pos.X)
-				.. ", "
-				.. string.format("%.2f", pos.Y)
-				.. ", "
-				.. string.format("%.2f", pos.Z)
-				.. ")\nRotator("
-				.. string.format("%.2f", rot.Pitch)
-				.. ", "
-				.. string.format("%.2f", rot.Yaw)
-				.. ", "
-				.. string.format("%.2f", rot.Roll)
-				.. ")"
+			local coords = 'Vector('
+				.. string.format('%.2f', pos.X)
+				.. ', '
+				.. string.format('%.2f', pos.Y)
+				.. ', '
+				.. string.format('%.2f', pos.Z)
+				.. ')\nRotator('
+				.. string.format('%.2f', rot.Pitch)
+				.. ', '
+				.. string.format('%.2f', rot.Yaw)
+				.. ', '
+				.. string.format('%.2f', rot.Roll)
+				.. ')'
 			self:DrawText(coords, Vector2D(width * 0.40, height * 0.9), FontType.OpenSans, 24)
 		end)
 		my_timer = Timer.SetInterval(function()
@@ -132,12 +132,12 @@ local laser_active = false
 local laser_timer = nil
 local laser_canvas = nil
 local last_entity = nil
-Events.SubscribeRemote("qb-adminmenu:client:entitylaser", function()
+Events.SubscribeRemote('qb-adminmenu:client:entitylaser', function()
 	if not laser_active then
 		laser_active = true
 		laser_canvas = Canvas(true, Color.TRANSPARENT, 0, true)
 		laser_canvas:SetVisibility(true)
-		laser_canvas:Subscribe("Update", function(self, width, height)
+		laser_canvas:Subscribe('Update', function(self, width, height)
 			local viewport_2d_center = Viewport.GetViewportSize() / 2
 			local viewport_3d = Viewport.DeprojectScreenToWorld(viewport_2d_center)
 			local trace_max_distance = 1000
@@ -166,21 +166,21 @@ Events.SubscribeRemote("qb-adminmenu:client:entitylaser", function()
 				end
 				last_entity = trace_result.Entity
 				last_entity:SetOutlineEnabled(true, 0)
-				local entity_info = "Entity: "
+				local entity_info = 'Entity: '
 					.. tostring(trace_result.Entity)
-					.. "\nLocation: "
+					.. '\nLocation: '
 					.. tostring(trace_result.Location)
-					.. "\nActor Name: "
+					.. '\nActor Name: '
 					.. tostring(trace_result.ActorName)
-					.. "\nComponent Name: "
+					.. '\nComponent Name: '
 					.. tostring(trace_result.ComponentName)
-					.. "\nBone Name: "
+					.. '\nBone Name: '
 					.. tostring(trace_result.BoneName)
-					.. "\nNormal: "
+					.. '\nNormal: '
 					.. tostring(trace_result.Normal)
-					.. "\nSurface Type: "
+					.. '\nSurface Type: '
 					.. tostring(trace_result.SurfaceType)
-					.. "\nUV: "
+					.. '\nUV: '
 					.. tostring(trace_result.UV)
 				self:DrawBox(Vector2D(width * 0.3, height * 0.75), Vector2D(1000, 150), 150.0, Color.BLACK)
 				self:DrawText(entity_info, Vector2D(width * 0.3, height * 0.7), FontType.OpenSans, 20)
@@ -215,7 +215,7 @@ function AddNametag(player, character)
 	if not character then
 		return
 	end
-	local text = "(" .. player:GetID() .. ") " .. player:GetName()
+	local text = '(' .. player:GetID() .. ') ' .. player:GetName()
 	local nametag = TextRender(
 		Vector(),
 		Rotator(),
@@ -223,11 +223,11 @@ function AddNametag(player, character)
 		Vector(0.2, 0.2, 0.2),
 		Color(1, 1, 1),
 		FontType.Roboto,
-		TextRenderAlignCamera.AlignCameraRotation
+		TextRenderAlignCamera.Unaligned
 	)
 	nametag:AttachTo(character)
-	nametag:SetRelativeLocation(Vector(0, 0, 175))
-	player:SetValue("Nametag", nametag)
+	nametag:SetRelativeLocation(Vector(0, -30, 100))
+	player:SetValue('Nametag', nametag)
 end
 
 function RemoveNametag(player, character)
@@ -237,13 +237,13 @@ function RemoveNametag(player, character)
 	if not character then
 		return
 	end
-	local text_render = player:GetValue("Nametag")
+	local text_render = player:GetValue('Nametag')
 	if text_render and text_render:IsValid() then
 		text_render:Destroy()
 	end
 end
 
-Events.SubscribeRemote("qb-adminmenu:client:showNames", function()
+Events.SubscribeRemote('qb-adminmenu:client:showNames', function()
 	showing_names = not showing_names
 	for _, player in ipairs(Player.GetAll()) do
 		local character = player:GetControlledCharacter()

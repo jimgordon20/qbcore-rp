@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const adminOptions = [
         { name: "NoClip", command: "noclip" },
         { name: "Heal", command: "heal" },
+        { name: "Kill", command: "kill" },
         { name: "Revive", command: "revive" },
         { name: "Revive All", command: "reviveall" },
         { name: "Invisible", command: "invisible" },
