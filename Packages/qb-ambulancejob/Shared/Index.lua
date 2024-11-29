@@ -4,7 +4,6 @@ Config = {
     MinimalDoctors = 2,            -- How many players with the ambulance job to prevent the hospital check-in system from being used
     DocCooldown = 1,               -- Cooldown between doctor calls allowed, in minutes
     WipeInventoryOnRespawn = true, -- Enable or disable removing all the players items when they respawn at the hospital
-    Helicopter = 'polmav',         -- Helicopter model that players with the ambulance job can use
     BillCost = 2000,               -- Price that players are charged for using the hospital check-in system
     DeathTime = 5,                 -- How long the timer is for players to bleed out completely and respawn at the hospital
     ReviveInterval = 360,          -- How long the timer is for players to revive a player in laststand
@@ -38,69 +37,48 @@ Config = {
 
     Locations = {                 -- Edit the various interaction points for players or create new ones
         ['checking'] = {
-            Vector(308.19, -595.35, 43.29),
+            Vector(6912.9, -4918.4, -299.8),
         },
         ['duty'] = {
-            Vector(311.18, -599.25, 43.29),
-        },
-        ['vehicle'] = {
-            Vector(294.578, -574.761, 43.179),
-        },
-        ['helicopter'] = {
-            Vector(351.58, -587.45, 74.16),
-        },
-        ['roof'] = {
-            Vector(338.5, -583.85, 74.16),
-        },
-        ['main'] = {
-            Vector(298.74, -599.33, 43.29),
+            Vector(7213.0, -4640.5, -33.9),
         },
         ['stash'] = {
-            Vector(309.78, -596.6, 43.29),
+            Vector(7195.6, -4366.1, -33.9),
         },
         ['beds'] = {
-            { coords = Vector(353.1, -584.6, 43.11),   taken = false, model = 1631638868 },
-            { coords = Vector(356.79, -585.86, 43.11), taken = false, model = 1631638868 },
-            { coords = Vector(354.12, -593.12, 43.1),  taken = false, model = 2117668672 },
-            { coords = Vector(350.79, -591.8, 43.1),   taken = false, model = 2117668672 },
-            { coords = Vector(346.99, -590.48, 43.1),  taken = false, model = 2117668672 },
-            { coords = Vector(360.32, -587.19, 43.02), taken = false, model = -1091386327 },
-            { coords = Vector(349.82, -583.33, 43.02), taken = false, model = -1091386327 },
-            { coords = Vector(326.98, -576.17, 43.02), taken = false, model = -1091386327 },
+            -- { coords = Vector(353.1, -584.6, 43.11),   taken = false, model = 'ecdbd-h::SM_Hospital_Bed_01' },
+            -- { coords = Vector(356.79, -585.86, 43.11), taken = false, model = 'ecdbd-h::SM_Hospital_Bed_01' },
+            -- { coords = Vector(354.12, -593.12, 43.1),  taken = false, model = 'ecdbd-h::SM_Hospital_Bed_01' },
+            -- { coords = Vector(350.79, -591.8, 43.1),   taken = false, model = 'ecdbd-h::SM_Hospital_Bed_01' },
+            -- { coords = Vector(346.99, -590.48, 43.1),  taken = false, model = 'ecdbd-h::SM_Hospital_Bed_01' },
+            -- { coords = Vector(360.32, -587.19, 43.02), taken = false, model = 'ecdbd-h::SM_Hospital_Bed_01' },
+            -- { coords = Vector(349.82, -583.33, 43.02), taken = false, model = 'ecdbd-h::SM_Hospital_Bed_01' },
+            -- { coords = Vector(326.98, -576.17, 43.02), taken = false, model = 'ecdbd-h::SM_Hospital_Bed_01' },
         },
         ['jailbeds'] = {
-            { coords = Vector(1761.96, 2597.74, 45.66), taken = false, model = 2117668672 },
-            { coords = Vector(1761.96, 2591.51, 45.66), taken = false, model = 2117668672 },
-            { coords = Vector(1771.8, 2598.02, 45.66),  taken = false, model = 2117668672 },
-            { coords = Vector(1771.85, 2591.85, 45.66), taken = false, model = 2117668672 },
+            -- { coords = Vector(1761.96, 2597.74, 45.66), taken = false, model = 'ecdbd-h::SM_Hospital_Bed_01' },
+            -- { coords = Vector(1761.96, 2591.51, 45.66), taken = false, model = 'ecdbd-h::SM_Hospital_Bed_01' },
+            -- { coords = Vector(1771.8, 2598.02, 45.66),  taken = false, model = 'ecdbd-h::SM_Hospital_Bed_01' },
+            -- { coords = Vector(1771.85, 2591.85, 45.66), taken = false, model = 'ecdbd-h::SM_Hospital_Bed_01' },
         },
         ['hospital'] = {
             {
                 ['name'] = Lang:t('info.pb_hospital'),
-                ['location'] = Vector(308.36, -595.25, 43.28),
+                ['location'] = Vector(6919.1, -4563.8, -299.8),
                 ['beds'] = {
-                    { coords = Vector(353.1, -584.6, 43.11),   taken = false, model = 1631638868 },
-                    { coords = Vector(356.79, -585.86, 43.11), taken = false, model = 1631638868 },
-                    { coords = Vector(354.12, -593.12, 43.1),  taken = false, model = 2117668672 },
-                    { coords = Vector(350.79, -591.8, 43.1),   taken = false, model = 2117668672 },
-                    { coords = Vector(346.99, -590.48, 43.1),  taken = false, model = 2117668672 },
-                    { coords = Vector(360.32, -587.19, 43.02), taken = false, model = -1091386327 },
-                    { coords = Vector(349.82, -583.33, 43.02), taken = false, model = -1091386327 },
-                    { coords = Vector(326.98, -576.17, 43.02), taken = false, model = -1091386327 },
+                    { coords = Vector(7387.9, -4108.0, -390), taken = false, model = 'ecdbd-h::SM_Hospital_Bed_01' },
+                    { coords = Vector(7166.7, -4095.9, -390), taken = false, model = 'ecdbd-h::SM_Hospital_Bed_01' },
+                    { coords = Vector(6911.6, -4082.0, -390), taken = false, model = 'ecdbd-h::SM_Hospital_Bed_01' },
+                    { coords = Vector(6654.2, -4101.7, -390), taken = false, model = 'ecdbd-h::SM_Hospital_Bed_01' },
+                    { coords = Vector(7411.2, -4348.6, -390), taken = false, model = 'ecdbd-h::SM_Hospital_Bed_01' },
+                    { coords = Vector(7415.1, -4609.3, -390), taken = false, model = 'ecdbd-h::SM_Hospital_Bed_01' },
+                    { coords = Vector(7395.2, -4808.7, -390), taken = false, model = 'ecdbd-h::SM_Hospital_Bed_01' },
                 },
             },
-            {
-                ['name'] = Lang:t('info.paleto_hospital'),
-                ['location'] = Vector(-254.54, 6331.78, 32.43),
-                ['beds'] = {
-                    { coords = Vector(-252.43, 6312.25, 32.34), taken = false, model = 2117668672 },
-                    { coords = Vector(-247.04, 6317.95, 32.34), taken = false, model = 2117668672 },
-                    { coords = Vector(-255.98, 6315.67, 32.34), taken = false, model = 2117668672 },
-                },
-            },
+            -- add more locations here
         },
         ['stations'] = {
-            { label = Lang:t('info.pb_hospital'), coords = Vector(304.27, -600.33, 43.28) }
+            { label = Lang:t('info.pb_hospital'), coords = Vector(7102.0, -4431.2, -299.8) }
         }
     },
 
