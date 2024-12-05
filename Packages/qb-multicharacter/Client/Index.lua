@@ -1,4 +1,3 @@
-local Config = Package.Require('../Shared/config.lua')
 local Lang = Package.Require('../Shared/locales/' .. QBConfig.Language .. '.lua')
 local my_webui = WebUI('Multicharacter', 'file://html/index.html')
 
