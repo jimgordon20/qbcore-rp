@@ -30,7 +30,7 @@ local function UpdateBlips()
     Events.BroadcastRemote('qb-policejob:client:UpdateBlips', dutyPlayers)
 end
 
-Timer.SetInterval(5000, UpdateBlips)
+Timer.SetInterval(UpdateBlips, 5000)
 
 -- Update Cop Count
 
@@ -39,14 +39,14 @@ local function GetCurrentCops()
     local players = QBCore.Functions.GetQBPlayers()
     for _, v in pairs(players) do
         if v and v.PlayerData.job.type == 'leo' and v.PlayerData.job.onduty then
-            amount += 1
+            amount = amount + 1
         end
     end
     --return amount
     Events.BroadcastRemote('qb-policejob:client:SetCopCount', amount)
 end
 
-Timer.SetInterval(5000, GetCurrentCops)
+Timer.SetInterval(GetCurrentCops, 5000)
 
 local updatingCops = false
 
@@ -57,7 +57,7 @@ Events.SubscribeRemote('qb-policejob:server:UpdateCurrentCops', function()
     updatingCops = true
     for _, v in pairs(players) do
         if v and v.PlayerData.job.type == 'leo' and v.PlayerData.job.onduty then
-            amount += 1
+            amount = amount + 1
         end
     end
     Events.BroadcastRemote('qb-policejob:client:SetCopCount', amount)

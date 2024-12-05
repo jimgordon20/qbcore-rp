@@ -1,3 +1,5 @@
+local Lang = Package.Require('../Shared/locales/' .. QBConfig.Language .. '.lua')
+
 local function DnaHash(s)
     local h = string.gsub(s, '.', function(c)
         return string.format('%02x', string.byte(c))

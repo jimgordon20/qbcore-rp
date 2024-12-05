@@ -1,0 +1,62 @@
+-- local currentCameraIndex = 0
+-- local createdCamera = 0
+
+-- -- Functions
+
+-- local function CloseSecurityCamera()
+--     DestroyCam(createdCamera, 0)
+--     RenderScriptCams(0, 0, 1, 1, 1)
+--     createdCamera = 0
+--     ClearTimecycleModifier('scanline_cam_cheap')
+--     SetFocusEntity(GetPlayerPed(PlayerId()))
+--     if Config.SecurityCameras.hideradar then
+--         DisplayRadar(true)
+--     end
+--     FreezeEntityPosition(GetPlayerPed(PlayerId()), false)
+-- end
+
+-- local function ChangeSecurityCamera(x, y, z, r)
+--     if createdCamera ~= 0 then
+--         DestroyCam(createdCamera, 0)
+--         createdCamera = 0
+--     end
+--     local cam = CreateCam('DEFAULT_SCRIPTED_CAMERA', 1)
+--     SetCamCoord(cam, x, y, z)
+--     SetCamRot(cam, r.x, r.y, r.z, 2)
+--     RenderScriptCams(1, 0, 0, 1, 1)
+--     Wait(250)
+--     createdCamera = cam
+-- end
+
+-- -- Events
+
+-- Events.SubscribeRemote('police:client:ActiveCamera', function(cameraId)
+--     local player = Client.GetLocalPlayer()
+--     if Config.SecurityCameras.cameras[cameraId] then
+--         player:StartCameraFade(0, 1, 0.1, Color(0, 0, 0, 1), true, true)
+--         SendNUIMessage({
+--             type = 'enablecam',
+--             label = Config.SecurityCameras.cameras[cameraId].label,
+--             id = cameraId,
+--             connected = Config.SecurityCameras.cameras[cameraId].isOnline,
+--             time = GetCurrentTime(),
+--         })
+--         local firstCamx = Config.SecurityCameras.cameras[cameraId].coords.X
+--         local firstCamy = Config.SecurityCameras.cameras[cameraId].coords.Y
+--         local firstCamz = Config.SecurityCameras.cameras[cameraId].coords.Z
+--         local firstCamr = Config.SecurityCameras.cameras[cameraId].r
+--         SetFocusArea(firstCamx, firstCamy, firstCamz, firstCamx, firstCamy, firstCamz)
+--         ChangeSecurityCamera(firstCamx, firstCamy, firstCamz, firstCamr)
+--         currentCameraIndex = cameraId
+--         player:StopCameraFade()
+--     elseif cameraId == 0 then
+--         player:StartCameraFade(0, 1, 0.1, Color(0, 0, 0, 1), true, true)
+--         CloseSecurityCamera()
+--         SendNUIMessage({
+--             type = 'disablecam',
+--         })
+--         player:StopCameraFade()
+--     else
+--         QBCore.Functions.Notify(Lang:t('error.no_camera'), 'error')
+--     end
+-- end)
