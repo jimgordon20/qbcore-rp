@@ -39,6 +39,8 @@
         "qb-shops",
         "qb-banking",
         "qb-ambulancejob",
+        "qb-policejob",
+        "qb-radio",
     ]
     # asset packs list (this will additionally load the asset packs you define here)
     assets = [
@@ -52,5 +54,5 @@
     map =               "ecdbd-fh-downtown-tits::RP_Downtown_Tits_v2"
     # banned HELIX account IDs
     banned_ids = [
-
+        
     ]
