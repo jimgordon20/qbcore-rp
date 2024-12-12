@@ -57,8 +57,9 @@ QBCore.Functions.CreateUseableItem('radio', function(source)
     Events.CallRemote('qb-radio:client:useRadio', source)
 end)
 
--- my_player:IsInVOIPChannel(channel) -- both -- (GetVOIPChannel())
--- my_player:AddVOIPChannel(channel) -- server (SetVOIPChannel(channel))
--- my_player:SetVOIPVolume(volume) -- both
--- my_player:SetVOIPSetting(setting) -- both
--- my_player:GetVOIPSetting() -- both
+-- IsInVOIPChannel(channel) -- both -- old function (GetVOIPChannel())
+-- AddVOIPChannel(channel) -- server -- old function (SetVOIPChannel(channel))
+-- RemoveVOIPChannel(channel) -- server
+-- SetVOIPVolume(volume) -- both
+-- SetVOIPSetting(setting) -- both
+-- GetVOIPSetting() -- both
