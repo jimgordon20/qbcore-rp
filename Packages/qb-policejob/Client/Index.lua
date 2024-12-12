@@ -50,7 +50,7 @@ Events.Subscribe('qb-policejob:client:JailPlayer', function()
     local player, distance = QBCore.Functions.GetClosestPlayer()
     if player ~= -1 and distance < 2.5 then
         local playerId = GetPlayerServerId(player)
-        local dialog = ShowInput({
+        ShowInput({
             header = Lang:t('info.jail_time_input'),
             submitText = Lang:t('info.submit'),
             inputs = {
@@ -61,12 +61,13 @@ Events.Subscribe('qb-policejob:client:JailPlayer', function()
                     isRequired = true
                 }
             }
-        })
-        if tonumber(dialog['jailtime']) > 0 then
-            Events.CallRemote('police:server:JailPlayer', playerId, tonumber(dialog['jailtime']))
-        else
-            QBCore.Functions.Notify(Lang:t('error.time_higher'), 'error')
-        end
+        }, function(dialog)
+            if dialog and tonumber(dialog['jailtime']) > 0 then
+                Events.CallRemote('police:server:JailPlayer', playerId, tonumber(dialog['jailtime']))
+            else
+                QBCore.Functions.Notify(Lang:t('error.time_higher'), 'error')
+            end
+        end)
     else
         QBCore.Functions.Notify(Lang:t('error.none_nearby'), 'error')
     end
