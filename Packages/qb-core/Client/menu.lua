@@ -1,7 +1,6 @@
-local my_webui = WebUI("Menu", "file://html/index.html")
+local my_webui = WebUI('Menu', 'file://html/index.html')
 local headerShown = false
 local sendData = nil
-local functionsToCall = {}
 
 local function cloneTable(org)
 	return { table.unpack(org) }
@@ -33,27 +32,17 @@ local function openMenu(data, sort, skipFirst)
 	Input.SetMouseEnabled(true)
 	my_webui:BringToFront()
 	headerShown = false
-	my_webui:CallEvent("OPEN_MENU", cloneTable(data))
+	my_webui:CallEvent('OPEN_MENU', cloneTable(data))
 end
-Package.Export("openMenu", openMenu)
-
--- sendData = data
--- for i = 2, #data, 1 do
---     local info = debug.getinfo(data[i].params.event)
---     print('Function Name: ' .. (info.name or '<anonymous>'))
---     print('Defined at: ' .. info.short_src .. ':' .. info.linedefined)
---     local nameToStoreFunction = info.short_src .. tostring(i)
---     functionsToCall[nameToStoreFunction] = data[i].params.event
---     data[i].params.event = nameToStoreFunction
--- end
+Package.Export('openMenu', openMenu)
 
 local function closeMenu()
 	sendData = nil
 	headerShown = false
 	Input.SetMouseEnabled(false)
-	my_webui:CallEvent("CLOSE_MENU")
+	my_webui:CallEvent('CLOSE_MENU')
 end
-Package.Export("closeMenu", closeMenu)
+Package.Export('closeMenu', closeMenu)
 
 local function showHeader(data)
 	if not data or not next(data) then
@@ -61,28 +50,28 @@ local function showHeader(data)
 	end
 	headerShown = true
 	sendData = data
-	my_webui:CallEvent("SHOW_HEADER", cloneTable(data))
+	my_webui:CallEvent('SHOW_HEADER', cloneTable(data))
 end
-Package.Export("showHeader", showHeader)
+Package.Export('showHeader', showHeader)
 
 -- Events
-Events.Subscribe("qb-menu:client:openMenu", function()
+Events.Subscribe('qb-menu:client:openMenu', function()
 	openMenu(data, sort, skipFirst)
 end)
 
-Events.Subscribe("qb-menu:client:closeMenu", function()
+Events.Subscribe('qb-menu:client:closeMenu', function()
 	closeMenu()
 end)
 
 -- NUI Listeners
 
-my_webui:Subscribe("closeMenu", function()
+my_webui:Subscribe('closeMenu', function()
 	headerShown = false
 	sendData = nil
 	Input.SetMouseEnabled(false)
 end)
 
-my_webui:Subscribe("clickedButton", function(option)
+my_webui:Subscribe('clickedButton', function(option)
 	if headerShown then
 		headerShown = false
 	end
@@ -95,14 +84,13 @@ my_webui:Subscribe("clickedButton", function(option)
 				if data.params.isServer then
 					Events.CallRemote(data.params.event, data.params.args)
 				elseif data.params.isCommand then
-					ExecuteCommand(data.params.event)
+					-- to do
+					--ExecuteCommand(data.params.event)
 				elseif data.params.isQBCommand then
-					Events.CallRemote("QBCore:CallCommand", data.params.event, data.params.args)
+					Events.CallRemote('QBCore:CallCommand', data.params.event, data.params.args)
 				elseif data.params.isAction then
-					CreateThread(function()
-						functionsToCall[data.params.event]()
-						functionsToCall[data.params.event] = nil
-					end)
+					-- to do
+					-- data.params.event(data.params.args)
 				else
 					Events.Call(data.params.event, data.params.args)
 				end

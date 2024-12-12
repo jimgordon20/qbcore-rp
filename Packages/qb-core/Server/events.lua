@@ -1,11 +1,11 @@
 -- Callback Events --
 
 -- Client Callback
-Events.SubscribeRemote("QBCore:Server:TriggerClientCallback", function(_, name, ...)
-	if QBCore.ClientCallbacks[name] then
-		QBCore.ClientCallbacks[name](...)
-		QBCore.ClientCallbacks[name] = nil
-	end
+Events.SubscribeRemote('QBCore:Server:TriggerClientCallback', function(_, name, ...)
+    if QBCore.ClientCallbacks[name] then
+        QBCore.ClientCallbacks[name](...)
+        QBCore.ClientCallbacks[name] = nil
+    end
 end)
 
 -- Server Callback

@@ -13,7 +13,8 @@ local voiceLevels = {
 
 local function updateVoiceLevel()
     local player = Client.GetLocalPlayer()
-    player:SetVOIPSetting(VOIPSetting.Local)
+    if not player then return end
+    player:SetVOIPSetting(VOIPSetting.Global)
     local voiceSetting = voiceLevels[voice_level]
     player:SetVOIPVolume(voiceSetting.radius)
     my_webui:CallEvent('UpdateVoiceVolume', voiceSetting.radius)
@@ -29,7 +30,7 @@ end
 
 Events.SubscribeRemote('QBCore:Client:OnPlayerLoaded', function()
     player_data = QBCore.Functions.GetPlayerData()
-    updateVoiceLevel()
+    --updateVoiceLevel()
 end)
 
 Events.SubscribeRemote('QBCore:Client:OnPlayerUnload', function()

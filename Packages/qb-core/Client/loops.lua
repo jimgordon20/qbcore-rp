@@ -1,17 +1,17 @@
 Timer.SetInterval(function()
-	if Client.GetValue("isLoggedIn", false) then
-		Events.CallRemote("QBCore:UpdatePlayer")
+	if Client.GetValue('isLoggedIn', false) then
+		Events.CallRemote('QBCore:UpdatePlayer')
 	end
 end, (1000 * 60) * QBConfig.UpdateInterval)
 
 Timer.SetInterval(function()
-	if Client.GetValue("isLoggedIn", false) then
+	if Client.GetValue('isLoggedIn', false) then
 		if not QBCore.PlayerData.metadata then
 			return
 		end
 		if
-			(QBCore.PlayerData.metadata["hunger"] <= 0 or QBCore.PlayerData.metadata["thirst"] <= 0)
-			and not (QBCore.PlayerData.metadata["isdead"] or QBCore.PlayerData.metadata["inlaststand"])
+			(QBCore.PlayerData.metadata['hunger'] <= 0 or QBCore.PlayerData.metadata['thirst'] <= 0)
+			and not (QBCore.PlayerData.metadata['isdead'] or QBCore.PlayerData.metadata['inlaststand'])
 		then
 			local player = Client.GetLocalPlayer()
 			local ped = player:GetControlledCharacter()

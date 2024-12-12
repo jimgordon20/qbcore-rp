@@ -39,7 +39,7 @@ QBShared.Items = {
     weapon_sovwhisper     = { name = 'weapon_sovwhisper', label = 'SOV WHISPER', weight = 1000, type = 'weapon', image = 'weapon_sovwhisper.png', unique = true, useable = true, shouldClose = true, description = '' },
     weapon_vulcan         = { name = 'weapon_vulcan', label = 'VULCAN', weight = 1000, type = 'weapon', image = 'weapon_vulcan.png', unique = true, useable = true, shouldClose = true, description = '' },
     weapon_flashlight     = { name = 'weapon_flashlight', label = 'Flashlight', weight = 1000, type = 'weapon', image = 'weapon_flashlight.png', unique = true, useable = true, shouldClose = true, description = '' },
-    item_bench     = { name = 'item_bench', label = 'item bench', weight = 1000, type = 'item', image = 'weapon_flashlight.png', unique = false, useable = true, shouldClose = true, description = '' },
+    item_bench            = { name = 'item_bench', label = 'item bench', weight = 1000, type = 'item', image = 'weapon_flashlight.png', unique = false, useable = true, shouldClose = true, description = '' },
 
     -- Weapon Attachments
     clip_attachment       = { name = 'clip_attachment', label = 'Clip', weight = 1000, type = 'item', image = 'clip_attachment.png', unique = false, useable = true, shouldClose = true, description = 'A clip for a weapon' },

@@ -26,45 +26,20 @@ QBConfig.Server.Whitelist = false              -- Enable or disable whitelist on
 QBConfig.Server.WhitelistPermission = 'admin'  -- Permission that's able to enter the server when the whitelist is on
 QBConfig.Server.Discord = ''                   -- Discord invite link
 QBConfig.Server.CheckDuplicateLicense = true   -- Check for duplicate account id on join
-QBConfig.Server.Permissions = {
+QBConfig.Server.Permissions = {                -- string for player account id found using GetAccountID()
 	god = {
-		['11ec67d4-bd1f-4f64-98a3-68e0ffd885d0'] = true, -- string for player account id found using GetAccountID()
-
-		-- HELIX
-		['a64b3c45-c026-4a58-b532-f08efb515647'] = true,
-
-		-- QA Generic Production
-		['e53c7eac-2c50-4fcf-95c4-cd3315a60c67'] = true,
-
-		-- QA Production Jen
-		['dc19be29-9981-4a83-af57-4030aa815a3e'] = true,
-
-		-- QA Staging Jen
-		['c9525e76-b49d-4987-b547-de41bc37dd1e'] = true,
-
-		-- QA Production Francisco
-		['d35e4f3c-4bf2-41b8-8467-2c1d7248e7d4'] = true,
+		['11ec67d4-bd1f-4f64-98a3-68e0ffd885d0'] = true,
+		['a64b3c45-c026-4a58-b532-f08efb515647'] = true, -- HELIX
+		['e53c7eac-2c50-4fcf-95c4-cd3315a60c67'] = true, -- QA Generic Production
+		['dc19be29-9981-4a83-af57-4030aa815a3e'] = true, -- QA Production Jen
+		['c9525e76-b49d-4987-b547-de41bc37dd1e'] = true, -- QA Staging Jen
+		['d35e4f3c-4bf2-41b8-8467-2c1d7248e7d4'] = true, -- QA Production Francisco
 		['63128f5b-c760-4865-9675-9c43faa469fa'] = true,
-
-		-- QA Staging Francisco
-		['b97768de-2848-4495-a52a-99eb1a98c3fe'] = true,
+		['b97768de-2848-4495-a52a-99eb1a98c3fe'] = true, -- QA Staging Francisco
 		['729bf24b-481d-4894-a954-80c30729936b'] = true,
-
-		-- QA Generic Staging
-		['d95e4660-8cc6-4610-bf6d-ac679f9a088d'] = true,
-
-		-- Tilman
-		['30264629-cb33-4c0d-b15b-512c0ae0a37e'] = true,
-
-		-- Tilman (Staging)
-		['20033b66-bfdb-41fa-b3bc-fa17d7dd01ea'] = true,
-
-		-- Kakarot
-		['eec65f3f-e5b0-4fb8-922d-75e1ea1575d2'] = true,
+		['d95e4660-8cc6-4610-bf6d-ac679f9a088d'] = true, -- QA Generic Staging
+		['eec65f3f-e5b0-4fb8-922d-75e1ea1575d2'] = true, -- Kakarot
 		['d4997d1b-b3ca-499d-9f0b-ffb361a51c4f'] = true,
-
-		-- Alex (Staging)
-		['883153d8-c83c-4b44-b359-ca37d3d04bba'] = true,
 	},
 	admin = {},
 	mod = {},

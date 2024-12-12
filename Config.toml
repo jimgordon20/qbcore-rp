@@ -48,7 +48,7 @@
         "abcca-qbcore",
         "abcca-shells",
         "ecdbd-h",
-        "qbcore-vehicles",
+        "qbcore-vehicles-mm",
     ]
     # default startup map
     map =               "ecdbd-fh-downtown-tits::RP_Downtown_Tits_v2"

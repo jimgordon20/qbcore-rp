@@ -181,7 +181,7 @@ function ClearInventory(source, filterItems)
 
     if not Player.Offline then
         local logMessage = string.format('**%s (citizenid: %s | id: %s)** inventory cleared', source:GetAccountName(), Player.PlayerData.citizenid, source)
-        Events.Call('qb-log:server:CreateLog', 'playerinventory', 'ClearInventory', 'red', logMessage)
+        --Events.Call('qb-log:server:CreateLog', 'playerinventory', 'ClearInventory', 'red', logMessage)
     end
 end
 
@@ -193,7 +193,7 @@ function SetInventory(source, items)
     Player.Functions.SetPlayerData('items', items)
     if not Player.Offline then
         local logMessage = string.format('**%s (citizenid: %s | id: %s)** items set: %s', source:GetAccountName(), Player.PlayerData.citizenid, source, json.encode(items))
-        Events.Call('qb-log:server:CreateLog', 'playerinventory', 'SetInventory', 'blue', logMessage)
+        --Events.Call('qb-log:server:CreateLog', 'playerinventory', 'SetInventory', 'blue', logMessage)
     end
 end
 

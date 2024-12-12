@@ -22,9 +22,9 @@ Player.Subscribe('VOIP', function(self, is_talking)
     print('VOIP', is_talking)
 end)
 
-Player.Subscribe('Ready', function(self)
-    self:AddVOIPChannel(1)
-end)
+-- Player.Subscribe('Ready', function(self)
+--     self:AddVOIPChannel(1)
+-- end)
 
 -- Events
 

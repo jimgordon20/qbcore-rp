@@ -7,11 +7,6 @@ Package.Require('commands.lua')
 
 -- Handlers
 
-Events.Subscribe('QBCore:Server:UpdateObject', function()
-    if source ~= '' then return end
-    QBCore = exports['qb-core']:GetCoreObject()
-end)
-
 Events.Subscribe('QBCore:Server:PlayerLoaded', function(Player)
     QBCore.Functions.AddPlayerMethod(Player.PlayerData.source, 'AddItem', function(item, amount, slot, info)
         return AddItem(Player.PlayerData.source, item, amount, slot, info)
