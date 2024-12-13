@@ -12,32 +12,32 @@ QBShared.Vehicles = {
 		gravity_enabled = true,
 	},
 	bp_ambulance = {
-		asset_name = 'qbcore-vehicles::BP_Ambulance',
+		asset_name = 'qbcore-vehicles-mm::BP_Ambulance',
 		collision_type = CollisionType.Normal,
 		gravity_enabled = true,
 	},
 	bp_armoredtruck = {
-		asset_name = 'qbcore-vehicles::BP_Armored_Truck',
+		asset_name = 'qbcore-vehicles-mm::BP_Armored_Truck',
 		collision_type = CollisionType.Normal,
 		gravity_enabled = true,
 	},
 	bp_bus = {
-		asset_name = 'qbcore-vehicles::BP_Bus',
+		asset_name = 'qbcore-vehicles-mm::BP_Bus',
 		collision_type = CollisionType.Normal,
 		gravity_enabled = true,
 	},
 	bp_garbagetruck = {
-		asset_name = 'qbcore-vehicles::BP_Garbage_Truck',
+		asset_name = 'qbcore-vehicles-mm::BP_Garbage_Truck',
 		collision_type = CollisionType.Normal,
 		gravity_enabled = true,
 	},
 	bp_semitruck = {
-		asset_name = 'qbcore-vehicles::BP_Semi_Truck',
+		asset_name = 'qbcore-vehicles-mm::BP_Semi_Truck',
 		collision_type = CollisionType.Normal,
 		gravity_enabled = true,
 	},
 	bp_taxi = {
-		asset_name = 'qbcore-vehicles::BP_Taxi',
+		asset_name = 'qbcore-vehicles-mm::BP_Taxi',
 		collision_type = CollisionType.Normal,
 		gravity_enabled = true,
 	},

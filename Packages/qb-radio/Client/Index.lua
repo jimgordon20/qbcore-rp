@@ -20,9 +20,9 @@ end
 
 local function openRadio()
     radio_open = true
-    my_webui:CallEvent('OPEN_RADIO')
     my_webui:BringToFront()
     Input.SetMouseEnabled(true)
+    my_webui:CallEvent('OPEN_RADIO')
 end
 
 local function closeRadio()
