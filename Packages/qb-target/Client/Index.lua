@@ -1,12 +1,12 @@
-local my_webui = WebUI("Target", "file://html/index.html")
-local Config = Package.Require("config.lua")
+local my_webui = WebUI('Target', 'file://html/index.html')
+local Config = Package.Require('config.lua')
 local player_data = QBCore.Functions.GetPlayerData()
 local target_active, target_entity, raycast_timer, player_ped, target_sprite = false, nil, nil, nil, nil
 local nui_data, send_data, Entities, Types, Zones = {}, {}, {}, {}, {}
 
 -- Handlers
 
-Package.Subscribe("Load", function()
+Package.Subscribe('Load', function()
 	player_data = QBCore.Functions.GetPlayerData()
 	local player = Client.GetLocalPlayer()
 	if player then
@@ -14,25 +14,25 @@ Package.Subscribe("Load", function()
 	end
 end)
 
-Events.SubscribeRemote("QBCore:Client:OnPlayerLoaded", function()
+Events.SubscribeRemote('QBCore:Client:OnPlayerLoaded', function()
 	player_data = QBCore.Functions.GetPlayerData()
 	player_ped = Client.GetLocalPlayer():GetControlledCharacter()
 end)
 
-Events.SubscribeRemote("QBCore:Client:OnPlayerUnload", function()
+Events.SubscribeRemote('QBCore:Client:OnPlayerUnload', function()
 	player_data = {}
 	player_ped = nil
 end)
 
-Events.SubscribeRemote("QBCore:Client:OnJobUpdate", function(JobInfo)
+Events.SubscribeRemote('QBCore:Client:OnJobUpdate', function(JobInfo)
 	player_data.job = JobInfo
 end)
 
-Events.SubscribeRemote("QBCore:Client:OnGangUpdate", function(GangInfo)
+Events.SubscribeRemote('QBCore:Client:OnGangUpdate', function(GangInfo)
 	player_data.gang = GangInfo
 end)
 
-Events.SubscribeRemote("QBCore:Player:SetPlayerData", function(val)
+Events.SubscribeRemote('QBCore:Player:SetPlayerData', function(val)
 	player_data = val
 end)
 
@@ -118,9 +118,9 @@ local function drawSprite(entity)
 		return
 	end
 	local coords = entity:GetLocation()
-	target_sprite = Billboard(coords, "", Vector2D(0.02, 0.02), true)
-	target_sprite:SetMaterialTextureParameter("Texture", "package://qb-target/Client/html/circle.png")
-	target_sprite:SetMaterialColorParameter("Texture", Color(255, 255, 255, 255))
+	target_sprite = Billboard(coords, '', Vector2D(0.02, 0.02), true)
+	target_sprite:SetMaterialTextureParameter('Texture', 'package://qb-target/Client/html/circle.png')
+	target_sprite:SetMaterialColorParameter('Texture', Color(255, 255, 255, 255))
 end
 
 local function removeSprite()
@@ -149,7 +149,7 @@ local function handleEntity(trace_result, start_location)
 				if Config.DrawSprite then
 					removeSprite()
 				end
-				my_webui:CallEvent("leftTarget")
+				my_webui:CallEvent('leftTarget')
 			end
 			target_entity = trace_result.Entity
 			if Config.EnableOutline then
@@ -168,8 +168,8 @@ local function handleEntity(trace_result, start_location)
 				setupOptions(Types[tostring(trace_result.ActorName)], target_entity, distance)
 			end
 			my_webui:CallEvent(
-				"foundTarget",
-				{ data = nui_data[1] and nui_data[1].targeticon or "", options = nui_data }
+				'foundTarget',
+				{ data = nui_data[1] and nui_data[1].targeticon or '', options = nui_data }
 			)
 		end
 	else
@@ -179,7 +179,7 @@ local function handleEntity(trace_result, start_location)
 			end
 			target_entity = nil
 			nui_data = {}
-			my_webui:CallEvent("leftTarget")
+			my_webui:CallEvent('leftTarget')
 		end
 	end
 end
@@ -193,22 +193,10 @@ local function handleRaycast()
 	local trace_max_distance = Config.MaxDistance
 	local start_location = viewport_3d.Position
 	local end_location = viewport_3d.Position + viewport_3d.Direction * trace_max_distance
-	local collision_trace = CollisionChannel.WorldStatic
-		| CollisionChannel.WorldDynamic
-		| CollisionChannel.PhysicsBody
-		| CollisionChannel.Vehicle
-		| CollisionChannel.Pawn
+	local collision_trace = CollisionChannel.WorldStatic | CollisionChannel.WorldDynamic | CollisionChannel.PhysicsBody | CollisionChannel.Vehicle | CollisionChannel.Pawn
 	local trace_mode = TraceMode.ReturnEntity | TraceMode.ReturnNames
-	local trace_result = Trace.LineSingle(
-		start_location,
-		end_location,
-		collision_trace,
-		trace_mode,
-		{ Client.GetLocalPlayer():GetControlledCharacter() }
-	)
-	if Config.Debug then
-		print(HELIXTable.Dump(trace_result))
-	end
+	local trace_result = Trace.LineSingle(start_location, end_location, collision_trace, trace_mode, { Client.GetLocalPlayer():GetControlledCharacter() })
+	if Config.Debug then print(HELIXTable.Dump(trace_result)) end
 	return trace_result, start_location
 end
 
@@ -220,7 +208,7 @@ local function enableTarget()
 		return
 	end
 	target_active = true
-	my_webui:CallEvent("openTarget")
+	my_webui:CallEvent('openTarget')
 	raycast_timer = Timer.SetInterval(function()
 		local trace_result, start_location = handleRaycast()
 		handleEntity(trace_result, start_location)
@@ -240,7 +228,7 @@ local function disableTarget()
 	end
 	target_active, target_entity = false, nil
 	nui_data, send_data = {}, {}
-	my_webui:CallEvent("closeTarget")
+	my_webui:CallEvent('closeTarget')
 	if raycast_timer then
 		Timer.ClearInterval(raycast_timer)
 		raycast_timer = nil
@@ -279,12 +267,12 @@ local function AddTargetEntity(entities, parameters)
 	end
 	SetOptions(Entities[entities], distance, options)
 end
-Package.Export("AddTargetEntity", AddTargetEntity)
+Package.Export('AddTargetEntity', AddTargetEntity)
 
 local function RemoveTargetEntity(entities)
 	Entities[entities] = nil
 end
-Package.Export("RemoveTargetEntity", RemoveTargetEntity)
+Package.Export('RemoveTargetEntity', RemoveTargetEntity)
 
 local function AddBoxZone(name, center, length, width, zoneOptions, targetoptions)
 	if not name or not center or not length or not width or not targetoptions then
@@ -297,12 +285,12 @@ local function AddBoxZone(name, center, length, width, zoneOptions, targetoption
 		Zones[name] = {}
 	end
 	local box_entity =
-		StaticMesh(center, Rotator(0.0, zoneOptions.heading, 0.0), "ecdbd-h::Invisible", CollisionType.NoCollision)
+		StaticMesh(center, Rotator(0.0, zoneOptions.heading, 0.0), 'ecdbd-h::Invisible', CollisionType.NoCollision)
 	box_entity:SetScale(Vector(length, width, 5.0))
 	Zones[name] = box_entity
 	AddTargetEntity(box_entity, targetoptions)
 end
-Package.Export("AddBoxZone", AddBoxZone)
+Package.Export('AddBoxZone', AddBoxZone)
 
 local function RemoveZone(name)
 	if not Zones[name] then
@@ -314,11 +302,11 @@ local function RemoveZone(name)
 	end
 	Zones[name] = nil
 end
-Package.Export("RemoveZone", RemoveZone)
+Package.Export('RemoveZone', RemoveZone)
 
 -- Events
 
-my_webui:Subscribe("selectTarget", function(option)
+my_webui:Subscribe('selectTarget', function(option)
 	option = tonumber(option) or option
 	Input.SetMouseEnabled(false)
 	target_active = false
@@ -333,75 +321,75 @@ my_webui:Subscribe("selectTarget", function(option)
 	if data.action then
 		data.action(data.entity)
 	elseif data.event then
-		if data.type == "client" then
+		if data.type == 'client' then
 			Events.Call(data.event, data)
-		elseif data.type == "server" then
+		elseif data.type == 'server' then
 			Events.CallRemote(data.event, data)
-		elseif data.type == "command" then
-			Events.CallRemote("QBCore:CallCommand", data.event, data)
+		elseif data.type == 'command' then
+			Events.CallRemote('QBCore:CallCommand', data.event, data)
 		else
 			Events.Call(data.event, data)
 		end
 	end
-	my_webui:CallEvent("closeTarget")
+	my_webui:CallEvent('closeTarget')
 end)
 
-my_webui:Subscribe("leftTarget", function()
+my_webui:Subscribe('leftTarget', function()
 	target_entity = nil
 end)
 
-my_webui:Subscribe("closeTarget", function()
+my_webui:Subscribe('closeTarget', function()
 	disableTarget()
 end)
 
 -- Keybinds
 
-Input.Register("Target", Config.OpenKey, "Open Target")
-Input.Bind("Target", InputEvent.Pressed, enableTarget)
-Input.Bind("Target", InputEvent.Released, disableTarget)
+Input.Register('Target', Config.OpenKey, 'Open Target')
+Input.Bind('Target', InputEvent.Pressed, enableTarget)
+Input.Bind('Target', InputEvent.Released, disableTarget)
 
-Input.Subscribe("MouseDown", function(key_name)
+Input.Subscribe('MouseDown', function(key_name)
 	if target_active and key_name == Config.MenuControlKey and next(nui_data) then
 		enableMouse()
-		my_webui:CallEvent("validTarget", { data = nui_data })
+		my_webui:CallEvent('validTarget', { data = nui_data })
 	end
 end)
 
 -- Setup config options
 
-if not Types["WorldVehicleWheeled"] then
-	Types["WorldVehicleWheeled"] = {}
+if not Types['WorldVehicleWheeled'] then
+	Types['WorldVehicleWheeled'] = {}
 end
 SetOptions(
-	Types["WorldVehicleWheeled"],
+	Types['WorldVehicleWheeled'],
 	Config.GlobalWorldVehicleWheeledOptions.distance,
 	Config.GlobalWorldVehicleWheeledOptions.options
 )
 
-if not Types["WorldCharacterSimple"] then
-	Types["WorldCharacterSimple"] = {}
+if not Types['WorldCharacterSimple'] then
+	Types['WorldCharacterSimple'] = {}
 end
 SetOptions(
-	Types["WorldCharacterSimple"],
+	Types['WorldCharacterSimple'],
 	Config.GlobalWorldCharacterSimpleOptions.distance,
 	Config.GlobalWorldCharacterSimpleOptions.options
 )
 
-if not Types["WorldProp"] then
-	Types["WorldProp"] = {}
+if not Types['WorldProp'] then
+	Types['WorldProp'] = {}
 end
-SetOptions(Types["WorldProp"], Config.GlobalWorldPropOptions.distance, Config.GlobalWorldPropOptions.options)
+SetOptions(Types['WorldProp'], Config.GlobalWorldPropOptions.distance, Config.GlobalWorldPropOptions.options)
 
-if not Types["WorldWeapon"] then
-	Types["WorldWeapon"] = {}
+if not Types['WorldWeapon'] then
+	Types['WorldWeapon'] = {}
 end
-SetOptions(Types["WorldWeapon"], Config.GlobalWorldWeaponOptions.distance, Config.GlobalWorldWeaponOptions.options)
+SetOptions(Types['WorldWeapon'], Config.GlobalWorldWeaponOptions.distance, Config.GlobalWorldWeaponOptions.options)
 
-if not Types["WorldStaticMesh"] then
-	Types["WorldStaticMesh"] = {}
+if not Types['WorldStaticMesh'] then
+	Types['WorldStaticMesh'] = {}
 end
 SetOptions(
-	Types["WorldStaticMesh"],
+	Types['WorldStaticMesh'],
 	Config.GlobalWorldStaticMeshOptions.distance,
 	Config.GlobalWorldStaticMeshOptions.options
 )

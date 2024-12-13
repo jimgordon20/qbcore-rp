@@ -14,8 +14,10 @@ end
 -- Event Handlers
 
 Package.Subscribe('Load', function()
-    player_data = QBCore.Functions.GetPlayerData()
-    if QBConfig.UseTarget then setupPeds() end
+    if Client.GetValue('isLoggedIn', false) then
+        player_data = QBCore.Functions.GetPlayerData()
+        if QBConfig.UseTarget then setupPeds() end
+    end
 end)
 
 Events.SubscribeRemote('QBCore:Client:OnPlayerLoaded', function()

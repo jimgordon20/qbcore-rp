@@ -1,24 +1,24 @@
 Config = {
-	OpenKey = "LeftAlt", -- enable target
-	MenuControlKey = "RightMouseButton", -- enable mouse control
-	MaxDistance = 400, -- max distance for raycast
-	Debug = false, -- prints trace results
-	EnableOutline = false, -- enable outline on target
-	OutlineColor = 0, -- 0 = green, 1 = red, 2 = blue
-	DrawSprite = true, -- draw sprite on target
+	OpenKey = 'LeftAlt',              -- enable target
+	MenuControlKey = 'RightMouseButton', -- enable mouse control
+	MaxDistance = 400,                -- max distance for raycast
+	Debug = false,                    -- prints trace results
+	EnableOutline = false,            -- enable outline on target
+	OutlineColor = 0,                 -- 0 = green, 1 = red, 2 = blue
+	DrawSprite = true,                -- draw sprite on target
 
 	GlobalWorldVehicleWheeledOptions = {
 		options = {
 			{
-				type = "client",
-				label = "Start Vehicle",
-				icon = "fas fa-wrench",
+				type = 'client',
+				label = 'Start Vehicle',
+				icon = 'fas fa-wrench',
 				action = function(entity)
 					local ped = Client.GetLocalPlayer():GetControlledCharacter()
 					if not ped then
 						return
 					end
-					Events.CallRemote("qb-target:server:startEngine", entity)
+					Events.CallRemote('qb-target:server:startEngine', entity)
 				end,
 			},
 		},
@@ -28,10 +28,10 @@ Config = {
 	GlobalWorldStaticMeshOptions = {
 		options = {
 			{
-				type = "server",
-				event = "qb-target:server:wave",
-				label = "Wave Hello",
-				icon = "fas fa-hand",
+				type = 'server',
+				event = 'qb-target:server:wave',
+				label = 'Wave Hello',
+				icon = 'fas fa-hand',
 			},
 		},
 		distance = 400,
@@ -40,10 +40,10 @@ Config = {
 	GlobalWorldCharacterSimpleOptions = {
 		options = {
 			{
-				type = "server",
-				event = "qb-target:server:wave",
-				label = "Wave Hello",
-				icon = "fas fa-hand",
+				type = 'server',
+				event = 'qb-target:server:wave',
+				label = 'Wave Hello',
+				icon = 'fas fa-hand',
 			},
 		},
 		distance = 400,
@@ -52,9 +52,9 @@ Config = {
 	GlobalWorldPropOptions = {
 		options = {
 			{
-				type = "client",
-				label = "Pickup Prop",
-				icon = "fas fa-hands-holding-circle",
+				type = 'client',
+				label = 'Pickup Prop',
+				icon = 'fas fa-hands-holding-circle',
 				canInteract = function(entity)
 					if not entity:GetGrabMode() then
 						return false
@@ -65,7 +65,7 @@ Config = {
 					if not ped then
 						return
 					end
-					Events.CallRemote("qb-target:server:pickupProp", entity)
+					Events.CallRemote('qb-target:server:pickupProp', entity)
 				end,
 			},
 		},
@@ -75,9 +75,9 @@ Config = {
 	GlobalWorldWeaponOptions = {
 		options = {
 			{
-				type = "client",
-				label = "Pickup Weapon",
-				icon = "fas fa-gun",
+				type = 'client',
+				label = 'Pickup Weapon',
+				icon = 'fas fa-gun',
 				canInteract = function(entity)
 					if not entity:GetGrabMode() then
 						return false
@@ -88,7 +88,7 @@ Config = {
 					if not ped then
 						return
 					end
-					Events.CallRemote("qb-target:server:pickupWeapon", entity)
+					Events.CallRemote('qb-target:server:pickupWeapon', entity)
 				end,
 			},
 		},

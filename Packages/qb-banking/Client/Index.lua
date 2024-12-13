@@ -109,12 +109,7 @@ end)
 
 -- Create ATM
 
-local atm = StaticMesh(
-	Vector(-1537.5, 15208.4, -400),
-	Rotator(0.0, 85.308410644531, 0.0),
-	Config.atmModel,
-	CollisionType.Normal
-)
+local atm = StaticMesh(Vector(-6588.5, 2723.2, -400), Rotator(0.0, -90.194213867188, 0.0), Config.atmModel, CollisionType.Normal)
 
 AddTargetEntity(atm, {
 	options = {

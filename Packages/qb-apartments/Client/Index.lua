@@ -215,6 +215,7 @@ local function EnterApartment(house, apartmentId, new)
 				Events.CallRemote('qb-apartments:server:SetInsideMeta', house, apartmentId, true, false)
 				--Events.CallRemote("InteractSound_SV:PlayOnSource", "houses_door_close", 0.1)
 				Events.CallRemote('apartments:server:setCurrentApartment', CurrentApartment)
+				if Input.IsMouseEnabled() then Input.SetMouseEnabled(false) end
 			end, house)
 		else
 			if offset > 730 then
@@ -237,6 +238,7 @@ local function EnterApartment(house, apartmentId, new)
 			Events.CallRemote('qb-apartments:server:SetInsideMeta', house, apartmentId, true, true)
 			--Events.CallRemote("InteractSound_SV:PlayOnSource", "houses_door_close", 0.1)
 			Events.CallRemote('apartments:server:setCurrentApartment', CurrentApartment)
+			if Input.IsMouseEnabled() then Input.SetMouseEnabled(false) end
 		end
 
 		if new ~= nil then
