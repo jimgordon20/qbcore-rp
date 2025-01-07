@@ -15,9 +15,7 @@ end)
 
 local function GiveStarterItems(source)
 	local Player = QBCore.Functions.GetPlayer(source)
-	if not Player then
-		return
-	end
+	if not Player then return end
 	for _, v in pairs(QBShared.StarterItems) do
 		local info = {}
 		if v.item == 'id_card' then
@@ -40,6 +38,12 @@ end
 -- Commands
 
 QBCore.Commands.Add('logout', Lang:t('commands.logout_description'), {}, false, function(source)
+	local Player = QBCore.Functions.GetPlayer(source)
+	if not Player then return end
+	local inside_meta = Player.PlayerData.metadata.inside
+	if inside_meta.apartment.apartmentId then
+		Events.CallRemote('qb-apartments:client:leaveApartment', source)
+	end
 	QBCore.Player.Logout(source)
 	Events.CallRemote('qb-multicharacter:client:chooseChar', source)
 end, 'admin')
@@ -62,13 +66,7 @@ Events.SubscribeRemote('qb-multicharacter:server:loadUserData', function(source,
 	if QBCore.Player.Login(source, cData.citizenid) then
 		CheckUserInterval = Timer.SetInterval(function()
 			if hasDonePreloading[source] then
-				print(
-					'[qb-core] '
-					.. source:GetAccountName()
-					.. ' (Citizen ID: '
-					.. cData.citizenid
-					.. ') has successfully loaded!'
-				)
+				print('[qb-core] ' .. source:GetAccountName() .. ' (Citizen ID: ' .. cData.citizenid .. ') has successfully loaded!')
 				QBCore.Commands.Refresh(source)
 				--loadHouseData(source)
 				if Config.SkipSelection then

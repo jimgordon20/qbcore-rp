@@ -2,16 +2,17 @@
 
 local function TeleportToInterior(player, x, y, z, h)
 	local ped = player:GetControlledCharacter()
+	if not ped then return end
 	ped:SetLocation(Vector(x, y, z))
 	ped:SetRotation(Rotator(0, h, 0))
 	player:StopCameraFade()
 end
 
-Events.SubscribeRemote("qb-interior:server:teleportPlayer", function(player, x, y, z, h)
+Events.SubscribeRemote('qb-interior:server:teleportPlayer', function(player, x, y, z, h)
 	TeleportToInterior(player, x, y, z, h)
 end)
 
-Package.Export("DespawnInterior", function(objects)
+Package.Export('DespawnInterior', function(objects)
 	for _, v in pairs(objects) do
 		if v:IsValid(v) then
 			v:Destroy()
@@ -40,9 +41,9 @@ end
 
 -- Shells
 
-Package.Export("CreateApartmentFurnished", function(player, spawn)
+Package.Export('CreateApartmentFurnished', function(player, spawn)
 	local exit = JSON.parse('{"x": -430.0, "y": -347.0, "z": 93.0, "h": 90.81}')
-	local model = "abcca-shells::SM_modernhotel_shell"
+	local model = 'abcca-shells::SM_modernhotel_shell'
 	local obj = CreateShell(player, spawn, exit, model)
 	if obj and obj[2] then
 		obj[2].clothes = JSON.parse('{"x": -6.028, "y": -9.5, "z": 1.2, "h":2.263}')
@@ -51,69 +52,69 @@ Package.Export("CreateApartmentFurnished", function(player, spawn)
 	end
 	if IsNew then
 		SetTimeout(750, function()
-			TriggerEvent("qb-clothes:client:CreateFirstCharacter")
+			TriggerEvent('qb-clothes:client:CreateFirstCharacter')
 			IsNew = false
 		end)
 	end
 	return { obj[1], obj[2] }
 end)
 
-Package.Export("CreateContainer", function(spawn)
+Package.Export('CreateContainer', function(spawn)
 	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
-	local model = "abcca-shells::SM_container_shell"
+	local model = 'abcca-shells::SM_container_shell'
 	return CreateShell(spawn, exit, model)
 end)
 
-Package.Export("CreateFurniMid", function(spawn)
+Package.Export('CreateFurniMid', function(spawn)
 	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
-	local model = "abcca-shells::SM_furnitured_midapart"
+	local model = 'abcca-shells::SM_furnitured_midapart'
 	return CreateShell(spawn, exit, model)
 end)
 
-Package.Export("CreateFranklinAunt", function(spawn)
+Package.Export('CreateFranklinAunt', function(spawn)
 	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
-	local model = "abcca-shells::SM_shell_frankaunt"
+	local model = 'abcca-shells::SM_shell_frankaunt'
 	return CreateShell(spawn, exit, model)
 end)
 
-Package.Export("CreateGarageMed", function(spawn)
+Package.Export('CreateGarageMed', function(spawn)
 	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
-	local model = "abcca-shells::SM_shell_garagem"
+	local model = 'abcca-shells::SM_shell_garagem'
 	return CreateShell(spawn, exit, model)
 end)
 
-Package.Export("CreateLesterShell", function(spawn)
+Package.Export('CreateLesterShell', function(spawn)
 	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
-	local model = "abcca-shells::SM_shell_lester"
+	local model = 'abcca-shells::SM_shell_lester'
 	return CreateShell(spawn, exit, model)
 end)
 
-Package.Export("CreateOffice1", function(spawn)
+Package.Export('CreateOffice1', function(spawn)
 	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
-	local model = "abcca-shells::SM_shell_office1"
+	local model = 'abcca-shells::SM_shell_office1'
 	return CreateShell(spawn, exit, model)
 end)
 
-Package.Export("CreateStore1", function(spawn)
+Package.Export('CreateStore1', function(spawn)
 	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
-	local model = "abcca-shells::SM_shell_store1"
+	local model = 'abcca-shells::SM_shell_store1'
 	return CreateShell(spawn, exit, model)
 end)
 
-Package.Export("CreateTrailer", function(spawn)
+Package.Export('CreateTrailer', function(spawn)
 	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
-	local model = "abcca-shells::SM_shell_trailer"
+	local model = 'abcca-shells::SM_shell_trailer'
 	return CreateShell(spawn, exit, model)
 end)
 
-Package.Export("CreateWarehouse1", function(spawn)
+Package.Export('CreateWarehouse1', function(spawn)
 	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
-	local model = "abcca-shells::SM_shell_warehouse1"
+	local model = 'abcca-shells::SM_shell_warehouse1'
 	return CreateShell(spawn, exit, model)
 end)
 
-Package.Export("CreateStandardMotel", function(spawn)
+Package.Export('CreateStandardMotel', function(spawn)
 	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
-	local model = "abcca-shells::SM_standardmotel_shell"
+	local model = 'abcca-shells::SM_standardmotel_shell'
 	return CreateShell(spawn, exit, model)
 end)

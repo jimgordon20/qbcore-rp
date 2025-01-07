@@ -433,7 +433,8 @@ Events.SubscribeRemote('qb-houses:server:SetHouseRammed', function(source, bool,
 end)
 
 Events.SubscribeRemote('qb-houses:server:SetInsideMeta', function(source, insideId, bool)
-	local Player = QBCore.Functions.GetPlayer(source)
+	local Player = QBCore.Functions.GetPlayer(source)\
+	if not Player then return end
 	local insideMeta = Player.PlayerData.metadata['inside']
 	if bool then
 		insideMeta.apartment.apartmentType = nil
@@ -452,6 +453,7 @@ end)
 
 QBCore.Functions.CreateCallback('qb-houses:server:buyFurniture', function(source, cb, price)
 	local pData = QBCore.Functions.GetPlayer(source)
+	if not pData then return end
 	local bankBalance = pData.PlayerData.money['bank']
 
 	if bankBalance >= price then

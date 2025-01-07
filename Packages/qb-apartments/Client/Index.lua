@@ -389,6 +389,7 @@ end)
 Events.SubscribeRemote('qb-apartments:client:SpawnInApartment', function(apartmentId, apartment)
 	if RangDoorbell ~= nil then
 		local ped = Client.GetLocalPlayer():GetControlledCharacter()
+		if not ped then return end
 		local pos = ped:GetLocation()
 		local doorbelldist = pos:Distance(
 			Vector(
@@ -489,6 +490,10 @@ Events.SubscribeRemote('qb-apartments:client:OpenDoor', function()
 end)
 
 Events.Subscribe('qb-apartments:client:LeaveApartment', function()
+	LeaveApartment(ClosestHouse)
+end)
+
+Events.SubscribeRemote('qb-apartments:client:LeaveApartment', function()
 	LeaveApartment(ClosestHouse)
 end)
 
