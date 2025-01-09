@@ -130,53 +130,47 @@ local function removeSprite()
 	end
 end
 
+local function updateEntityHighlight(entity, enable)
+	if Config.EnableOutline then
+		entity:SetHighlightEnabled(enable, Config.OutlineColor)
+		entity:SetOutlineEnabled(enable, Config.OutlineColor)
+	end
+end
+
 local function handleEntity(trace_result, start_location)
 	if not trace_result or not trace_result.Entity then
+		if target_entity then
+			updateEntityHighlight(target_entity, false)
+			target_entity = nil
+			nui_data = {}
+			my_webui:CallEvent('leftTarget')
+		end
 		return
 	end
 	if trace_result.Success then
-		if Config.EnableOutline then
-			trace_result.Entity:SetOutlineEnabled(true, Config.OutlineColor)
-		end
-		if Config.DrawSprite then
-			drawSprite(trace_result.Entity)
-		end
 		if target_entity ~= trace_result.Entity then
 			if target_entity then
-				if Config.EnableOutline then
-					target_entity:SetOutlineEnabled(false)
-				end
-				if Config.DrawSprite then
-					removeSprite()
-				end
+				updateEntityHighlight(target_entity, false)
+				if Config.DrawSprite then removeSprite() end
 				my_webui:CallEvent('leftTarget')
 			end
 			target_entity = trace_result.Entity
-			if Config.EnableOutline then
-				target_entity:SetOutlineEnabled(Config.EnableOutline, Config.OutlineColor)
-			end
-			if Config.DrawSprite then
-				drawSprite(target_entity)
-			end
+			updateEntityHighlight(target_entity, true)
+			if Config.DrawSprite then drawSprite(target_entity) end
+
 			nui_data = {}
+			local distance = start_location:Distance(trace_result.Location)
 			if Entities[target_entity] then
-				local distance = start_location:Distance(trace_result.Location)
 				setupOptions(Entities[target_entity], target_entity, distance)
 			end
 			if Types[tostring(trace_result.ActorName)] then
-				local distance = start_location:Distance(trace_result.Location)
 				setupOptions(Types[tostring(trace_result.ActorName)], target_entity, distance)
 			end
-			my_webui:CallEvent(
-				'foundTarget',
-				{ data = nui_data[1] and nui_data[1].targeticon or '', options = nui_data }
-			)
+			my_webui:CallEvent('foundTarget', { data = nui_data[1] and nui_data[1].targeticon or '', options = nui_data })
 		end
 	else
 		if target_entity then
-			if Config.EnableOutline then
-				target_entity:SetOutlineEnabled(false)
-			end
+			updateEntityHighlight(target_entity, false)
 			target_entity = nil
 			nui_data = {}
 			my_webui:CallEvent('leftTarget')
