@@ -1,8 +1,8 @@
 local my_webui = WebUI('Target', 'file://html/index.html')
 local Config = Package.Require('config.lua')
 local player_data = QBCore.Functions.GetPlayerData()
-local target_active, target_entity, raycast_timer, player_ped, target_sprite = false, nil, nil, nil, nil
-local nui_data, send_data, Entities, Types, Zones = {}, {}, {}, {}, {}
+local target_active, target_entity, raycast_timer, player_ped = false, nil, nil, nil
+local active_sprites, nui_data, send_data, Entities, Types, Zones = {}, {}, {}, {}, {}, {}
 
 -- Handlers
 
@@ -83,23 +83,22 @@ local function setupOptions(datatable, entity, distance)
 			table.insert(nui_data, new_option)
 			send_data[#nui_data] = data
 			send_data[#nui_data].entity = entity
+			local target_icon = nui_data[1] and nui_data[1].targeticon or ''
+			my_webui:CallEvent('foundTarget', { data = target_icon, options = nui_data })
 		end
 	end
 end
 
-local function drawSprite(entity)
-	if not Config.DrawSprite or target_sprite then return end
-	local coords = entity:GetLocation()
-	if not coords then return end
-	target_sprite = Billboard(coords, '', Vector2D(0.02, 0.02), true)
-	target_sprite:SetMaterialTextureParameter('Texture', 'package://qb-target/Client/html/circle.png')
-	target_sprite:SetMaterialColorParameter('Texture', Color(255, 255, 255, 255))
-end
-
-local function removeSprite()
-	if not target_sprite then return end
-	target_sprite:Destroy()
-	target_sprite = nil
+local function removeSprite(entity)
+	if entity and active_sprites[entity] then
+		active_sprites[entity]:Destroy()
+		active_sprites[entity] = nil
+	elseif not entity then
+		for _, sprite in pairs(active_sprites) do
+			sprite:Destroy()
+		end
+		active_sprites = {}
+	end
 end
 
 local function updateEntityHighlight(entity, enable)
@@ -113,7 +112,7 @@ end
 local function clearTarget()
 	if not target_entity then return end
 	updateEntityHighlight(target_entity, false)
-	if Config.DrawSprite then removeSprite() end
+	removeSprite(target_entity)
 	target_entity = nil
 	nui_data = {}
 	my_webui:CallEvent('leftTarget')
@@ -133,15 +132,12 @@ local function handleEntity(trace_result, start_location)
 		clearTarget()
 		target_entity = trace_result.Entity
 		updateEntityHighlight(target_entity, true)
-		if Config.DrawSprite then drawSprite(target_entity) end
 		nui_data = {}
 		local distance = start_location:Distance(trace_result.Location)
 		local optionsSource = Entities[target_entity] or Types[tostring(trace_result.ActorName)]
 		if optionsSource then
 			setupOptions(optionsSource, target_entity, distance)
 		end
-		local target_icon = nui_data[1] and nui_data[1].targeticon or ''
-		my_webui:CallEvent('foundTarget', { data = target_icon, options = nui_data })
 	end
 end
 
@@ -157,11 +153,32 @@ local function handleRaycast()
 	return trace_result, start_location
 end
 
+local function drawSprite(entity)
+	if not Config.DrawSprite or active_sprites[entity] then return end
+	if not entity or not entity:IsValid() then return end
+	local coords = entity:GetLocation()
+	if not coords then return end
+	local sprite = Billboard(coords, '', Vector2D(0.02, 0.02), true)
+	sprite:SetMaterialTextureParameter('Texture', 'package://qb-target/Client/html/circle.png')
+	active_sprites[entity] = sprite
+end
+
 local function enableTarget()
 	if Input.IsMouseEnabled() then return end
 	if target_active then return end
 	target_active = true
 	my_webui:CallEvent('openTarget')
+	local player_coords = player_ped and player_ped:GetLocation()
+	if not player_coords then return end
+	for entity, _ in pairs(Entities) do
+		if entity and entity:IsValid() then
+			local entity_coords = entity:GetLocation()
+			local distance = player_coords:Distance(entity_coords)
+			if distance <= Config.MaxDistance then
+				drawSprite(entity)
+			end
+		end
+	end
 	raycast_timer = Timer.SetInterval(function()
 		local trace_result, start_location = handleRaycast()
 		handleEntity(trace_result, start_location)
@@ -173,10 +190,7 @@ local function disableTarget()
 	if target_entity and Config.EnableOutline then
 		target_entity:SetOutlineEnabled(false)
 	end
-	if target_sprite then
-		target_sprite:Destroy()
-		target_sprite = nil
-	end
+	removeSprite()
 	target_active, target_entity = false, nil
 	nui_data, send_data = {}, {}
 	my_webui:CallEvent('closeTarget')

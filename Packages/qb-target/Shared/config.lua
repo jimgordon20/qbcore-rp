@@ -1,7 +1,7 @@
 Config = {
 	OpenKey = 'LeftControl',          -- enable target
 	MenuControlKey = 'RightMouseButton', -- enable mouse control
-	MaxDistance = 400,                -- max distance for raycast
+	MaxDistance = 1000,               -- max distance for raycast
 	Debug = false,                    -- prints trace results
 	EnableOutline = true,             -- enable outline on target
 	OutlineColor = 0,                 -- 0 = green, 1 = red, 2 = blue
