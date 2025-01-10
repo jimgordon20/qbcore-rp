@@ -14,9 +14,7 @@ local function RegisterApartmentEntranceTarget(apartmentID, apartmentData)
 	local coords = Vector(apartmentData.coords[1], apartmentData.coords[2], apartmentData.coords[3])
 	local boxName = 'apartmentEntrance_' .. apartmentID
 	local boxData = apartmentData.polyzoneBoxData
-	if boxData.created then
-		return
-	end
+	if boxData.created then return end
 	local options = {}
 
 	if apartmentID == ClosestHouse and IsOwned then
@@ -67,12 +65,12 @@ local function RegisterInApartmentTarget(targetKey, coords, heading, options)
 	end
 
 	local boxName = 'inApartmentTarget_' .. targetKey
-	AddBoxZone(boxName, coords, 1.5, 1.5, {
+	AddBoxZone(boxName, coords, 0.5, 0.5, {
 		name = boxName,
 		heading = heading,
 	}, {
 		options = options,
-		distance = 500,
+		distance = 200,
 	})
 
 	InApartmentTargets[targetKey] = InApartmentTargets[targetKey] or {}
@@ -175,7 +173,6 @@ end
 -- utility functions
 
 local function EnterApartment(house, apartmentId, new)
-	Sound(Vector(), 'package://qb-apartments/Client/houses_door_open.ogg', true)
 	QBCore.Functions.TriggerCallback('qb-apartments:GetApartmentOffset', function(offset)
 		if offset == nil or offset == 0 then
 			QBCore.Functions.TriggerCallback('qb-apartments:GetApartmentOffsetNewOffset', function(newoffset)
@@ -198,7 +195,7 @@ local function EnterApartment(house, apartmentId, new)
 				RangDoorbell = nil
 				Events.Call('qb-weathersync:client:DisableSync')
 				Events.CallRemote('qb-apartments:server:SetInsideMeta', house, apartmentId, true, false)
-				Sound(Vector(), 'package://qb-apartments/Client/houses_door_close.ogg', true)
+				Sound(Vector(), 'package://qb-apartments/Client/houses_door_open.ogg', true)
 				Events.CallRemote('qb-apartments:server:setCurrentApartment', CurrentApartment)
 				if Input.IsMouseEnabled() then Input.SetMouseEnabled(false) end
 			end, house)
@@ -207,7 +204,6 @@ local function EnterApartment(house, apartmentId, new)
 				offset = 710
 			end
 			CurrentOffset = offset
-			Sound(Vector(), 'package://qb-apartments/Client/houses_door_open.ogg', true)
 			Events.CallRemote('qb-apartments:server:AddObject', apartmentId, house, CurrentOffset)
 			local coords = Vector(
 				Apartments.Locations[house].coords[1],
@@ -221,7 +217,7 @@ local function EnterApartment(house, apartmentId, new)
 			CurrentApartment = apartmentId
 			Events.Call('qb-weathersync:client:DisableSync')
 			Events.CallRemote('qb-apartments:server:SetInsideMeta', house, apartmentId, true, true)
-			Sound(Vector(), 'package://qb-apartments/Client/houses_door_close.ogg', true)
+			Sound(Vector(), 'package://qb-apartments/Client/houses_door_open.ogg', true)
 			Events.CallRemote('qb-apartments:server:setCurrentApartment', CurrentApartment)
 			if Input.IsMouseEnabled() then Input.SetMouseEnabled(false) end
 		end
@@ -270,7 +266,7 @@ local function SetClosestApartment()
 	end
 	local pos = ped:GetLocation()
 	local current = nil
-	local dist = 100
+	local dist = 500
 	for id in pairs(Apartments.Locations) do
 		local distcheck = pos:Distance(
 			Vector(
