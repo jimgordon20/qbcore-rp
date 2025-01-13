@@ -4,23 +4,23 @@ local peds = {}
 -- Functions
 
 local function checkTable(inputValue, requiredValue)
-	if type(inputValue) == "table" and type(requiredValue) == "table" then
+	if type(inputValue) == 'table' and type(requiredValue) == 'table' then
 		for _, v in ipairs(requiredValue) do
 			if inputValue[v] then
 				return true
 			end
 		end
-	elseif type(requiredValue) == "table" then
+	elseif type(requiredValue) == 'table' then
 		for _, v in ipairs(requiredValue) do
 			if v == inputValue then
 				return true
 			end
 		end
-	elseif type(inputValue) == "string" and type(requiredValue) == "string" then
+	elseif type(inputValue) == 'string' and type(requiredValue) == 'string' then
 		return inputValue == requiredValue
-	elseif type(inputValue) == "table" and type(requiredValue) == "string" then
+	elseif type(inputValue) == 'table' and type(requiredValue) == 'string' then
 		return inputValue[requiredValue] == true
-	elseif type(inputValue) == "string" and type(requiredValue) == "table" then
+	elseif type(inputValue) == 'string' and type(requiredValue) == 'table' then
 		for _, v in ipairs(requiredValue) do
 			if v == inputValue then
 				return true
@@ -28,56 +28,6 @@ local function checkTable(inputValue, requiredValue)
 		end
 	end
 	return false
-end
-
-local function tableCheck(inputValue, requiredValue)
-	local playerJob = inputValue.job.name
-	local playerJobGrade = inputValue.job.grade.level
-	local playerGang = inputValue.gang.name
-	local playerGangGrade = inputValue.gang.grade.level
-	local shopData = Config.Locations[requiredValue]
-
-	local jobCheck = false
-	local gangCheck = false
-	local itemCheck = false
-
-	if shopData.requiredJob then
-		if type(shopData.requiredJob) == "table" then
-			for job, grade in pairs(shopData.requiredJob) do
-				if playerJob == job and playerJobGrade >= grade then
-					jobCheck = true
-					break
-				end
-			end
-		elseif playerJob == shopData.requiredJob then
-			jobCheck = true
-		end
-	else
-		jobCheck = true
-	end
-
-	if shopData.requiredGang then
-		if type(shopData.requiredGang) == "table" then
-			for gang, grade in pairs(shopData.requiredGang) do
-				if playerGang == gang and playerGangGrade >= grade then
-					gangCheck = true
-					break
-				end
-			end
-		elseif playerGang == shopData.requiredGang then
-			gangCheck = true
-		end
-	else
-		gangCheck = true
-	end
-
-	if shopData.requiredItem then
-		itemCheck = HasItem(shopData.requiredItem)
-	else
-		itemCheck = true
-	end
-
-	return jobCheck and gangCheck and itemCheck
 end
 
 local function saveShopInv(shop, products)
@@ -100,21 +50,21 @@ local function deliveryPay(source, shop)
 	if distance > 10 then
 		return
 	end
-	Player.Functions.AddMoney("bank", Config.DeliveryPrice, "qb-shops:deliveryPay")
+	Player.Functions.AddMoney('bank', Config.DeliveryPrice, 'qb-shops:deliveryPay')
 	if math.random(100) <= 10 then
-		AddItem(source, Config.RewardItem, 1, false, false, "qb-shops:deliveryPay")
+		AddItem(source, Config.RewardItem, 1, false, false, 'qb-shops:deliveryPay')
 	end
 end
 
 -- Callbacks
 
-QBCore.Functions.CreateCallback("getShopPeds", function(_, cb)
+QBCore.Functions.CreateCallback('qb-shops:server:getPeds', function(_, cb)
 	cb(peds)
 end)
 
 -- Events
 
-Events.SubscribeRemote("qb-shops:server:RestockShopItems", function(source, shop)
+Events.SubscribeRemote('qb-shops:server:RestockShopItems', function(source, shop)
 	if not shop then
 		return
 	end
@@ -130,10 +80,10 @@ Events.SubscribeRemote("qb-shops:server:RestockShopItems", function(source, shop
 		Config.Locations[shop].products[k].amount = Config.Locations[shop].products[k].amount + randAmount
 	end
 	saveShopInv(shop, Config.Locations[shop].products)
-	Events.BroadcastRemote("qb-shops:client:SetShopItems", shop, Config.Locations[shop].products)
+	Events.BroadcastRemote('qb-shops:client:SetShopItems', shop, Config.Locations[shop].products)
 end)
 
-Events.Subscribe("qb-shops:server:UpdateShopItems", function(shop, itemData, amount) -- called from inventory
+Events.Subscribe('qb-shops:server:UpdateShopItems', function(shop, itemData, amount) -- called from inventory
 	if not shop or not itemData or not amount then
 		return
 	end
@@ -149,10 +99,10 @@ Events.Subscribe("qb-shops:server:UpdateShopItems", function(shop, itemData, amo
 		Config.Locations[shop].products[itemData.slot].amount = 0
 	end
 	saveShopInv(shop, Config.Locations[shop].products)
-	Events.BroadcastRemote("qb-shops:client:SetShopItems", shop, Config.Locations[shop].products)
+	Events.BroadcastRemote('qb-shops:client:SetShopItems', shop, Config.Locations[shop].products)
 end)
 
-Events.SubscribeRemote("qb-shops:server:openShop", function(source, data)
+Events.SubscribeRemote('qb-shops:server:openShop', function(source, data)
 	local shopName = data.shop
 	local shopData = Config.Locations[shopName]
 	if not shopData then
@@ -198,7 +148,7 @@ Events.SubscribeRemote("qb-shops:server:openShop", function(source, data)
 		if
 			addProduct
 			and curProduct.requiredLicense
-			and not checkTable(playerData.metadata["licences"], curProduct.requiredLicense)
+			and not checkTable(playerData.metadata['licences'], curProduct.requiredLicense)
 		then
 			addProduct = false
 		end
@@ -226,17 +176,17 @@ for shop, shopData in pairs(Config.Locations) do
 		local coords = shopData.coords
 		local heading = shopData.heading
 		local ped = HCharacter(coords, heading, shopData.ped)
-		ped:AddSkeletalMeshAttached("head", "/CharacterCreator/CharacterAssets/Avatar_FBX/Head/Male_Head")
-		ped:AddSkeletalMeshAttached("chest", "helix::SK_Man_Outwear_03")
-		ped:AddSkeletalMeshAttached("legs", "helix::SK_Man_Pants_05")
-		ped:AddSkeletalMeshAttached("feet", "helix::SK_Delivery_Shoes")
+		ped:AddSkeletalMeshAttached('head', '/CharacterCreator/CharacterAssets/Avatar_FBX/Head/Male_Head')
+		ped:AddSkeletalMeshAttached('chest', 'helix::SK_Man_Outwear_03')
+		ped:AddSkeletalMeshAttached('legs', 'helix::SK_Man_Pants_05')
+		ped:AddSkeletalMeshAttached('feet', 'helix::SK_Delivery_Shoes')
 		--ped:SetInvulnerable(true)
 		--ped:SetImpactDamageTaken(0)
 		peds[ped] = {
 			options = {
 				{
-					type = "server",
-					event = "qb-shops:server:openShop",
+					type = 'server',
+					event = 'qb-shops:server:openShop',
 					shop = shop,
 					label = shopData.targetLabel or Config.DefaultTargetLabel,
 					icon = shopData.targetIcon or Config.DefaultTargetIcon,
@@ -247,48 +197,5 @@ for shop, shopData in pairs(Config.Locations) do
 			},
 			distance = 400,
 		}
-	end
-end
-
-if not QBConfig.UseTarget then
-	for shop in pairs(Config.Locations) do
-		local box_trigger = Trigger(
-			Config.Locations[shop]["coords"],
-			Rotator(0, 45, 0),
-			Vector(100, 100, 100),
-			TriggerType.Box,
-			false,
-			Color(1, 0, 0)
-		)
-
-		box_trigger:Subscribe("BeginOverlap", function(_, actor_triggering)
-			if not actor_triggering:IsA(HCharacter) then
-				return
-			end
-			local source = actor_triggering:GetPlayer()
-			if not source then
-				return
-			end
-			local Player = QBCore.Functions.GetPlayer(source)
-			if not tableCheck(Player.PlayerData, shop) then
-				return
-			end
-			Events.CallRemote("qb-shops:client:enteredShop", source, shop)
-		end)
-
-		box_trigger:Subscribe("EndOverlap", function(_, actor_triggering)
-			if not actor_triggering:IsA(HCharacter) then
-				return
-			end
-			local source = actor_triggering:GetPlayer()
-			if not source then
-				return
-			end
-			local Player = QBCore.Functions.GetPlayer(source)
-			if not tableCheck(Player.PlayerData, shop) then
-				return
-			end
-			Events.CallRemote("qb-shops:client:leftShop", source)
-		end)
 	end
 end

@@ -1,5 +1,4 @@
 QBConfig = {}
-QBConfig.UseTarget = true
 QBConfig.Language = 'en'
 
 --QBConfig.MaxPlayers = GetConvarInt('sv_maxclients', 48) -- Gets max players from config file, default 48
