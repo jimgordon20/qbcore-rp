@@ -4,13 +4,13 @@ Config = {
             Vector(-194849.8, 219318.8, 214.5),
         },
         ambulance = {
-            Vector(311.21, -599.36, 43.29),
+            Vector(0, 0, 0),
         },
         cardealer = {
-            Vector(-32.94, -1114.64, 26.42),
+            Vector(0, 0, 0),
         },
         mechanic = {
-            Vector(-347.59, -133.35, 39.01),
+            Vector(0, 0, 0),
         },
     },
 
