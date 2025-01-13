@@ -1,0 +1,190 @@
+local locations = {
+    Vector(-14758.1, 118048.5, 94.0),
+    Vector(-13533.8, 109840.7, 92.7),
+    Vector(-10954.4, 114227.9, 92.7),
+    Vector(11785.2, 45548.8, 92.6),
+    Vector(12641.8, 40921.2, 97.3),
+    Vector(14039.2, 15241.3, 92.9),
+    Vector(15791.4, 13426.5, 92.9),
+    Vector(13943.4, 3848.1, 92.9),
+    Vector(15751.6, -1163.8, 92.9),
+    Vector(13838.5, -17493.0, 92.9),
+    Vector(15646.2, -22637.6, 92.9),
+    Vector(13778.4, -33463.0, 92.9),
+    Vector(15580.7, -39928.6, 92.9),
+    Vector(15559.4, -22059.3, 98.7),
+    Vector(13974.9, -33154.0, 98.7),
+    Vector(15435.5, -39492.8, 98.7),
+    Vector(13797.4, -52383.7, 98.7),
+    Vector(11648.4, -55089.5, 98.8),
+    Vector(15344.5, -60966.9, 98.7),
+    Vector(1835.1, 127629.7, 92.6),
+    Vector(14504.7, 107015.3, 92.7),
+    Vector(18534.9, 90826.8, 92.7),
+    Vector(17922.7, 80437.9, 92.9),
+    Vector(12608.7, 75470.5, 93.0),
+    Vector(13676.0, -52761.2, 92.9),
+    Vector(11287.6, -55188.1, 93.0),
+    Vector(-1707.0, -95726.0, 93.3),
+    Vector(1215.4, -85349.5, 93.2),
+    Vector(157.9, -62624.8, 93.1),
+    Vector(-15494.6, -65550.3, 93.2),
+    Vector(-14269.4, -31730.7, 93.2),
+    Vector(-15336.6, -11700.2, 93.2),
+    Vector(-11007.4, 1977.1, 93.2),
+    Vector(1602.4, 24261.5, 93.2),
+    Vector(-14127.1, 20941.0, 93.2),
+    Vector(-15210.7, 29696.1, 93.2),
+    Vector(-19030.6, 39465.5, 93.2),
+    Vector(-16744.1, 70073.9, 93.2),
+    Vector(-13640.5, 74482.5, 93.2),
+    Vector(-16304.9, 80965.1, 93.1),
+    Vector(-16712.4, 84500.4, 93.3),
+    Vector(-13570.5, 93077.0, 93.2),
+    Vector(-18703.2, 93321.4, 93.2),
+    Vector(-18025.2, -112151.7, 93.3),
+    Vector(-11264.3, -113445.1, 93.2),
+    Vector(-2114.1, 115948.6, 92.7),
+    Vector(25045.3, -54153.2, 93.0),
+    Vector(27384.0, -55917.0, 93.1),
+    Vector(28444.3, -67411.2, 92.9),
+    Vector(27276.2, -68609.4, 93.0),
+    Vector(28251.3, -84505.1, 94.1),
+    Vector(2008.3, 128748.6, 92.6),
+    Vector(20864.2, 144944.8, 92.7),
+    Vector(28559.9, 133632.9, 96.3),
+    Vector(26467.7, 132217.9, 92.7),
+    Vector(27121.5, -86377.1, 92.9),
+    Vector(26853.9, -102634.3, 93.7),
+    Vector(27979.6, -105646.2, 93.0),
+    Vector(28538.8, -113885.0, 93.0),
+    Vector(27003.8, -86488.6, 92.9),
+    Vector(-2970.3, -112306.4, 93.2),
+    Vector(-2386.5, -72025.3, 93.2),
+    Vector(-26674.9, -53732.4, 93.3),
+    Vector(-2623.2, 2453.3, 93.3),
+    Vector(-22545.2, 45672.1, 93.3),
+    Vector(-26594.9, 60162.0, 93.2),
+    Vector(-22911.6, 60716.6, 93.2),
+    Vector(-22540.3, 61622.5, 93.2),
+    Vector(-22177.1, 66142.7, 97.6),
+    Vector(-28128.8, 104859.9, 93.3),
+    Vector(-24752.6, 109766.4, 93.2),
+    Vector(-29840.1, -113311.2, 93.2),
+    Vector(-31798.1, -54410.8, 93.2),
+    Vector(39781.0, -98516.9, 92.9),
+    Vector(37944.2, -94658.4, 92.9),
+    Vector(33181.8, -88613.3, 93.0),
+    Vector(-37143.9, -46977.5, 92.7),
+    Vector(-38242.0, -42872.0, 93.2),
+    Vector(-3806.8, 25900.9, 93.3),
+    Vector(-3971.6, 25358.6, 93.2),
+    Vector(-31152.2, 112973.5, 93.2),
+    Vector(-38337.1, -73964.1, 91.2),
+    Vector(-37381.5, -106100.5, 93.2),
+    Vector(-34425.0, -112027.4, 93.3),
+    Vector(-43635.8, 117526.7, 93.2),
+    Vector(4891.1, -114937.8, 93.3),
+    Vector(-47362.9, 120296.9, 93.3),
+    Vector(-47613.2, 123673.5, 93.3),
+    Vector(-43707.8, 102157.8, 93.2),
+    Vector(-44840.3, 99078.7, 93.3),
+    Vector(-40887.5, -96575.4, 93.2),
+    Vector(-58007.6, 92608.4, 93.2),
+    Vector(-50064.0, 129599.4, 93.2),
+    Vector(5065.3, -74236.6, 93.2),
+    Vector(5037.5, -91159.9, 93.2),
+    Vector(-52031.7, 128565.5, 93.2),
+    Vector(-56415.6, 103120.9, 93.2),
+    Vector(-51969.5, 108346.6, 93.2),
+    Vector(-58053.1, 45309.2, 93.3),
+    Vector(-53886.7, 45961.9, 93.3),
+    Vector(-56911.6, -44680.5, 93.2),
+    Vector(-51507.2, -71087.1, 92.7),
+    Vector(-62452.2, -71992.0, 93.2),
+    Vector(-68492.1, -65439.5, 93.2),
+    Vector(-63403.0, -54061.9, 93.3),
+    Vector(-68199.4, -50909.7, 93.2),
+    Vector(-61877.8, -45252.2, 93.3),
+    Vector(-61374.9, -37115.6, 93.3),
+    Vector(-63137.9, -37791.0, 93.2),
+    Vector(-67771.1, -33825.0, 93.2),
+    Vector(-62432.4, -23014.0, 93.2),
+    Vector(-64068.0, -13935.7, 93.2),
+    Vector(-67310.2, -11427.4, 93.2),
+    Vector(-66808.2, 15188.4, 93.2),
+    Vector(-64720.6, 26577.1, 93.2),
+    Vector(-64448.1, 51284.2, 93.2),
+    Vector(-68781.6, 67977.9, 93.2),
+    Vector(-67211.9, 86300.9, 93.2),
+    Vector(-65196.5, 104426.8, 93.2),
+    Vector(-62207.3, 109028.7, 93.2),
+    Vector(6664.5, 125012.7, 92.7),
+    Vector(7974.9, 60838.7, 92.9),
+    Vector(7823.2, -45865.3, 93.0),
+    Vector(8527.9, 70036.6, 92.9),
+    Vector(-8574.8, 113068.6, 92.9),
+    Vector(9057.0, 49808.6, 92.9),
+    Vector(9349.2, -38013.2, 93.0),
+    Vector(9259.3, 65868.4, 92.9),
+    Vector(-9583.5, -63425.2, 93.2),
+    Vector(-9768.7, 89599.7, 93.3),
+}
+
+local is_working = false
+local dropoff_Location = nil
+local current_marker = nil
+
+local function startBusJob()
+    if is_working then return end
+    is_working = true
+    Events.CallRemote('qb-busjob:server:spawnBus')
+    dropoff_Location = locations[math.random(#locations)]
+    print(dropoff_Location)
+    current_marker = Prop(dropoff_location, Rotator(0, 0, 0), 'pco-markers::SM_MarkerArrow')
+    current_marker:SetMaterialColorParameter('Color', Color(255, 0, 0, 1))
+    current_marker:SetScale(Vector(100, 100, 100))
+end
+
+local function getNextLocation()
+    if current_marker then
+        current_marker:Destroy()
+        current_marker = nil
+    end
+    dropoff_Location = locations[math.random(#locations)]
+    print(dropoff_Location)
+    current_marker = Prop(dropoff_location, Rotator(0, 0, 0), 'pco-markers::SM_MarkerArrow')
+    current_marker:SetMaterialColorParameter('Color', Color(255, 0, 0, 1))
+    current_marker:SetScale(Vector(100, 100, 100))
+end
+
+local ped = CharacterSimple(Vector(21505.2, 100641.9, 190.1), Rotator(0.0, -99.679672241211, 0.0), 'helix::SK_Male')
+ped:AddSkeletalMeshAttached('head', 'helix::SK_Male_Head')
+ped:AddSkeletalMeshAttached('chest', 'helix::SK_Man_Outwear_03')
+ped:AddSkeletalMeshAttached('legs', 'helix::SK_Man_Pants_05')
+ped:AddSkeletalMeshAttached('feet', 'helix::SK_Delivery_Shoes')
+
+AddTargetEntity(ped, {
+    options = {
+        {
+            label = 'Start Bus Job',
+            icon = 'fas fa-bus',
+            action = function()
+                startBusJob()
+            end
+        }
+    },
+    distance = 400
+})
+
+Input.Subscribe('KeyDown', function(key_name)
+    if not is_working or not dropoff_location then return end
+    if key_name == 'E' then
+        local player_location = Client.GetLocalPlayer():GetControlledCharacter():GetLocation()
+        local distance = player_location:Distance(dropoff_Location)
+        print(distance)
+        if distance > 1000 then return end
+        Events.CallRemote('qb-busjob:server:dropoff', dropoff_Location)
+        getNextLocation()
+    end
+end)
