@@ -41,7 +41,8 @@ QBConfig.Server.Permissions = {                -- string for player account id f
 		['eec65f3f-e5b0-4fb8-922d-75e1ea1575d2'] = true, -- Kakarot
 		['d4997d1b-b3ca-499d-9f0b-ffb361a51c4f'] = true,
 		['ebc0e470-7c49-477a-85cb-7684f3a40ed4'] = true, -- Maggie
-		['b04771ab-3d22-4364-beaa-e0b48e70911c'] = true -- Kravs
+		['b04771ab-3d22-4364-beaa-e0b48e70911c'] = true, -- Kravs
+		['65687081-32ee-40e0-9391-4874c194bf5c'] = true, -- Joel
 	},
 	admin = {},
 	mod = {},
