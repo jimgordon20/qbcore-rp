@@ -47,7 +47,7 @@
         "qb-management",
         "qb-cityhall",
         "qb-busjob",
-        "qb-taxijob"
+        "qb-taxijob",
     ]
     # asset packs list (this will additionally load the asset packs you define here)
     assets = [
@@ -61,5 +61,5 @@
     map =               "abcca-nyc-wip::NYC_Small"
     # banned HELIX account IDs
     banned_ids = [
-
+        
     ]
