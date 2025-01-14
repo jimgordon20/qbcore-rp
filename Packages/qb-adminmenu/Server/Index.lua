@@ -34,6 +34,8 @@ QBCore.Commands.Add('noclip', '', {}, false, function(source)
     else
         QBCore.Functions.TriggerClientCallback('qb-adminmenu:client:getCamera', source, function(coords, rotation)
             local newChar = HCharacter(coords, rotation, source)
+            local player_dimension = source:GetDimension()
+            newChar:SetDimension(player_dimension)
             source:Possess(newChar)
             source:SetValue('noclip', false)
         end)

@@ -72,6 +72,8 @@ Events.SubscribeRemote('qb-multicharacter:server:loadUserData', function(source,
 				if Config.SkipSelection then
 					local coords = JSON.parse(cData.position)
 					local new_char = HCharacter(coords, Rotator(0, 0, 0), source)
+					local source_dimension = source:GetDimension()
+					new_char:SetDimension(source_dimension)
 					source:Possess(new_char)
 					Events.CallRemote('QBCore:Client:OnPlayerLoaded', source)
 					Events.CallRemote('qb-multicharacter:client:spawnLastLocation', source, coords, cData)
@@ -112,6 +114,8 @@ Events.SubscribeRemote('qb-multicharacter:server:createCharacter', function(sour
 					QBCore.Commands.Refresh(source)
 					--loadHouseData(source)
 					local new_char = HCharacter(QBConfig.DefaultSpawn, Rotator(0, 0, 0), source)
+					local source_dimension = source:GetDimension()
+					new_char:SetDimension(source_dimension)
 					source:Possess(new_char)
 					Events.CallRemote('QBCore:Client:OnPlayerLoaded', source)
 					Events.CallRemote('qb-multicharacter:client:closeNUIdefault', source)

@@ -86,8 +86,8 @@ Events.SubscribeRemote('qb-apartments:server:CreateApartment', function(source, 
 			Apartments.Locations[type].coords[3]
 		)
 		local new_char = HCharacter(coords, Rotator(0, 0, 0), source)
-		local dimension = new_char:GetDimension()
-		source:SetDimension(dimension)
+		local source_dimension = source:GetDimension()
+		new_char:SetDimension(source_dimension)
 		source:Possess(new_char)
 		Events.CallRemote('qb-apartments:client:SpawnInApartment', source, apartmentId, type)
 	end
