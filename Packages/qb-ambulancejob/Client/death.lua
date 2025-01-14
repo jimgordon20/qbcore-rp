@@ -37,8 +37,8 @@ HCharacter.Subscribe('Death', function(self)
     if client:GetControlledCharacter() == self then
         isDead = true
         DeathTimer(true)
-        Events.CallRemote('hospital:server:SetDeathStatus', true)
-        Events.CallRemote('hospital:server:ambulanceAlert', Lang:t('info.civ_died'))
+        Events.CallRemote('qb-ambulancejob:server:SetDeathStatus', true)
+        Events.CallRemote('qb-ambulancejob:server:ambulanceAlert', Lang:t('info.civ_died'))
     end
 end)
 
@@ -48,7 +48,7 @@ HCharacter.Subscribe('Respawn', function(self)
     if client:GetControlledCharacter() == self then
         isDead = false
         DeathTimer(false)
-        Events.CallRemote('hospital:server:SetDeathStatus', false)
+        Events.CallRemote('qb-ambulancejob:server:SetDeathStatus', false)
     end
 end)
 
@@ -57,7 +57,7 @@ Input.Subscribe('KeyDown', function(key_name)
         hold_time = hold_time - 1
         if hold_time <= 0 then
             --Events.CallRemote('QBCore:Console:CallCommand', 'revive')
-            Events.CallRemote('hospital:server:RespawnAtHospital')
+            Events.CallRemote('qb-ambulancejob:server:RespawnAtHospital')
             hold_time = 50
             isDead = false
             DeathTimer(false)

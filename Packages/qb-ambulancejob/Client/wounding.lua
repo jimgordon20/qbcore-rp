@@ -53,24 +53,27 @@ end
 -- Handler
 
 HCharacter.Subscribe('TakeDamage', function(self, damage, bone, type, from_direction, instigator, causer)
+    local player = Client.GetLocalPlayer()
+    local ped = player:GetControlledCharacter()
+    if ped ~= self then return end
     print('TakeDamage was called')
     print(self, damage, bone, type, from_direction, instigator, causer)
 end)
 
 -- Events
 
-Events.SubscribeRemote('hospital:client:useIfaks', function()
+Events.SubscribeRemote('qb-ambulancejob:client:useIfaks', function()
     if painkillerAmount < 3 then painkillerAmount = painkillerAmount + 1 end
     PainKillerLoop()
     if math.random(1, 100) < 50 then RemoveBleed(1) end
 end)
 
-Events.SubscribeRemote('hospital:client:useBandage', function()
+Events.SubscribeRemote('qb-ambulancejob:client:useBandage', function()
     if math.random(1, 100) < 50 then RemoveBleed(1) end
     if math.random(1, 100) < 7 then ResetPartial() end
 end)
 
-Events.SubscribeRemote('hospital:client:usePainkillers', function()
+Events.SubscribeRemote('qb-ambulancejob:client:usePainkillers', function()
     if painkillerAmount < 3 then painkillerAmount = painkillerAmount + 1 end
     PainKillerLoop()
 end)

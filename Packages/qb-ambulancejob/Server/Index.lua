@@ -24,7 +24,7 @@ for _, loc in ipairs(Config.Locations['checking']) do
         options = {
             {
                 type = 'server',
-                event = 'hospital:server:RespawnAtHospital',
+                event = 'qb-ambulancejob:server:RespawnAtHospital',
                 label = 'Check In',
                 icon = 'fas fa-clipboard',
             },
@@ -106,14 +106,20 @@ end)
 
 -- Events
 
-Events.SubscribeRemote('qb-ambulancejob:server:KillPlayer', function(playerId)
-    local ped = playerId:GetControlledCharacter()
+Events.SubscribeRemote('qb-ambulancejob:server:setHealth', function(source, playerId, amount)
+    local ped = source:GetControlledCharacter()
     if not ped then return end
     ped:SetHealth(0)
 end)
 
-Events.SubscribeRemote('qb-ambulancejob:server:HealPlayer', function(playerId)
-    local ped = playerId:GetControlledCharacter()
+Events.SubscribeRemote('qb-ambulancejob:server:KillPlayer', function(source, playerId)
+    local ped = source:GetControlledCharacter()
+    if not ped then return end
+    ped:SetHealth(0)
+end)
+
+Events.SubscribeRemote('qb-ambulancejob:server:HealPlayer', function(source, playerId)
+    local ped = source:GetControlledCharacter()
     if not ped then return end
     ped:SetHealth(ped:GetMaxHealth())
 end)
@@ -150,7 +156,7 @@ QBCore.Functions.CreateUseableItem('ifaks', function(source, item)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
     if Player.Functions.RemoveItem(item.name) then
-        Events.CallRemote('hospital:client:UseIfaks', source)
+        Events.CallRemote('qb-ambulancejob:client:UseIfaks', source)
         local ped = source:GetControlledCharacter()
         if not ped then return end
         local health = ped:GetHealth()
@@ -168,7 +174,7 @@ QBCore.Functions.CreateUseableItem('bandage', function(source, item)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
     if Player.Functions.RemoveItem(item.name) then
-        Events.CallRemote('hospital:client:UseBandage', source)
+        Events.CallRemote('qb-ambulancejob:client:UseBandage', source)
         local ped = source:GetControlledCharacter()
         if not ped then return end
         local health = ped:GetHealth()
@@ -185,11 +191,11 @@ end)
 QBCore.Functions.CreateUseableItem('painkillers', function(source, item)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
-    if Player.Functions.RemoveItem(item.name) then Events.CallRemote('hospital:client:UsePainkillers', source) end
+    if Player.Functions.RemoveItem(item.name) then Events.CallRemote('qb-ambulancejob:client:UsePainkillers', source) end
 end)
 
 QBCore.Functions.CreateUseableItem('firstaid', function(source, item)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
-    if Player.Functions.RemoveItem(item.name) then Events.CallRemote('hospital:client:UseFirstAid', source) end
+    if Player.Functions.RemoveItem(item.name) then Events.CallRemote('qb-ambulancejob:client:UseFirstAid', source) end
 end)

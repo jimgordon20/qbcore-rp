@@ -84,7 +84,7 @@ Config = {
 
     AuthorizedVehicles = { -- Grade is key, don't add same vehicle in multiple grades. Higher rank can see lower
         [0] = {
-            ['qbcore-vehicles::BP_Ambulance'] = 'Ambulance'
+            ['qbcore-vehicles-mm::BP_Ambulance'] = 'Ambulance'
         }
     },
 
