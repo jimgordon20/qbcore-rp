@@ -88,8 +88,15 @@ end)
 -- Commands
 
 Events.SubscribeRemote('QBCore:Console:RegisterCommand', function(name, help, paramList)
-    Console.RegisterCommand(name, function(args)
-        Events.CallRemote('QBCore:Console:CallCommand', name, args)
+    Console.RegisterCommand(name, function(...)
+        local args = {...}
+        local argsString = ''
+        if #args > 0 then
+            for _, argument in pairs(args) do
+                argsString = argsString == '' and argument or argsString .. ' ' .. argument
+            end
+        end
+        Events.CallRemote('QBCore:Console:CallCommand', name, argsString)
     end, help, paramList)
 end)
 
