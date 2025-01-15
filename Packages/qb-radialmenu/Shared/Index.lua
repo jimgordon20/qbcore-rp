@@ -508,7 +508,7 @@ Config.JobInteractions = {
 			title = 'Check Health Status',
 			icon = 'heart-pulse',
 			type = 'client',
-			event = 'hospital:client:CheckStatus',
+			event = 'qb-ambulancejob:client:checkStatus',
 			shouldClose = true,
 		},
 		{
@@ -516,7 +516,7 @@ Config.JobInteractions = {
 			title = 'Revive',
 			icon = 'user-doctor',
 			type = 'client',
-			event = 'hospital:client:RevivePlayer',
+			event = 'qb-ambulancejob:client:revivePlayer',
 			shouldClose = true,
 		},
 		{
@@ -524,7 +524,7 @@ Config.JobInteractions = {
 			title = 'Heal wounds',
 			icon = 'bandage',
 			type = 'client',
-			event = 'hospital:client:TreatWounds',
+			event = 'qb-ambulancejob:client:treatWounds',
 			shouldClose = true,
 		},
 		{
@@ -532,7 +532,7 @@ Config.JobInteractions = {
 			title = 'Emergency button',
 			icon = 'bell',
 			type = 'client',
-			event = 'police:client:SendPoliceEmergencyAlert',
+			event = 'qb-ambulancejob:client:panicButton',
 			shouldClose = true,
 		},
 		{
@@ -540,7 +540,7 @@ Config.JobInteractions = {
 			title = 'Escort',
 			icon = 'user-group',
 			type = 'client',
-			event = 'police:client:EscortPlayer',
+			event = 'qb-ambulancejob:client:escortPlayer',
 			shouldClose = true,
 		},
 		{
@@ -553,7 +553,7 @@ Config.JobInteractions = {
 					title = 'Spawn Stretcher',
 					icon = 'plus',
 					type = 'client',
-					event = 'qb-radialmenu:client:TakeStretcher',
+					event = 'qb-ambulancejob:client:takeStretcher',
 					shouldClose = false,
 				},
 				{
@@ -561,7 +561,7 @@ Config.JobInteractions = {
 					title = 'Remove Stretcher',
 					icon = 'minus',
 					type = 'client',
-					event = 'qb-radialmenu:client:RemoveStretcher',
+					event = 'qb-ambulancejob:client:removeStretcher',
 					shouldClose = false,
 				},
 			},
@@ -573,7 +573,7 @@ Config.JobInteractions = {
 			title = 'Show/Hide Meter',
 			icon = 'eye-slash',
 			type = 'client',
-			event = 'qb-taxi:client:toggleMeter',
+			event = 'qb-taxijob:client:toggleMeter',
 			shouldClose = false,
 		},
 		{
@@ -581,7 +581,7 @@ Config.JobInteractions = {
 			title = 'Start/Stop Meter',
 			icon = 'hourglass-start',
 			type = 'client',
-			event = 'qb-taxi:client:enableMeter',
+			event = 'qb-taxijob:client:enableMeter',
 			shouldClose = true,
 		},
 		{
@@ -589,7 +589,7 @@ Config.JobInteractions = {
 			title = 'NPC Mission',
 			icon = 'taxi',
 			type = 'client',
-			event = 'qb-taxi:client:DoTaxiNpc',
+			event = 'qb-taxijob:client:startMission',
 			shouldClose = true,
 		},
 	},
@@ -599,7 +599,7 @@ Config.JobInteractions = {
 			title = 'Toggle NPC',
 			icon = 'toggle-on',
 			type = 'client',
-			event = 'jobs:client:ToggleNpc',
+			event = 'qb-towjob:client:startMission',
 			shouldClose = true,
 		},
 		{
@@ -607,7 +607,7 @@ Config.JobInteractions = {
 			title = 'Tow vehicle',
 			icon = 'truck-pickup',
 			type = 'client',
-			event = 'qb-tow:client:TowVehicle',
+			event = 'qb-towjob:client:towVehicle',
 			shouldClose = true,
 		},
 	},
@@ -617,7 +617,7 @@ Config.JobInteractions = {
 			title = 'Tow vehicle',
 			icon = 'truck-pickup',
 			type = 'client',
-			event = 'qb-tow:client:TowVehicle',
+			event = 'qb-towjob:client:towVehicle',
 			shouldClose = true,
 		},
 	},
@@ -627,7 +627,7 @@ Config.JobInteractions = {
 			title = 'Emergency button',
 			icon = 'bell',
 			type = 'client',
-			event = 'police:client:SendPoliceEmergencyAlert',
+			event = 'qb-policejob:server:panicButton',
 			shouldClose = true,
 		},
 		{
@@ -635,7 +635,7 @@ Config.JobInteractions = {
 			title = 'Reset house lock',
 			icon = 'key',
 			type = 'client',
-			event = 'qb-houses:client:ResetHouse',
+			event = 'qb-houses:client:resetHouse',
 			shouldClose = true,
 		},
 		{
@@ -643,7 +643,7 @@ Config.JobInteractions = {
 			title = 'Revoke Drivers License',
 			icon = 'id-card',
 			type = 'client',
-			event = 'police:client:SeizeDriverLicense',
+			event = 'qb-policejob:client:seizeDriverLicense',
 			shouldClose = true,
 		},
 		{
@@ -652,19 +652,11 @@ Config.JobInteractions = {
 			icon = 'list-check',
 			items = {
 				{
-					id = 'statuscheck',
-					title = 'Check Health Status',
-					icon = 'heart-pulse',
-					type = 'client',
-					event = 'hospital:client:CheckStatus',
-					shouldClose = true,
-				},
-				{
 					id = 'checkstatus',
 					title = 'Check status',
 					icon = 'question',
 					type = 'client',
-					event = 'qb-policejob:client:CheckStatus',
+					event = 'qb-policejob:client:checkStatus',
 					shouldClose = true,
 				},
 				{
@@ -672,7 +664,7 @@ Config.JobInteractions = {
 					title = 'Escort',
 					icon = 'user-group',
 					type = 'client',
-					event = 'qb-policejob:client:EscortPlayer',
+					event = 'qb-policejob:client:escortPlayer',
 					shouldClose = true,
 				},
 				{
@@ -680,7 +672,7 @@ Config.JobInteractions = {
 					title = 'Search',
 					icon = 'magnifying-glass',
 					type = 'server',
-					event = 'qb-policejob:server:SearchPlayer',
+					event = 'qb-policejob:server:searchPlayer',
 					shouldClose = true,
 				},
 				{
@@ -688,7 +680,7 @@ Config.JobInteractions = {
 					title = 'Jail',
 					icon = 'user-lock',
 					type = 'client',
-					event = 'qb-policejob:client:JailPlayer',
+					event = 'qb-policejob:client:jailPlayer',
 					shouldClose = true,
 				},
 			},
