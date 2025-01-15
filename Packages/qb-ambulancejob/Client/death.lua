@@ -37,6 +37,7 @@ HCharacter.Subscribe('Death', function(self)
     if client:GetControlledCharacter() == self then
         isDead = true
         DeathTimer(true)
+        StopBleedTimer()
         Events.CallRemote('qb-ambulancejob:server:SetDeathStatus', true)
         Events.CallRemote('qb-ambulancejob:server:ambulanceAlert', Lang:t('info.civ_died'))
     end
