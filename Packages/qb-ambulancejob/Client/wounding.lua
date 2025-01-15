@@ -1,3 +1,4 @@
+BleedAmount = 0
 local prevPos = nil
 local onPainKillers = false
 local painkillerAmount = 0
@@ -9,30 +10,30 @@ local advanceBleedTimer = 0
 -- Functions
 
 local function DoBleedAlert()
-    if not isDead and tonumber(isBleeding) > 0 then
-        QBCore.Functions.Notify(Lang:t('info.bleed_alert', { bleedstate = Config.BleedingStates[tonumber(isBleeding)].label }), 'error', 5000)
+    if not isDead and tonumber(BleedAmount) > 0 then
+        QBCore.Functions.Notify(Lang:t('info.bleed_alert', { bleedstate = Config.BleedingStates[tonumber(BleedAmount)].label }), 'error', 5000)
     end
 end
 
 local function RemoveBleed(level)
-    if isBleeding ~= 0 then
-        if isBleeding - level < 0 then
-            isBleeding = 0
+    if BleedAmount ~= 0 then
+        if BleedAmount - level < 0 then
+            BleedAmount = 0
         else
-            isBleeding = isBleeding - level
+            BleedAmount = BleedAmount - level
         end
         DoBleedAlert()
 
-        if isBleeding == 0 then StopBleedTimer() end
+        if BleedAmount == 0 then StopBleedTimer() end
     end
 end
 
 local function ApplyBleed(level)
-    if isBleeding ~= 4 then
-        if isBleeding + level > 4 then
-            isBleeding = 4
+    if BleedAmount ~= 4 then
+        if BleedAmount + level > 4 then
+            BleedAmount = 4
         else
-            isBleeding = isBleeding + level
+            BleedAmount = BleedAmount + level
         end
         StartBleedTimer()
         DoBleedAlert()
@@ -106,8 +107,8 @@ Events.SubscribeRemote('qb-ambulancejob:client:usePainkillers', function()
 end)
 
 Events.SubscribeRemote('qb-ambulancejob:client:stopBleed', function()
-    if isBleeding <= 0 then return end
-    RemoveBleed(isBleeding)
+    if BleedAmount <= 0 then return end
+    RemoveBleed(BleedAmount)
 end)
 
 -- Bleeding Tick Logic
@@ -119,7 +120,7 @@ end)
 function StartBleedTimer()
     BleedTick = Timer.SetInterval(function()
         if not PlayerPed then return end -- No ped, nothing to bleed yet, but continue to run interval
-        if isBleeding > 0 then
+        if BleedAmount > 0 then
             if bleedTickTimer < Config.BleedTickRate then
                 -- For first 30 ticks
                 prevPos = prevPos or PlayerPed:GetLocation()
@@ -151,7 +152,7 @@ function StartBleedTimer()
                             Player:StopCameraFade()
                         end, 1500)
                     else
-                        blackoutTimer = blackoutTimer + (isBleeding > 3 and 2 or 1) -- Severe bleeding, increase blackoutTimer by 2
+                        blackoutTimer = blackoutTimer + (BleedAmount > 3 and 2 or 1) -- Severe bleeding, increase blackoutTimer by 2
                         
                         Player:StartCameraFade(0.0, 0.8, 1.0, Color(0.0, 0.0, 0.0, 1.0), true, false)
                     end
@@ -159,7 +160,7 @@ function StartBleedTimer()
                 end
 
                 -- Damage player for bleeding
-                local bleedDamage = isBleeding * Config.BleedTickDamage
+                local bleedDamage = BleedAmount * Config.BleedTickDamage
                 Events.CallRemote('qb-ambulancejob:server:setHealth', nil, bleedDamage)
             end
         end

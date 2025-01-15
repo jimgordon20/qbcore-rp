@@ -47,7 +47,7 @@ HCharacter.Subscribe('Respawn', function(self)
     if not client then return end
     if client:GetControlledCharacter() == self then
         isDead = false
-        isBleeding = 0
+        BleedAmount = 0
         DeathTimer(false)
         Events.CallRemote('qb-ambulancejob:server:SetDeathStatus', false)
     end
