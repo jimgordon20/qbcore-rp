@@ -16,12 +16,6 @@ QBCore.Commands.Add('fix', 'Fix Vehicle', {}, false, function(source)
     Events.CallRemote('hud:client:fixVehicle', source)
 end, 'admin')
 
--- Voice
-
-Player.Subscribe('VOIP', function(self, is_talking)
-    print('VOIP', is_talking)
-end)
-
 -- Player.Subscribe('Ready', function(self)
 --     self:AddVOIPChannel(1)
 -- end)

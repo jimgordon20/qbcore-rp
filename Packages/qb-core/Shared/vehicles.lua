@@ -5,6 +5,15 @@ QBShared.Vehicles = {
 		asset_name = 'helix::BP_PoliceCar',
 		collision_type = CollisionType.Normal,
 		gravity_enabled = true,
+		doors = {
+			[0] = {
+				offset_location = Vector(50, -75, 105),
+				seat_location = Vector(8, -32.5, 95),
+				seat_rotation = Rotator(0, 0, 10),
+				trigger_radius = 70,
+				leave_lateral_offset = -150
+			}
+		}
 	},
 	bp_simcade = {
 		asset_name = 'helix::BP_Simcade',

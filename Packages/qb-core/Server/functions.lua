@@ -509,13 +509,23 @@ function QBCore.Functions.CreateVehicle(source, vehicle_name, coords, rotation, 
 	if not rotation then rotation = Rotator(0, 0, 0) end
 	local vehicle = HSimpleVehicle(coords, rotation, vehicle_data.asset_name, vehicle_data.collision_type, vehicle_data.gravity_enabled)
 	if not vehicle then return false end
-	if vehicle then
-		local plate_number = plate or QBCore.Functions.GeneratePlate(vehicle)
-		vehicle:SetValue('plate', plate_number, true)
-		local fuel_value = fuel or 100
-		vehicle:SetValue('fuel', fuel_value, true)
-		return vehicle
+	if vehicle_data.doors then
+		for door_index, door_data in pairs(vehicle_data.doors) do
+			vehicle:SetDoor(
+				door_index,
+				door_data.offset_location,
+				door_data.seat_location,
+				door_data.seat_rotation,
+				door_data.trigger_radius,
+				door_data.leave_lateral_offset
+			)
+		end
 	end
+	local plate_number = plate or QBCore.Functions.GeneratePlate(vehicle)
+	vehicle:SetValue('plate', plate_number, true)
+	local fuel_value = fuel or 100
+	vehicle:SetValue('fuel', fuel_value, true)
+	return vehicle
 end
 
 -- Shared Update Functions

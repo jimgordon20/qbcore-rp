@@ -212,12 +212,10 @@ end, 'god')
 QBCore.Commands.Add('car', Lang:t('command.car.help'), { { name = Lang:t('command.car.params.model.name'), help = Lang:t('command.car.params.model.help') } }, true, function(source, args)
 	local vehicle_name = args[1] and args[1]:lower()
 	local vehicle = QBCore.Functions.CreateVehicle(source, vehicle_name)
-	if vehicle then
-		local ped = source:GetControlledCharacter()
-		if ped then
-			ped:EnterVehicle(vehicle)
-		end
-	end
+	if not vehicle then return end
+	local ped = source:GetControlledCharacter()
+	if not ped then return end
+	ped:EnterVehicle(vehicle)
 end, 'admin')
 
 QBCore.Commands.Add('weapon', Lang:t('command.weapon.help'), { { name = Lang:t('command.weapon.params.model.name'), help = Lang:t('command.weapon.params.model.help') } }, true, function(source, args)

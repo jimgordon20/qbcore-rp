@@ -61,7 +61,8 @@ end)
 
 -- Voice
 
-Player.Subscribe('VOIP', function(_, is_talking)
+Player.Subscribe('VOIP', function(self, is_talking)
+    if self ~= Client.GetLocalPlayer() then return end
     print('VOIP', is_talking)
     my_webui:CallEvent('IsTalking', is_talking)
 end)
@@ -104,12 +105,18 @@ end, 100)
 
 -- Weapons
 
-HCharacter.Subscribe('Reload', function(_, weapon)
+HCharacter.Subscribe('Reload', function(self, weapon)
+    local player = Client.GetLocalPlayer()
+    local ped = player:GetControlledCharacter()
+    if ped ~= self then return end
     local ammo_clip, ammo_bag = GetWeaponAmmo(weapon)
     my_webui:CallEvent('UpdateWeaponAmmo', ammo_clip, ammo_bag)
 end)
 
-HCharacter.Subscribe('PickUp', function(_, object)
+HCharacter.Subscribe('PickUp', function(self, object)
+    local player = Client.GetLocalPlayer()
+    local ped = player:GetControlledCharacter()
+    if ped ~= self then return end
     if object:IsA(Weapon) then
         has_weapon = true
         current_weapon = object
@@ -119,7 +126,10 @@ HCharacter.Subscribe('PickUp', function(_, object)
     end
 end)
 
-HCharacter.Subscribe('Drop', function(_, object)
+HCharacter.Subscribe('Drop', function(self, object)
+    local player = Client.GetLocalPlayer()
+    local ped = player:GetControlledCharacter()
+    if ped ~= self then return end
     if object:IsA(Weapon) then
         has_weapon = false
         current_weapon = nil
@@ -127,7 +137,10 @@ HCharacter.Subscribe('Drop', function(_, object)
     end
 end)
 
-HCharacter.Subscribe('Fire', function(_, weapon)
+HCharacter.Subscribe('Fire', function(self, weapon)
+    local player = Client.GetLocalPlayer()
+    local ped = player:GetControlledCharacter()
+    if ped ~= self then return end
     local ammo_clip, ammo_bag = GetWeaponAmmo(weapon)
     my_webui:CallEvent('UpdateWeaponAmmo', ammo_clip, ammo_bag)
 end)
@@ -141,6 +154,9 @@ Events.SubscribeRemote('hud:client:fixVehicle', function()
 end)
 
 HCharacter.Subscribe('EnterVehicle', function(self, vehicle, seat_index)
+    local player = Client.GetLocalPlayer()
+    local ped = player:GetControlledCharacter()
+    if ped ~= self then return end
     print('EnterVehicle')
     in_vehicle = true
     current_vehicle = vehicle
@@ -148,6 +164,9 @@ HCharacter.Subscribe('EnterVehicle', function(self, vehicle, seat_index)
 end)
 
 HCharacter.Subscribe('LeaveVehicle', function(self, vehicle)
+    local player = Client.GetLocalPlayer()
+    local ped = player:GetControlledCharacter()
+    if ped ~= self then return end
     print('LeaveVehicle')
     in_vehicle = false
     current_vehicle = nil
