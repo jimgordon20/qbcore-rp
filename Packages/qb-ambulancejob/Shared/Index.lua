@@ -15,7 +15,7 @@ Config = {
     AlwaysBleedChance = 70,        -- Set the chance out of 100 that if a player is hit with a weapon, that also has a random chance, it will cause bleeding
     MessageTimer = 12,             -- How long it will take to display limb/bleed message
     AIHealTimer = 20,              -- How long it will take to be healed after checking in, in seconds
-    BleedTickRate = 30,            -- How much time, in seconds, between bleed ticks
+    BleedTickRate = 30,            -- How much time, in seconds, between bleed ticks (inaccurate comment)
     BleedMovementTick = 10,        -- How many seconds is taken away from the bleed tick rate if the player is walking, jogging, or sprinting
     BleedMovementAdvance = 3,      -- How much time moving while bleeding adds
     BleedTickDamage = 8,           -- The base damage that is multiplied by bleed level everytime a bleed tick occurs
@@ -88,64 +88,32 @@ Config = {
         }
     },
 
-    WeaponClasses = { -- Define gta weapon classe numbers
-        ['SMALL_CALIBER'] = 1,
-        ['MEDIUM_CALIBER'] = 2,
-        ['HIGH_CALIBER'] = 3,
-        ['SHOTGUN'] = 4,
-        ['CUTTING'] = 5,
-        ['LIGHT_IMPACT'] = 6,
-        ['HEAVY_IMPACT'] = 7,
-        ['EXPLOSIVE'] = 8,
-        ['FIRE'] = 9,
-        ['SUFFOCATING'] = 10,
-        ['OTHER'] = 11,
-        ['WILDLIFE'] = 12,
-        ['NOTHING'] = 13
-    },
+    MinorInjury = 25, -- 25 or less damage is minor, more is major
 
-    MinorInjurWeapons = { -- Define which weapons cause small injuries
-        --[WeaponClasses['SMALL_CALIBER']] = true,
-        --[WeaponClasses['MEDIUM_CALIBER']] = true,
-        --[WeaponClasses['CUTTING']] = true,
-        --[WeaponClasses['WILDLIFE']] = true,
-        --[WeaponClasses['OTHER']] = true,
-        --[WeaponClasses['LIGHT_IMPACT']] = true,
-    },
-
-    MajorInjurWeapons = { -- Define which weapons cause large injuries
-        --[WeaponClasses['HIGH_CALIBER']] = true,
-        --[WeaponClasses['HEAVY_IMPACT']] = true,
-        --[WeaponClasses['SHOTGUN']] = true,
-        --[WeaponClasses['EXPLOSIVE']] = true,
-    },
-
-    AlwaysBleedChanceWeapons = { -- Define which weapons will always cause bleeding
-        --[WeaponClasses['SMALL_CALIBER']] = true,
-        --[WeaponClasses['MEDIUM_CALIBER']] = true,
-        --[WeaponClasses['CUTTING']] = true,
-        --[WeaponClasses['WILDLIFE']] = false,
-    },
-
-    ForceInjuryWeapons = { -- Define which weapons will always cause injuries
-        --[WeaponClasses['HIGH_CALIBER']] = true,
-        --[WeaponClasses['HEAVY_IMPACT']] = true,
-        --[WeaponClasses['EXPLOSIVE']] = true,
-    },
-
-    CriticalAreas = { -- Define body areas that will always cause bleeding if wearing armor or not
-        ['UPPER_BODY'] = { armored = false },
-        ['LOWER_BODY'] = { armored = true },
-        ['SPINE'] = { armored = true },
-    },
-
-    StaggerAreas = { -- Define body areas that will always cause staggering if wearing armor or not
-        ['SPINE'] = { armored = true, major = 60, minor = 30 },
-        ['UPPER_BODY'] = { armored = false, major = 60, minor = 30 },
-        ['LLEG'] = { armored = true, major = 100, minor = 85 },
-        ['RLEG'] = { armored = true, major = 100, minor = 85 },
-        ['LFOOT'] = { armored = true, major = 100, minor = 100 },
-        ['RFOOT'] = { armored = true, major = 100, minor = 100 },
+    -- armored = whether to bleed if wearing armor. major = chance of stagger during major weapon: integer | nil (don't stagger)
+    Bones = {
+        head = { label = Lang:t('body.head'), causeLimp = false, isDamaged = false, severity = 0 },
+        neck_02 = { label = Lang:t('body.neck_02'), causeLimp = false, isDamaged = false, severity = 0 },
+        neck_01 = { label = Lang:t('body.neck_01'), causeLimp = false, isDamaged = false, severity = 0 },
+        clavicle_l = { label = Lang:t('body.clavicle_l'), causeLimp = false, isDamaged = false, severity = 0 },
+        clavicle_r = { label = Lang:t('body.clavicle_r'), causeLimp = false, isDamaged = false, severity = 0 },
+        upperarm_l = { label = Lang:t('body.upperarm_l'), causeLimp = false, isDamaged = false, severity = 0 },
+        upperarm_r = { label = Lang:t('body.upperarm_r'), causeLimp = false, isDamaged = false, severity = 0 },
+        lowerarm_l = { label = Lang:t('body.lowerarm_l'), causeLimp = false, isDamaged = false, severity = 0 },
+        lowerarm_r = { label = Lang:t('body.lowerarm_r'), causeLimp = false, isDamaged = false, severity = 0 },
+        hand_l = { label = Lang:t('body.hand_l'), causeLimp = false, isDamaged = false, severity = 0 },
+        hand_r = { label = Lang:t('body.hand_r'), causeLimp = false, isDamaged = false, severity = 0 },
+        spine_05 = { label = Lang:t('body.spine_05'), causeLimp = false, isDamaged = false, severity = 0, armored = false, major = 60, minor = 30 }, -- 60% chance, 30% chance of stagger
+        spine_04 = { label = Lang:t('body.spine_04'), causeLimp = false, isDamaged = false, severity = 0, armored = false, major = 60, minor = 30 },
+        spine_03 = { label = Lang:t('body.spine_03'), causeLimp = false, isDamaged = false, severity = 0, armored = false, major = 60, minor = 30 },
+        spine_02 = { label = Lang:t('body.spine_02'), causeLimp = false, isDamaged = false, severity = 0, armored = false, major = 60, minor = 30 }, -- Couldn't see a spine_01 during testing
+        pelvis = { label = Lang:t('body.pelvis'), causeLimp = false, isDamaged = false, severity = 0 },
+        thigh_l = { label = Lang:t('body.thigh_l'), causeLimp = false, isDamaged = false, severity = 0,  major = 100, minor = 85 },
+        thigh_r = { label = Lang:t('body.thigh_r'), causeLimp = false, isDamaged = false, severity = 0,  major = 100, minor = 85 },
+        calf_l = { label = Lang:t('body.calf_l'), causeLimp = false, isDamaged = false, severity = 0, major = 100, minor = 85 },
+        calf_r = { label = Lang:t('body.calf_r'), causeLimp = false, isDamaged = false, severity = 0, major = 100, minor = 85 },
+        foot_l = {  label = Lang:t('body.foot_l'), causeLimp = false, isDamaged = false, severity = 0, major = 100, minor = 100 },
+        foot_r = {  label = Lang:t('body.foot_r'), causeLimp = false, isDamaged = false, severity = 0, major = 100, minor = 100 },
     },
 
     WoundStates = { -- Translate wound alerts
@@ -161,178 +129,6 @@ Config = {
         { label = Lang:t('states.lot_bleed') },
         { label = Lang:t('states.big_bleed') },
     },
-
-    MovementRate = { -- Set the player movement rate based on the level of damage they have
-        0.98,
-        0.96,
-        0.94,
-        0.92,
-    },
-
-    Bones = { -- Correspond bone hash numbers to their label
-        [0] = 'NONE',
-    },
-
-    BoneIndexes = { -- Correspond bone labels to their hash number
-        ['NONE'] = 0,
-    },
-
-    Weapons = { -- Correspond weapon names to their class number
-        -- [`WEAPON_STUNGUN`] = WeaponClasses['NONE'],
-        -- [`WEAPON_STUNGUN_MP`] = WeaponClasses['NONE'],
-        -- --[[ Small Caliber ]] --
-        -- [`WEAPON_PISTOL`] = WeaponClasses['SMALL_CALIBER'],
-        -- [`WEAPON_COMBATPISTOL`] = WeaponClasses['SMALL_CALIBER'],
-        -- [`WEAPON_APPISTOL`] = WeaponClasses['SMALL_CALIBER'],
-        -- [`WEAPON_COMBATPDW`] = WeaponClasses['SMALL_CALIBER'],
-        -- [`WEAPON_MACHINEPISTOL`] = WeaponClasses['SMALL_CALIBER'],
-        -- [`WEAPON_MICROSMG`] = WeaponClasses['SMALL_CALIBER'],
-        -- [`WEAPON_MINISMG`] = WeaponClasses['SMALL_CALIBER'],
-        -- [`WEAPON_PISTOL_MK2`] = WeaponClasses['SMALL_CALIBER'],
-        -- [`WEAPON_SNSPISTOL`] = WeaponClasses['SMALL_CALIBER'],
-        -- [`WEAPON_SNSPISTOL_MK2`] = WeaponClasses['SMALL_CALIBER'],
-        -- [`WEAPON_VINTAGEPISTOL`] = WeaponClasses['SMALL_CALIBER'],
-
-        -- --[[ Medium Caliber ]] --
-        -- [`WEAPON_ADVANCEDRIFLE`] = WeaponClasses['MEDIUM_CALIBER'],
-        -- [`WEAPON_ASSAULTSMG`] = WeaponClasses['MEDIUM_CALIBER'],
-        -- [`WEAPON_BULLPUPRIFLE`] = WeaponClasses['MEDIUM_CALIBER'],
-        -- [`WEAPON_BULLPUPRIFLE_MK2`] = WeaponClasses['MEDIUM_CALIBER'],
-        -- [`WEAPON_CARBINERIFLE`] = WeaponClasses['MEDIUM_CALIBER'],
-        -- [`WEAPON_CARBINERIFLE_MK2`] = WeaponClasses['MEDIUM_CALIBER'],
-        -- [`WEAPON_COMPACTRIFLE`] = WeaponClasses['MEDIUM_CALIBER'],
-        -- [`WEAPON_DOUBLEACTION`] = WeaponClasses['MEDIUM_CALIBER'],
-        -- [`WEAPON_GUSENBERG`] = WeaponClasses['MEDIUM_CALIBER'],
-        -- [`WEAPON_HEAVYPISTOL`] = WeaponClasses['MEDIUM_CALIBER'],
-        -- [`WEAPON_MARKSMANPISTOL`] = WeaponClasses['MEDIUM_CALIBER'],
-        -- [`WEAPON_PISTOL50`] = WeaponClasses['MEDIUM_CALIBER'],
-        -- [`WEAPON_REVOLVER`] = WeaponClasses['MEDIUM_CALIBER'],
-        -- [`WEAPON_REVOLVER_MK2`] = WeaponClasses['MEDIUM_CALIBER'],
-        -- [`WEAPON_SMG`] = WeaponClasses['MEDIUM_CALIBER'],
-        -- [`WEAPON_SMG_MK2`] = WeaponClasses['MEDIUM_CALIBER'],
-        -- [`WEAPON_SPECIALCARBINE`] = WeaponClasses['MEDIUM_CALIBER'],
-        -- [`WEAPON_SPECIALCARBINE_MK2`] = WeaponClasses['MEDIUM_CALIBER'],
-
-        -- --[[ High Caliber ]] --
-        -- [`WEAPON_ASSAULTRIFLE`] = WeaponClasses['HIGH_CALIBER'],
-        -- [`WEAPON_ASSAULTRIFLE_MK2`] = WeaponClasses['HIGH_CALIBER'],
-        -- [`WEAPON_COMBATMG`] = WeaponClasses['HIGH_CALIBER'],
-        -- [`WEAPON_COMBATMG_MK2`] = WeaponClasses['HIGH_CALIBER'],
-        -- [`WEAPON_HEAVYSNIPER`] = WeaponClasses['HIGH_CALIBER'],
-        -- [`WEAPON_HEAVYSNIPER_MK2`] = WeaponClasses['HIGH_CALIBER'],
-        -- [`WEAPON_MARKSMANRIFLE`] = WeaponClasses['HIGH_CALIBER'],
-        -- [`WEAPON_MARKSMANRIFLE_MK2`] = WeaponClasses['HIGH_CALIBER'],
-        -- [`WEAPON_MG`] = WeaponClasses['HIGH_CALIBER'],
-        -- [`WEAPON_MINIGUN`] = WeaponClasses['HIGH_CALIBER'],
-        -- [`WEAPON_MUSKET`] = WeaponClasses['HIGH_CALIBER'],
-        -- [`WEAPON_RAILGUN`] = WeaponClasses['HIGH_CALIBER'],
-        -- [`WEAPON_HEAVYRIFLE`] = WeaponClasses['HIGH_CALIBER'],
-
-        -- --[[ Shotguns ]] --
-        -- [`WEAPON_ASSAULTSHOTGUN`] = WeaponClasses['SHOTGUN'],
-        -- [`WEAPON_BULLUPSHOTGUN`] = WeaponClasses['SHOTGUN'],
-        -- [`WEAPON_DBSHOTGUN`] = WeaponClasses['SHOTGUN'],
-        -- [`WEAPON_HEAVYSHOTGUN`] = WeaponClasses['SHOTGUN'],
-        -- [`WEAPON_PUMPSHOTGUN`] = WeaponClasses['SHOTGUN'],
-        -- [`WEAPON_PUMPSHOTGUN_MK2`] = WeaponClasses['SHOTGUN'],
-        -- [`WEAPON_SAWNOFFSHOTGUN`] = WeaponClasses['SHOTGUN'],
-        -- [`WEAPON_SWEEPERSHOTGUN`] = WeaponClasses['SHOTGUN'],
-
-        -- --[[ Animals ]]                                            --
-        -- [`WEAPON_ANIMAL`] = WeaponClasses['WILDLIFE'],      -- Animal
-        -- [`WEAPON_COUGAR`] = WeaponClasses['WILDLIFE'],      -- Cougar
-        -- [`WEAPON_BARBED_WIRE`] = WeaponClasses['WILDLIFE'], -- Barbed Wire
-
-        -- --[[ Cutting Weapons ]]                                    --
-        -- [`WEAPON_BATTLEAXE`] = WeaponClasses['CUTTING'],
-        -- [`WEAPON_BOTTLE`] = WeaponClasses['CUTTING'],
-        -- [`WEAPON_DAGGER`] = WeaponClasses['CUTTING'],
-        -- [`WEAPON_HATCHET`] = WeaponClasses['CUTTING'],
-        -- [`WEAPON_KNIFE`] = WeaponClasses['CUTTING'],
-        -- [`WEAPON_MACHETE`] = WeaponClasses['CUTTING'],
-        -- [`WEAPON_SWITCHBLADE`] = WeaponClasses['CUTTING'],
-
-        -- --[[ Light Impact ]] --
-        -- [`WEAPON_KNUCKLE`] = WeaponClasses['LIGHT_IMPACT'],
-
-        -- --[[ Heavy Impact ]] --
-        -- [`WEAPON_BAT`] = WeaponClasses['HEAVY_IMPACT'],
-        -- [`WEAPON_CROWBAR`] = WeaponClasses['HEAVY_IMPACT'],
-        -- [`WEAPON_FIREEXTINGUISHER`] = WeaponClasses['HEAVY_IMPACT'],
-        -- [`WEAPON_FIRWORK`] = WeaponClasses['HEAVY_IMPACT'],
-        -- [`WEAPON_GOLFLCUB`] = WeaponClasses['HEAVY_IMPACT'],
-        -- [`WEAPON_HAMMER`] = WeaponClasses['HEAVY_IMPACT'],
-        -- [`WEAPON_PETROLCAN`] = WeaponClasses['HEAVY_IMPACT'],
-        -- [`WEAPON_POOLCUE`] = WeaponClasses['HEAVY_IMPACT'],
-        -- [`WEAPON_WRENCH`] = WeaponClasses['HEAVY_IMPACT'],
-        -- [`WEAPON_RAMMED_BY_CAR`] = WeaponClasses['HEAVY_IMPACT'],
-        -- [`WEAPON_RUN_OVER_BY_CAR`] = WeaponClasses['HEAVY_IMPACT'],
-
-        -- --[[ Explosives ]] --
-        -- [`WEAPON_EXPLOSION`] = WeaponClasses['EXPLOSIVE'],
-        -- [`WEAPON_GRENADE`] = WeaponClasses['EXPLOSIVE'],
-        -- [`WEAPON_COMPACTLAUNCHER`] = WeaponClasses['EXPLOSIVE'],
-        -- [`WEAPON_HOMINGLAUNCHER`] = WeaponClasses['EXPLOSIVE'],
-        -- [`WEAPON_PIPEBOMB`] = WeaponClasses['EXPLOSIVE'],
-        -- [`WEAPON_PROXMINE`] = WeaponClasses['EXPLOSIVE'],
-        -- [`WEAPON_RPG`] = WeaponClasses['EXPLOSIVE'],
-        -- [`WEAPON_STICKYBOMB`] = WeaponClasses['EXPLOSIVE'],
-        -- [`WEAPON_HELI_CRASH`] = WeaponClasses['EXPLOSIVE'],
-        -- [`WEAPON_EMPLAUNCHER`] = WeaponClasses['EXPLOSIVE'],
-
-        -- --[[ Other ]]                                                   --
-        -- [`WEAPON_FALL`] = WeaponClasses['OTHER'],                -- Fall
-        -- [`WEAPON_HIT_BY_WATER_CANNON`] = WeaponClasses['OTHER'], -- Water Cannon
-
-        -- --[[ Fire ]]                                                    --
-        -- [`WEAPON_ELECTRIC_FENCE`] = WeaponClasses['FIRE'],
-        -- [`WEAPON_FIRE`] = WeaponClasses['FIRE'],
-        -- [`WEAPON_MOLOTOV`] = WeaponClasses['FIRE'],
-        -- [`WEAPON_FLARE`] = WeaponClasses['FIRE'],
-        -- [`WEAPON_FLAREGUN`] = WeaponClasses['FIRE'],
-
-        -- --[[ Suffocate ]]                                                     --
-        -- [`WEAPON_DROWNING`] = WeaponClasses['SUFFOCATING'],            -- Drowning
-        -- [`WEAPON_DROWNING_IN_VEHICLE`] = WeaponClasses['SUFFOCATING'], -- Drowning Veh
-        -- [`WEAPON_EXHAUSTION`] = WeaponClasses['SUFFOCATING'],          -- Exhaust
-        -- [`WEAPON_BZGAS`] = WeaponClasses['SUFFOCATING'],
-        -- [`WEAPON_SMOKEGRENADE`] = WeaponClasses['SUFFOCATING'],
-    },
-
-    VehicleSettings = {        -- Enable or disable vehicle extras when pulling them from the ambulance job vehicle spawner
-        ['car1'] = {           -- Model name
-            ['extras'] = {
-                ['1'] = false, -- on/off
-                ['2'] = true,
-                ['3'] = true,
-                ['4'] = true,
-                ['5'] = true,
-                ['6'] = true,
-                ['7'] = true,
-                ['8'] = true,
-                ['9'] = true,
-                ['10'] = true,
-                ['11'] = true,
-                ['12'] = true,
-            }
-        },
-        ['car2'] = {
-            ['extras'] = {
-                ['1'] = false,
-                ['2'] = true,
-                ['3'] = true,
-                ['4'] = true,
-                ['5'] = true,
-                ['6'] = true,
-                ['7'] = true,
-                ['8'] = true,
-                ['9'] = true,
-                ['10'] = true,
-                ['11'] = true,
-                ['12'] = true,
-            }
-        }
-    }
 }
 
 return Config
