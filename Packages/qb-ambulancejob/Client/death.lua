@@ -1,5 +1,5 @@
+isDead = false -- Global, used by multiple files
 local deathTime = 0
-local isDead = false
 local death_canvas = nil
 local death_timer = nil
 local hold_time = 50
@@ -47,6 +47,7 @@ HCharacter.Subscribe('Respawn', function(self)
     if not client then return end
     if client:GetControlledCharacter() == self then
         isDead = false
+        isBleeding = 0
         DeathTimer(false)
         Events.CallRemote('qb-ambulancejob:server:SetDeathStatus', false)
     end

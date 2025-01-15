@@ -1,6 +1,10 @@
 local prevPos = nil
 local onPainKillers = false
 local painkillerAmount = 0
+local bleedTickTimer = 0
+local fadeOutTimer = 0
+local blackoutTimer = 0
+local advanceBleedTimer = 0
 
 -- Functions
 
@@ -18,6 +22,8 @@ local function RemoveBleed(level)
             isBleeding = isBleeding - level
         end
         DoBleedAlert()
+
+        if isBleeding == 0 then StopBleedTimer() end
     end
 end
 
@@ -28,6 +34,7 @@ local function ApplyBleed(level)
         else
             isBleeding = isBleeding + level
         end
+        StartBleedTimer()
         DoBleedAlert()
     end
 end
@@ -58,6 +65,26 @@ HCharacter.Subscribe('TakeDamage', function(self, damage, bone, type, from_direc
     if ped ~= self then return end
     print('TakeDamage was called')
     print(self, damage, bone, type, from_direction, instigator, causer)
+    if isDead then return end
+
+    -- TODO: Handle other forms of damage (vehicle, etc)
+    local weapon = causer:IsA('weapon')
+    if not weapon then return end -- Punch or other damage? Doesn't need to decrease armor or stagger player
+
+    local playerArmor = QBCore.Functions.GetPlayerData().metadata.armor
+    if playerArmor > 0 and not Config.Bones[bone].armored then
+        -- Hit armor, decrease armor
+        return Events.CallRemote('qb-ambulancejob:server:damageArmor')
+    end
+    
+    -- Bleed & Stagger. Bleed based on weapon damage
+    local severity = damage <= Config.MinorInjury and 1 or 2
+    local staggerChance = severity == 2 and (Config.Bones[bone].major or 0) or (Config.Bones[bone].minor or 0) -- or no chance of stagger
+    if math.random(1, 100) <= staggerChance then -- If major damage weapon, use major stagger chance
+        Events.CallRemote('qb-ambulancejob:server:damageRagdoll', 500)
+    end
+    print('Applying bleed ' .. severity)
+    ApplyBleed(severity)
 end)
 
 -- Events
@@ -77,3 +104,69 @@ Events.SubscribeRemote('qb-ambulancejob:client:usePainkillers', function()
     if painkillerAmount < 3 then painkillerAmount = painkillerAmount + 1 end
     PainKillerLoop()
 end)
+
+Events.SubscribeRemote('qb-ambulancejob:client:stopBleed', function()
+    if isBleeding <= 0 then return end
+    RemoveBleed(isBleeding)
+end)
+
+-- Bleeding Tick Logic
+
+Player.Subscribe('Possess', function(self, character)
+    PlayerPed = character
+end)
+
+function StartBleedTimer()
+    BleedTick = Timer.SetInterval(function()
+        if not PlayerPed then return end -- No ped, nothing to bleed yet, but continue to run interval
+        if isBleeding > 0 then
+            if bleedTickTimer < Config.BleedTickRate then
+                -- For first 30 ticks
+                prevPos = prevPos or PlayerPed:GetLocation()
+                if prevPos:Distance(PlayerPed:GetLocation()) < 1.0 then
+                    -- Hasn't moved, increase timer closer to bleeding out
+                    bleedTickTimer = bleedTickTimer + 1
+                else
+                    -- Character is moving, bleed more
+                    bleedTickTimer = bleedTickTimer + Config.BleedMovementTick
+                    advanceBleedTimer = advanceBleedTimer + Config.BleedMovementAdvance -- Increase timer for bleeding leveling up
+                end
+
+                prevPos = PlayerPed:GetLocation() -- Update position after calculations for next tick
+                return
+            end
+
+            -- Begin fading/blacking out timer
+            if not isDead then
+                fadeOutTimer = fadeOutTimer + 1
+                if fadeOutTimer == Config.FadeOutTimer then -- Every 2 seconds, check if fade out, increase blackoutTimer
+                    local Player = Client.GetLocalPlayer() -- Could cache it if it's intensive
+                    if blackoutTimer + 1 >= Config.BlackoutTimer and not onPainKillers then
+                        -- Black out after 10 ticks (could be 5 seconds if severe)
+
+                        Player:StartCameraFade(0.0, 1.0, 1.0, Color(0.0, 0.0, 0.0, 1.0), true, true)
+
+                        Events.CallRemote('qb-ambulancejob:server:damageRagdoll', 1500)
+                        Timer.SetTimeout(function()
+                            Player:StopCameraFade()
+                        end, 1500)
+                    else
+                        blackoutTimer = blackoutTimer + (isBleeding > 3 and 2 or 1) -- Severe bleeding, increase blackoutTimer by 2
+                        
+                        Player:StartCameraFade(0.0, 0.8, 1.0, Color(0.0, 0.0, 0.0, 1.0), true, false)
+                    end
+                    fadeOutTimer = 0
+                end
+
+                -- Damage player for bleeding
+                local bleedDamage = isBleeding * Config.BleedTickDamage
+                Events.CallRemote('qb-ambulancejob:server:setHealth', nil, bleedDamage)
+            end
+        end
+    end, 1000)
+end
+
+function StopBleedTimer()
+    if not BleedTick then return end
+    Timer.ClearInterval(BleedTick)
+end

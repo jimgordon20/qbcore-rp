@@ -109,7 +109,7 @@ end)
 Events.SubscribeRemote('qb-ambulancejob:server:setHealth', function(source, playerId, amount)
     local ped = source:GetControlledCharacter()
     if not ped then return end
-    ped:SetHealth(0)
+    ped:SetHealth(ped:GetHealth() - amount)
 end)
 
 Events.SubscribeRemote('qb-ambulancejob:server:KillPlayer', function(source, playerId)
@@ -142,6 +142,17 @@ Events.SubscribeRemote('hospital:server:RespawnAtHospital', function(source)
     end
     if not closest_bed then return end
     ped:Respawn(closest_bed:GetLocation(), closest_bed:GetRotation())
+end)
+
+Events.SubscribeRemote('qb-ambulancejob:server:damageRagdoll', function(source, length)
+    local ped = source:GetControlledCharacter()
+    if not ped then return end
+
+    ped:SetRagdollMode(true) -- Ragdoll player on severe enough damage
+
+    Timer.SetTimeout(function()
+        ped:SetRagdollMode(false) -- Wait passed length of time, remove ragdoll
+    end, length)
 end)
 
 -- Callbacks
