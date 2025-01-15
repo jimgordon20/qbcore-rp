@@ -2,151 +2,142 @@
 let isInDropdown = false;
 let scrollDelay = false;
 let persistentOptions = null;
+let visibleOptionElements = [];
+let editMode = false;
 
-$(document).on('keydown', function (e) {
-    if (e.keyCode == 13) {
-        let $selected = $('.option.selected') || $('.dropdown.selected');
-
-        if (
-            $selected.hasClass('checkbox') ||
-            $selected.hasClass('action') ||
-            $selected.hasClass('text-input') ||
-            $selected.hasClass('password-input') ||
-            $selected.hasClass('number-input') ||
-            $selected.hasClass('radio')
-        ) {
-            let id = $selected.data('id');
-            let option = findOptionById(persistentOptions, id);
-            if (option) {
-                if ($selected.hasClass('checkbox')) {
-                    option.checked = !option.checked;
-                    $selected.toggleClass('active');
-                } else if ($selected.hasClass('action')) {
-                    Events.Call("ExecuteCallback", id, option);
-                } else if ($selected.hasClass('text-input') || $selected.hasClass('password-input') || $selected.hasClass('number-input')) {
-                    let value = $selected.find('.input input').val();
-                    $selected.find('input').focus();
-                    Events.Call("ExecuteCallback", id, value);
-                } else if ($selected.hasClass('radio')) {
-                    let selectedRadio = $selected.find('input[type="radio"]:checked').val();
-                    Events.Call("ExecuteCallback", id, selectedRadio);
-                }
-            }
-        } else if ($selected.parent().hasClass('dropdown')) {
-            $selected.find('svg').click();
-            $('.option').removeClass('selected');
-            if ($selected.parent().hasClass('active')) { }
-            $selected.parent().addClass('active');
-            $selected.parent().find('.sub-list .option').eq(0).addClass('selected');
-            isInDropdown = true;
+document.addEventListener(
+    "blur",
+    (ev) => {
+        const focusCatcher = document.getElementById("ContextFocusCatcher");
+        if (focusCatcher && !document.hidden) {
+            setTimeout(() => {
+                focusCatcher.focus();
+            }, 0);
         }
+    },
+    true
+);
+
+$(document).on("keydown", function (e) {
+    if (editMode) {
+        handleEditMode(e);
+        return;
     }
+    handleNavigation(e);
+});
 
-    let $selected = $('.option.selected');
-
-    if (e.keyCode == 38 || e.keyCode == 40) {
-        if (scrollDelay) return;
-        scrollDelay = true;
-
-        $('input').blur();
-
-        let $allOptions = $('.option, .dropdown .option').not('.sub-list .option');
-        let index = $allOptions.index($selected);
-
-        if (isInDropdown) {
-            $allOptions = $('.option.selected').parent().find('.option');
-            index = $allOptions.index($selected);
-        }
-
-        if (e.keyCode == 38) {
-            if (index > 0) {
-                $selected.removeClass('selected');
-                $allOptions.eq(index - 1).addClass('selected');
-            }
-        }
-
-        if (e.keyCode == 40) {
-            if (index < $allOptions.length - 1) {
-                $selected.removeClass('selected');
-                $allOptions.eq(index + 1).addClass('selected');
-            }
-        }
-
-        $('.option.selected').get(0).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-        setTimeout(() => {
-            scrollDelay = false;
-        }, 50);
-    }
-
-    if (e.keyCode == 37 || e.keyCode == 39) {
-        if ($selected.hasClass('quantity')) {
-            let id = $selected.data('id');
-            let option = findOptionById(hardcodedItems, id);
-            let $value = $selected.find('.value');
-            let value = parseInt($value.val());
-            let min = option.min;
-            let max = option.max;
-
-            if (e.keyCode == 37) {
-                if (value > min) {
-                    value--;
-                    $value.val(value);
-                    option.value = value;
-                }
-            }
-
-            if (e.keyCode == 39) {
-                if (value < max) {
-                    value++;
-                    $value.val(value);
-                    option.value = value;
-                }
-            }
-
-            $selected.find('.less').toggleClass('unable', value == min);
-            $selected.find('.more').toggleClass('unable', value == max);
-
-            $value.css('width', ($value.val().length * 8) + 'px');
-        } else if ($selected.hasClass('list')) {
-            let id = $selected.data('id');
-            let option = findOptionById(hardcodedItems, id);
-            let $value = $selected.find('.value');
-            let value = $value.text();
-            let list = option.list;
-            let index = list.findIndex(item => item.label === value);
-
-            if (e.keyCode == 37) {
-                if (index > 0) {
-                    index--;
-                    $value.text(list[index].label);
-                }
-            }
-
-            if (e.keyCode == 39) {
-                if (index < list.length - 1) {
-                    index++;
-                    $value.text(list[index].label);
-                }
-            }
-
-            $selected.find('.left').toggleClass('unable', index == 0);
-            $selected.find('.right').toggleClass('unable', index == list.length - 1);
-        }
-    }
-
-    if (e.keyCode == 8 && isInDropdown && !$(e.target).is('input, textarea')) {
-        $('.option').removeClass('selected');
-        $selected.parent().parent().find('.option').not('.sub-list .option').removeClass('active');
-        $selected.parent().parent().find('.option').not('.sub-list .option').addClass('selected');
-        $selected.parent().css('height', '0px');
-        isInDropdown = false;
+$(document).on("keydown", "input, textarea, select", function (e) {
+    if ([37, 38, 39, 40].includes(e.keyCode)) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).blur();
+        $(document).trigger($.Event("keydown", { keyCode: e.keyCode }));
     }
 });
 
-// Notification
+function handleNavigation(e) {
+    let $selected = $(".option.selected");
+    if (!$selected.length) return;
+
+    switch (e.keyCode) {
+        case 38: // ArrowUp
+        case 40: // ArrowDown
+            e.preventDefault();
+            rebuildVisibleOptionList();
+            moveFocus(e.keyCode);
+            break;
+
+        case 37: // ArrowLeft
+            if ($selected.hasClass("list-picker")) {
+                $selected.find(".controls .left").click();
+            } else {
+                collapseFocusedOption();
+            }
+            break;
+
+        case 39: // ArrowRight
+            if ($selected.hasClass("list-picker")) {
+                $selected.find(".controls .right").click();
+            } else {
+                expandFocusedOption();
+            }
+            break;
+
+        case 13: // Enter
+            if ($selected.hasClass("text-input") || $selected.hasClass("password-input") || $selected.hasClass("number-input") || $selected.hasClass("range-input")) {
+                editMode = true;
+            } else {
+                selectFocusedOption();
+            }
+            break;
+
+        case 8: // Backspace
+        case 27: // Escape
+            Events.Call("closeContextMenu");
+            break;
+    }
+}
+function handleEditMode(e) {
+    let $selected = $(".option.selected");
+    if (!$selected.length) return;
+
+    switch (e.keyCode) {
+        case 37: // ArrowLeft
+        case 39: // ArrowRight
+            // Ajustar valor del slider/number
+            adjustOptionValue($selected, e.keyCode);
+            break;
+
+        case 8: // BackSpace
+        case 27: // Escape
+            // Salir de editMode
+            editMode = false;
+            break;
+    }
+}
+
+function adjustOptionValue($option, keyCode) {
+    // Ejemplo para range o number:
+    if ($option.hasClass("range-input") || $option.hasClass("number-input")) {
+        let $input = $option.find('input[type="number"], input[type="range"]');
+        if ($input.length === 0) return;
+
+        let currentVal = parseInt($input.val()) || 0;
+        let step = 1;
+
+        if (keyCode === 37) {
+            // arrow left
+            currentVal -= step;
+        } else {
+            currentVal += step;
+        }
+        // Asigna valor
+        $input.val(currentVal).trigger("input"); // disparar su callback con "input"
+    }
+}
+
+/* Mover foco up/down si NO estamos en editMode: */
+function moveFocus(keyCode) {
+    let $selected = $(".option.selected");
+    let index = visibleOptionElements.indexOf($selected.get(0));
+    if (index < 0) index = 0;
+
+    if (keyCode === 38 && index > 0) {
+        // up
+        $selected.removeClass("selected");
+        index--;
+        $(visibleOptionElements[index]).addClass("selected");
+    } else if (keyCode === 40 && index < visibleOptionElements.length - 1) {
+        // down
+        $selected.removeClass("selected");
+        index++;
+        $(visibleOptionElements[index]).addClass("selected");
+    }
+    // scroll
+    $(".option.selected").get(0).scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
 const showNotification = (type, title, description) => {
-    let element = `<div class="notification entering ${type}" ${description ? "" : "style='align-items: center !important;'"}> 
+    let element = `<div class="notification entering ${type}" ${description ? "" : "style='align-items: center !important;'"}>
         <div class="icon">
             <img src="./media/icons/notif_${type}.svg" alt="">
         </div>
@@ -161,22 +152,22 @@ const showNotification = (type, title, description) => {
     </div>`;
 
     let $element = $(element);
-    $('.notifications').append($element);
+    $(".notifications").append($element);
 
     setTimeout(() => {
-        $element.removeClass('entering').addClass('entered');
+        $element.removeClass("entering").addClass("entered");
     }, 100);
 
     setTimeout(() => {
-        $element.removeClass('entered').addClass('leaving');
+        $element.removeClass("entered").addClass("leaving");
     }, 5000);
 
     setTimeout(() => {
         $element.remove();
     }, 5500);
 
-    $element.find('.close').on('click', function () {
-        $element.removeClass('entered').addClass('leaving');
+    $element.find(".close").on("click", function () {
+        $element.removeClass("entered").addClass("leaving");
         setTimeout(() => {
             $element.remove();
         }, 500);
@@ -184,121 +175,146 @@ const showNotification = (type, title, description) => {
 };
 
 const showUi = () => {
-    $('.screen').removeClass('hidden');
+    $(".screen").removeClass("hidden");
 };
 
 const hideUi = () => {
-    $('.screen').addClass('hidden');
+    $(".screen").addClass("hidden");
 };
 
-const $options = $('.content .options');
+const $options = $(".content .options");
 
 const setOptions = (options) => {
     $options.empty();
     persistentOptions = options;
-    options.forEach(option => {
+    options.forEach((option) => {
         let type = option.type;
 
         switch (type) {
-            case 'checkbox':
+            case "checkbox":
                 $options.append(getCheckbox(option));
                 break;
-            case 'dropdown':
+            case "dropdown":
                 $options.append(getDropdown(option));
                 break;
-            case 'button':
+            case "button":
                 $options.append(getButton(option));
                 break;
-            case 'text-input':
+            case "text-input":
                 $options.append(getTextInput(option));
                 break;
-            case 'range':
+            case "range":
                 $options.append(getRange(option));
                 break;
-            case 'list':
+            case "list":
                 $options.append(getList(option));
                 break;
-            case 'password':
+            case "password":
                 $options.append(getPasswordInput(option));
                 break;
-            case 'radio':
+            case "radio":
                 $options.append(getRadioInput(option));
                 break;
-            case 'number':
+            case "number":
                 $options.append(getNumberInput(option));
                 break;
-            case 'select':
+            case "select":
                 $options.append(getSelectInput(option));
+                break;
+            case "color":
+                $options.append(getColorPicker(option));
+                break;
+            case "date":
+                $options.append(getDatePicker(option));
+                break;
+            case "list-picker":
+                $options.append(getListPicker(option));
                 break;
             default:
                 break;
         }
     });
 
-    $('.option.checkbox').on('click', function () {
-        let id = $(this).data('id');
+    $(".option").on("click", function () {
+        $(".option").removeClass("selected");
+        $(this).addClass("selected");
+    });
+
+    $(".option.text-input .input input").on("click", function (e) {
+        e.stopPropagation();
+        $(".option").removeClass("selected");
+        $(this).closest(".option").addClass("selected");
+        $(this).focus();
+    });
+
+    $(".option.checkbox").on("click", function () {
+        let id = $(this).data("id");
         let option = findOptionById(options, id);
-        $('.option').removeClass('selected');
-        $(this).addClass('selected');
+        $(".option").removeClass("selected");
+        $(this).addClass("selected");
         Events.Call("ExecuteCallback", id, option);
     });
 
-    $('.option.checkbox .check').on('click', function (e) {
-        let id = $(this).parent().data('id');
+    $(".option.checkbox .check").on("click", function (e) {
+        let id = $(this).parent().data("id");
         let option = findOptionById(options, id);
-        $('.option').removeClass('selected');
-        $(this).parent().addClass('selected');
-        if ($(this).hasClass('check')) {
-            $(this).parent().toggleClass('active');
+        $(".option").removeClass("selected");
+        $(this).parent().addClass("selected");
+        if ($(this).hasClass("check")) {
+            $(this).parent().toggleClass("active");
         }
     });
 
-    $('.dropdown > .option svg').on('click', function () {
-        let id = $(this).parent().parent().data('id');
+    $(".dropdown > .option svg").on("click", function () {
+        let id = $(this).parent().parent().data("id");
         let option = findOptionById(options, id);
-        $('.option').removeClass('selected');
-        $(this).parent().toggleClass('active').addClass('selected');
+        $(".option").removeClass("selected");
+        $(this).parent().toggleClass("active").addClass("selected");
 
-        if ($(this).parent().hasClass('active')) {
-            $(this).parent().parent().find('.sub-list').css('height', ((52 * option.options.length - 8)) + 'px');
+        if ($(this).parent().hasClass("active")) {
+            $(this)
+                .parent()
+                .parent()
+                .find(".sub-list")
+                .css("height", 52 * option.options.length - 8 + "px");
             isInDropdown = true;
         } else {
-            $(this).parent().parent().find('.sub-list').removeClass('.hidden');
-            $(this).parent().parent().find('.sub-list').css('height', '0px');
+            $(this).parent().parent().find(".sub-list").removeClass(".hidden");
+            $(this).parent().parent().find(".sub-list").css("height", "0px");
             isInDropdown = false;
         }
 
-        $('.options-qty .qty').text((parseInt($('.option.selected').parent().index()) + 1) + "/" + options.length);
+        $(".options-qty .qty").text(parseInt($(".option.selected").parent().index()) + 1 + "/" + options.length);
     });
 
-    $('.option.action').on('click', function () {
-        let id = $(this).data('id');
+    $(".option.action").on("click", function () {
+        let id = $(this).data("id");
         let option = findOptionById(options, id);
         Events.Call("ExecuteCallback", id, option);
     });
 
-    $('.option.text-input').on('click', function () {
-        let id = $(this).data('id');
+    $(".option.text-input").on("click", function () {
+        let id = $(this).data("id");
         let option = findOptionById(options, id);
-        $('.option').removeClass('selected');
-        $(this).toggleClass('active').addClass('selected');
+        $(".option").removeClass("selected");
+        $(this).toggleClass("active").addClass("selected");
     });
 
-    $('.option.range-input .slider').on('input', function () {
+    $(".option.range-input .slider").on("input", function () {
         let val = parseInt($(this).val());
         let $parent = $(this).parent();
-        $parent.find('.number-value').val(val);
-        let id = $parent.parent().data('id');
+        $parent.find(".number-value").val(val);
+        let id = $parent.parent().data("id");
         let option = findOptionById(options, id);
         option.value = val;
         Events.Call("ExecuteCallback", id, val);
     });
 
-    $('.option.range-input .number-value').on('input', function () {
+    $(".option.range-input .number-value").on("input", function () {
         let $this = $(this);
         let val = parseInt($this.val());
         let $parent = $this.parent();
-        let id = $parent.parent().data('id');
+        let id = $parent.parent().data("id");
         let option = findOptionById(options, id);
 
         if (isNaN(val)) val = option.min;
@@ -306,20 +322,20 @@ const setOptions = (options) => {
         if (val > option.max) val = option.max;
 
         $this.val(val);
-        $parent.find('.slider').val(val);
+        $parent.find(".slider").val(val);
         option.value = val;
         Events.Call("ExecuteCallback", id, val);
     });
 
-    $('.option.quantity .controls button').on('click', function () {
-        let id = $(this).parent().parent().data('id');
+    $(".option.quantity .controls button").on("click", function () {
+        let id = $(this).parent().parent().data("id");
         let option = findOptionById(options, id);
-        let $value = $(this).parent().find('.value');
+        let $value = $(this).parent().find(".value");
         let value = parseInt($value.val());
         let min = option.min;
         let max = option.max;
 
-        if ($(this).hasClass('less')) {
+        if ($(this).hasClass("less")) {
             if (value > min) {
                 value--;
                 $value.val(value);
@@ -334,21 +350,27 @@ const setOptions = (options) => {
         }
         Events.Call("ExecuteCallback", id, value);
 
-        $(this).parent().find('.less').toggleClass('unable', value == min);
-        $(this).parent().find('.more').toggleClass('unable', value == max);
+        $(this)
+            .parent()
+            .find(".less")
+            .toggleClass("unable", value == min);
+        $(this)
+            .parent()
+            .find(".more")
+            .toggleClass("unable", value == max);
 
-        $value.css('width', ($value.val().length * 8) + 'px');
+        $value.css("width", $value.val().length * 8 + "px");
     });
 
-    $('.option.list .controls button').on('click', function () {
-        let id = $(this).parent().parent().data('id');
+    $(".option.list .controls button").on("click", function () {
+        let id = $(this).parent().parent().data("id");
         let option = findOptionById(options, id);
-        let $value = $(this).parent().find('.value');
+        let $value = $(this).parent().find(".value");
         let value = $value.text();
         let list = option.list;
-        let index = list.findIndex(item => item.label === value);
+        let index = list.findIndex((item) => item.label === value);
 
-        if ($(this).hasClass('left')) {
+        if ($(this).hasClass("left")) {
             if (index > 0) {
                 index--;
                 $value.text(list[index].label);
@@ -360,18 +382,24 @@ const setOptions = (options) => {
             }
         }
 
-        $(this).parent().find('.left').toggleClass('unable', index == 0);
-        $(this).parent().find('.right').toggleClass('unable', index == list.length - 1);
+        $(this)
+            .parent()
+            .find(".left")
+            .toggleClass("unable", index == 0);
+        $(this)
+            .parent()
+            .find(".right")
+            .toggleClass("unable", index == list.length - 1);
     });
 
-    $('.option.list, .option.quantity').on('click', function (e) {
+    $(".option.list, .option.quantity").on("click", function (e) {
         e.stopPropagation();
-        $('.option').removeClass('selected');
-        $(this).addClass('selected');
+        $(".option").removeClass("selected");
+        $(this).addClass("selected");
     });
 
-    $('.option.quantity input.value').on('input', function () {
-        let id = $(this).parent().parent().data('id');
+    $(".option.quantity input.value").on("input", function () {
+        let id = $(this).parent().parent().data("id");
         let option = findOptionById(options, id);
         let value = parseInt($(this).val());
 
@@ -386,12 +414,73 @@ const setOptions = (options) => {
         $(this).val(value);
         Events.Call("ExecuteCallback", id, value);
 
-        $(this).parent().find('.less').toggleClass('unable', value == option.min);
-        $(this).parent().find('.more').toggleClass('unable', value == option.max);
+        $(this)
+            .parent()
+            .find(".less")
+            .toggleClass("unable", value == option.min);
+        $(this)
+            .parent()
+            .find(".more")
+            .toggleClass("unable", value == option.max);
 
-        $(this).css('width', ($(this).val().length * 8) + 'px');
+        $(this).css("width", $(this).val().length * 8 + "px");
+    });
+
+    // List-picker
+    $(".option.list-picker .controls button").on("click", function () {
+        let id = $(this).parent().parent().data("id");
+        let option = findOptionById(options, id);
+        let $value = $(this).parent().find(".value");
+        let currentLabel = $value.text();
+        let list = option.list || [];
+
+        let index = list.findIndex((item) => item.label === currentLabel);
+        if (index < 0) index = 0;
+
+        if ($(this).hasClass("left")) {
+            if (index > 0) index--;
+        } else {
+            if (index < list.length - 1) index++;
+        }
+
+        $value.text(list[index].label);
+
+        // Actualizamos las flechas
+        $(this)
+            .parent()
+            .find(".left")
+            .toggleClass("unable", index === 0);
+        $(this)
+            .parent()
+            .find(".right")
+            .toggleClass("unable", index === list.length - 1);
+    });
+
+    // Y para click en la opción (seleccionarla):
+    $(".option.list-picker").on("click", function (e) {
+        e.stopPropagation();
+        $(".option").removeClass("selected");
+        $(this).addClass("selected");
     });
 };
+
+function getColorPicker(option) {
+    return `<div class="option color-input" data-id="${option.id}">
+        <p class="name">${option.label}</p>
+        <div class="input">
+            <input type="color" value="${option.value || "#ffffff"}">
+        </div>
+    </div>`;
+}
+
+function getDatePicker(option) {
+    return `<div class="option date-input" data-id="${option.id}">
+        <p class="name">${option.label}</p>
+        <div class="input">
+            <input type="date" value="${option.value || "2024-01-01"}">
+        </div>
+    </div>`;
+}
 
 // Existing input builders
 const getCheckbox = (option) => {
@@ -408,34 +497,38 @@ const getCheckbox = (option) => {
 };
 
 const getDropdown = (option) => {
-    let subOptions = '';
-    option.options.forEach(opt => {
+    let subOptions = "";
+    option.options.forEach((opt) => {
         let t = opt.type;
         switch (t) {
-            case 'checkbox':
+            case "checkbox":
                 subOptions += getCheckbox(opt);
                 break;
-            case 'dropdown':
+            case "dropdown":
                 subOptions += getDropdown(opt);
                 break;
-            case 'text-input':
+            case "text-input":
                 subOptions += getTextInput(opt);
                 break;
-            case 'range':
+            case "range":
                 subOptions += getRange(opt);
                 break;
-            case 'password':
+            case "password":
                 subOptions += getPasswordInput(opt);
                 break;
-            case 'radio':
+            case "radio":
                 subOptions += getRadioInput(opt);
                 break;
-            case 'number':
+            case "number":
                 subOptions += getNumberInput(opt);
                 break;
-            case 'select':
+            case "select":
                 subOptions += getSelectInput(opt);
                 break;
+            case "list-picker":
+                $options.append(getListPicker(option));
+                break;
+
             default:
                 break;
         }
@@ -520,7 +613,7 @@ const getPasswordInput = (option) => {
 };
 
 const getRadioInput = (option) => {
-    let radiosHTML = '';
+    let radiosHTML = "";
     if (option.options && option.options.length > 0) {
         option.options.forEach((opt, i) => {
             radiosHTML += `
@@ -543,15 +636,15 @@ const getNumberInput = (option) => {
     return `<div class="option number-input ${option.active ? "active" : ""}" data-id="${option.id}">
         <p class="name">${option.label || "Number Input"}</p>
         <div class="input">
-            <input type="number" placeholder="${option.placeholder || "Enter number"}" value="${option.value || ''}">
+            <input type="number" placeholder="${option.placeholder || "Enter number"}" value="${option.value || ""}">
         </div>
     </div>`;
 };
 
 const getSelectInput = (option) => {
-    let selectOptions = '';
+    let selectOptions = "";
     if (option.options && option.options.length > 0) {
-        option.options.forEach(opt => {
+        option.options.forEach((opt) => {
             selectOptions += `<option value="${opt.value}" ${opt.selected ? "selected" : ""}>${opt.text}</option>`;
         });
     }
@@ -565,19 +658,44 @@ const getSelectInput = (option) => {
     </div>`;
 };
 
+function getListPicker(option) {
+    let firstLabel = option.list && option.list.length > 0 ? option.list[0].label : "";
+
+    return `
+    <div class="option list-picker" data-id="${option.id}">
+        <p class="name">${option.label}</p>
+        <div class="controls">
+            <button class="left">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(90deg);">
+                <path d="M4.58398 7.29199L10.0007 12.7087L15.4173 7.29199" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            </button>
+            <p class="value">${firstLabel}</p>
+            <button class="right">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(-90deg);">
+                <path d="M4.58398 7.29199L10.0007 12.7087L15.4173 7.29199" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            </button>
+        </div>
+    </div>
+    `;
+}
+
 function findOptionById(items, id) {
     id = id.toString();
     for (let item of items) {
         if (item.id === id) {
             return item;
         }
-        if (item.type === 'dropdown' && item.options) {
+        if (item.type === "dropdown" && item.options) {
             let found = findOptionById(item.options, id);
             if (found) {
                 return found;
             }
         }
-        if (item.type === 'list' && item.list) {
+        if (item.type === "list" && item.list) {
             let found = findOptionById(item.list, id);
             if (found) {
                 return found;
@@ -589,87 +707,169 @@ function findOptionById(items, id) {
 
 const setMenuInfo = (info) => {
     const { title, description } = info;
-    $('.context-menu .info .head p').text(title);
-    $('.context-menu .info .description').text(description);
+    $(".context-menu .info .head p").text(title);
+    $(".context-menu .info .description").text(description);
 };
 
 const setHeader = (header) => {
     const { svgSrc, title, hotkey } = header;
-    $('.context-menu .header .img').attr('src', svgSrc);
-    $('.context-menu .header .title').text(title);
-    $('.context-menu .header .hotkey p').text(hotkey);
+    $(".context-menu .header .img").attr("src", svgSrc);
+    $(".context-menu .header .title").text(title);
+    $(".context-menu .header .hotkey p").text(hotkey);
 };
 
 const setSubmenuHeader = (submenuHeader) => {
     const { mainTitle, subTitle } = submenuHeader;
-    $('.context-menu .thread').removeClass('hidden');
-    $('.context-menu .thread .main').text(mainTitle);
-    $('.context-menu .thread .actual').text(subTitle);
+    $(".context-menu .thread").removeClass("hidden");
+    $(".context-menu .thread .main").text(mainTitle);
+    $(".context-menu .thread .actual").text(subTitle);
 };
 
 const hideSubmenuHeader = () => {
-    $('.context-menu .thread').addClass('hidden');
+    $(".context-menu .thread").addClass("hidden");
 };
+
+// Keyboard Navigation Support
+function focusOptionById(id) {
+    // Remove selection from any currently selected option
+    $(".option").removeClass("selected");
+    // Find the new target by data-id
+    let $target = $(`.option[data-id="${id}"]`);
+    if ($target.length > 0) {
+        $target.addClass("selected");
+        $target[0].scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+}
+
+// Trigger the callback or expand/collapse logic when "Enter" is pressed
+function selectFocusedOption() {
+    let $focused = $(".option.selected");
+    if ($focused.length === 0) return;
+
+    let id = $focused.data("id");
+    let option = findOptionById(persistentOptions, id);
+    if (!option) return;
+
+    // Check option type
+    if ($focused.hasClass("checkbox")) {
+        option.checked = !option.checked;
+        $focused.toggleClass("active");
+        Events.Call("ExecuteCallback", id, option.checked);
+    } else if ($focused.hasClass("action")) {
+        Events.Call("ExecuteCallback", id, option);
+    } else if ($focused.hasClass("text-input") || $focused.hasClass("password-input") || $focused.hasClass("number-input")) {
+        let value = $focused.find(".input input").val();
+        Events.Call("ExecuteCallback", id, value);
+    } else if ($focused.hasClass("color-input") || $focused.hasClass("date-input")) {
+        let value = $focused.find(".input input").val();
+        Events.Call("ExecuteCallback", id, value);
+    } else if ($focused.hasClass("radio")) {
+        let selectedRadio = $focused.find('input[type="radio"]:checked').val();
+        Events.Call("ExecuteCallback", id, selectedRadio);
+    } else if ($focused.parent().hasClass("dropdown") && !$focused.hasClass("active")) {
+        // Expand dropdown if it's collapsed
+        $focused.find("svg").click();
+    } else if ($focused.parent().hasClass("dropdown") && $focused.hasClass("active")) {
+        Events.Call("ExecuteCallback", id, option.label || option.id);
+    } else if ($focused.hasClass("list-picker")) {
+        // Obtenemos el label actual
+        let currentLabel = $focused.find(".value").text();
+        let foundItem = option.list.find((item) => item.label === currentLabel);
+        // Llamar callback con foundItem.id o el label
+        let param = foundItem ? foundItem.id : currentLabel;
+        Events.Call("ExecuteCallback", id, param);
+    }
+}
+
+// Expand the currently focused dropdown (trigger .active)
+function expandFocusedOption() {
+    let $focused = $(".option.selected");
+    if ($focused.parent().hasClass("dropdown") && !$focused.hasClass("active")) {
+        $focused.find("svg").click();
+    }
+}
+
+// Collapse the currently focused dropdown
+function collapseFocusedOption() {
+    let $focused = $(".option.selected");
+    if ($focused.parent().hasClass("dropdown") && $focused.hasClass("active")) {
+        $focused.find("svg").click();
+    }
+}
+
+function rebuildVisibleOptionList() {
+    visibleOptionElements = [];
+    let allOptions = document.querySelectorAll(".context-menu .options > .option, .context-menu .options .dropdown.active .sub-list .option");
+    visibleOptionElements = Array.from(allOptions).filter((el) => el.offsetParent !== null);
+}
+
+function selectFirstOption() {
+    rebuildVisibleOptionList();
+    if (visibleOptionElements.length > 0) {
+        $(".option").removeClass("selected");
+        $(visibleOptionElements[0]).addClass("selected");
+    }
+}
 
 const hardcodedItems = [
     {
-        id: 'checkbox-1',
-        label: 'Checkbox 1',
-        type: 'checkbox',
-        checked: false
+        id: "checkbox-1",
+        label: "Checkbox 1",
+        type: "checkbox",
+        checked: false,
     },
     {
-        id: 'checkbox-2',
-        label: 'Checkbox 2',
-        type: 'checkbox',
-        checked: true
+        id: "checkbox-2",
+        label: "Checkbox 2",
+        type: "checkbox",
+        checked: true,
     },
     {
-        id: 'dropdown-1',
-        label: 'Dropdown 1',
-        type: 'dropdown',
+        id: "dropdown-1",
+        label: "Dropdown 1",
+        type: "dropdown",
         options: [
             {
-                id: 'checkbox-3',
-                label: 'Checkbox 3',
-                type: 'checkbox',
-                checked: false
+                id: "checkbox-3",
+                label: "Checkbox 3",
+                type: "checkbox",
+                checked: false,
             },
             {
-                id: 'checkbox-4',
-                label: 'Checkbox 4',
-                type: 'checkbox',
-                checked: true
+                id: "checkbox-4",
+                label: "Checkbox 4",
+                type: "checkbox",
+                checked: true,
             },
             {
-                id: 'text-input-3',
-                label: 'Text Input 3',
-                type: 'text-input'
+                id: "text-input-3",
+                label: "Text Input 3",
+                type: "text-input",
             },
-        ]
+        ],
     },
     {
-        id: 'button-1',
-        label: 'Button 1',
-        type: 'button'
+        id: "button-1",
+        label: "Button 1",
+        type: "button",
     },
     {
-        id: 'text-input-1',
-        label: 'Text Input 1',
-        type: 'text-input'
+        id: "text-input-1",
+        label: "Text Input 1",
+        type: "text-input",
     },
     {
-        id: 'range-1',
-        label: 'Range 1',
-        type: 'range',
+        id: "range-1",
+        label: "Range 1",
+        type: "range",
         min: 2,
         max: 26,
-        value: 4
+        value: 4,
     },
     {
-        id: 'list-1',
-        label: 'List 1',
-        type: 'list',
+        id: "list-1",
+        label: "List 1",
+        type: "list",
         list: [
             {
                 id: "weapon_sniper",
@@ -682,8 +882,8 @@ const hardcodedItems = [
             {
                 id: "weapon_pistol",
                 label: "Beretta",
-            }
-        ]
+            },
+        ],
     },
 ];
 
@@ -706,6 +906,8 @@ Events.Subscribe("buildContextMenu", function (items) {
     showUi();
     setOptions(items);
     persistentOptions = items;
+
+    selectFirstOption();
 });
 
 Events.Subscribe("ShowNotification", function (data) {
@@ -713,7 +915,7 @@ Events.Subscribe("ShowNotification", function (data) {
         showNotification(data.type, data.title, data.message);
         return;
     }
-    showNotification('info', 'Info', 'Emtpy notification');
+    showNotification("info", "Info", "Emtpy notification");
 });
 
 Events.Subscribe("closeContextMenu", function () {
@@ -722,15 +924,45 @@ Events.Subscribe("closeContextMenu", function () {
 
 Events.Subscribe("setHeader", function (title) {
     setHeader({
-        svgSrc: './media/icons/Context-menu-icon.svg',
+        svgSrc: "./media/icons/Context-menu-icon.svg",
         title: title,
-        hotkey: 'C'
+        hotkey: "C",
     });
 });
 
 Events.Subscribe("setMenuInfo", function (title, description) {
     setMenuInfo({
         title: title,
-        description: description
+        description: description,
     });
+});
+
+Events.Subscribe("FocusOptionById", function (id) {
+    focusOptionById(id);
+});
+
+Events.Subscribe("SelectFocusedOption", function () {
+    selectFocusedOption();
+});
+
+Events.Subscribe("ExpandFocusedOption", function () {
+    expandFocusedOption();
+});
+
+Events.Subscribe("CollapseFocusedOption", function () {
+    collapseFocusedOption();
+});
+
+Events.Subscribe("ForceFocusOnUI", () => {
+    const focusCatcher = document.getElementById("ContextFocusCatcher");
+    if (focusCatcher) {
+        focusCatcher.focus({ preventScroll: true });
+    }
+});
+
+Events.Subscribe("SimulateClickOnFirstOption", function () {
+    let firstOption = document.querySelector(".option");
+    if (firstOption) {
+        firstOption.click();
+    }
 });

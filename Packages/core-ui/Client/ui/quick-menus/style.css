@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap");
 
 :root {
     --fontxsmall: clamp(10px, 0.39375vh, 20px);
@@ -29,9 +29,9 @@ body {
     opacity: 1;
     margin: 0;
     padding: 0;
-    font-family: 'Outfit', sans-serif;
+    font-family: "Outfit", sans-serif;
     user-select: none;
-    background: rgba(0,0,0,0.5);
+    /* background: rgba(0,0,0,0.5); */
 }
 
 * {
@@ -40,14 +40,14 @@ body {
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    font-family: 'Outfit', sans-serif;
+    font-family: "Outfit", sans-serif;
     box-sizing: border-box;
     color: white;
     font-style: normal;
-    letter-spacing: .1vh;
+    letter-spacing: 0.1vh;
 }
 
-body>.bg {
+body > .bg {
     position: absolute;
     width: 100vw;
     height: 100vh;
@@ -59,16 +59,17 @@ body>.bg {
     pointer-events: none;
 }
 
-.input-menu, .confirm-menu {
+.input-menu,
+.confirm-menu {
     position: absolute;
-    left:50%;
-    top:50%;
+    left: 50%;
+    top: 50%;
     transform: translate(-50%, -50%) scale(var(--scale));
     width: 320px;
-    background-color: #161616E5;
+    background-color: #161616e5;
     border-radius: 16px;
     pointer-events: none;
-    opacity:0;
+    opacity: 0;
     transition: all 0.2s ease;
     display: flex;
     flex-direction: column;
@@ -78,122 +79,122 @@ body>.bg {
 body.in-input-menu .input-menu,
 body.in-confirm-menu .confirm-menu {
     pointer-events: all;
-    opacity:1;
+    opacity: 1;
 }
 
 .header {
-    width: calc(100% - 40px);
+    width: 100%;
     height: 70px;
-    display:flex;
-    align-items:center;
-    padding:0 20px;
-    gap:12px;
-    border-bottom:1px solid #FFFFFF24;
-    position:relative;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 12px;
+    border-bottom: 1px solid #ffffff24;
+    position: relative;
 }
 
 .header .title {
-    font-size: 24px;
+    font-size: 18px;
     font-weight: 600;
-    color:white;
-    text-transform:uppercase;
-    letter-spacing:1px;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .header .close-panel {
-    position:absolute;
-    right:20px;
-    cursor:pointer;
+    position: absolute;
+    right: 20px;
+    cursor: pointer;
+    display: none;
 }
 
 .content {
-    display:flex;
-    flex-direction:column;
-    gap:20px;
-    padding:20px;
-    width:calc(100% -40px);
-    align-self:center;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    width: calc(100% -40px);
+    align-self: center;
 }
 
 .content input {
-    width:100%;
-    height:44px;
-    border-radius:8px;
-    background-color:transparent;
-    border:2px solid #2E2E2E;
-    color:#EDEDED;
-    padding:0 12px;
-    font-size:16px;
-    outline:none;
-    transition:all .2s ease;
+    width: 100%;
+    height: 44px;
+    border-radius: 8px;
+    background-color: transparent;
+    border: 2px solid #2e2e2e;
+    color: #ededed;
+    padding: 0 12px;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.2s ease;
 }
 
 .content input:hover {
-    background-color:#FFFFFF1A;
-    border-color:#505050;
+    background-color: #ffffff1a;
+    border-color: #505050;
 }
 
 .content input:focus {
-    border:2px solid #EDEDED;
-    background-color:#343434;
+    border: 2px solid #ededed;
+    background-color: #343434;
 }
 
 .content .message {
-    font-size:16px;
-    font-weight:500;
-    color:#FFFFFF99;
-    margin:0;
-    text-align:center;
+    font-size: 16px;
+    font-weight: 500;
+    color: #ffffff99;
+    margin: 0;
+    text-align: center;
 }
 
 .buttons {
-    display:flex;
-    justify-content:space-between;
-    gap:12px;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
 }
 
 .buttons button {
-    height:44px;
-    padding:0 16px;
-    border-radius:8px;
-    border:none;
-    font-size:16px;
-    font-weight:600;
-    letter-spacing:1px;
-    text-transform:uppercase;
-    cursor:pointer;
+    height: 44px;
+    padding: 0 16px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
 }
 
 .buttons button.cancel {
-    background-color:#FFFFFF12;
-    color:#EDEDED;
+    background-color: #ffffff12;
+    color: #ededed;
 }
 
 .buttons button.cancel:hover {
-    background-color:#FFFFFF24;
+    background-color: #ffffff24;
 }
 
 .buttons button.confirm {
-    background-color:#2DFF9B24;
-    color:#57FFAF;
+    background-color: #2dff9b24;
+    color: #57ffaf;
 }
 
 .buttons button.confirm:hover {
-    background-color:#2DFF9B36;
+    background-color: #2dff9b36;
 }
-
 
 ::-webkit-scrollbar {
     width: 0.5vh;
 }
 
 ::-webkit-scrollbar-track {
-    background: #28282A;
+    background: #28282a;
     border-radius: 23px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #00FBDD;
+    background: #00fbdd;
     border-radius: 23px;
 }
 

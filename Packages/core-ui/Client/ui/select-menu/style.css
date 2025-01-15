@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 :root {
     --fontxsmall: clamp(10px, 0.39375vh, 20px);
@@ -39,15 +39,15 @@ body.hidden {
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    font-family: 'Outfit', sans-serif;
+    font-family: "Outfit", sans-serif;
     box-sizing: border-box;
     /* transition: all 0.3s ease; */
     color: white;
     font-style: normal;
-    letter-spacing: .1vh;
+    letter-spacing: 0.1vh;
 }
 
-body>.bg {
+body > .bg {
     position: absolute;
     width: 100vw;
     height: 100vh;
@@ -133,7 +133,7 @@ body>.bg {
     margin-top: 20px;
 }
 
-.configurable-menu .options-selector .slider>div {
+.configurable-menu .options-selector .slider > div {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -157,7 +157,6 @@ body>.bg {
     gap: 20px;
     transition: all 0.3s ease;
     transform: translateX(0%);
-
 }
 
 .configurable-menu .options-selector .slider.disabled .options {
@@ -184,7 +183,7 @@ body>.bg {
 }
 
 .configurable-menu .options-selector .slider .options .option.selected {
-    border: 2px solid #00FBDD;
+    border: 2px solid #00fbdd;
 }
 
 .configurable-menu .options-selector .slider .options .option .name {
@@ -220,7 +219,7 @@ body>.bg {
     width: 40px;
     border-radius: 20000px;
     border: 1px solid #121212;
-    background-color: #FF6B61;
+    background-color: #ff6b61;
     color: #121212;
 
     display: flex;
@@ -239,7 +238,7 @@ body>.bg {
 }
 
 .configurable-menu .options-selector .slider .options .option.winning .votes {
-    background-color: #00FBDD;
+    background-color: #00fbdd;
 }
 
 .configurable-menu .options-selector .slider .options .option.voted .votes {
@@ -252,7 +251,7 @@ body>.bg {
     align-items: center;
     height: 100%;
     width: 36px;
-    background-color: #FFFFFF;
+    background-color: #ffffff;
     border: none;
     border-radius: 4px;
     transition: all 0.3s ease;
@@ -274,7 +273,7 @@ body>.bg {
 }
 
 .configurable-menu .options-selector .slider button.slide.unable svg {
-    stroke: #8C8C91;
+    stroke: #8c8c91;
 }
 
 .configurable-menu .options-selector .slider button.slide {
@@ -287,7 +286,7 @@ body>.bg {
 }
 
 .configurable-menu .options-selector .slider button.slide:not(.unable):hover {
-    background-color: #FFFFFFE5;
+    background-color: #ffffffe5;
 }
 
 .configurable-menu .options-selector .slider .slider-pages {
@@ -314,7 +313,7 @@ body>.bg {
 }
 
 .configurable-menu .options-selector .slider .slider-pages .page.selected {
-    background-color: #00FBDD;
+    background-color: #00fbdd;
     cursor: default;
 }
 
@@ -385,7 +384,7 @@ body>.bg {
     line-height: 24px;
     letter-spacing: 0px;
     text-align: left;
-    color: #8C8C91;
+    color: #8c8c91;
 }
 
 .configurable-menu .selected-option .info {
@@ -435,7 +434,7 @@ body>.bg {
     line-height: 24px;
     letter-spacing: 0px;
     text-align: left;
-    color: #8C8C91;
+    color: #8c8c91;
 }
 
 .configurable-menu .buttons {
@@ -454,7 +453,7 @@ body>.bg {
     align-items: center;
     border-radius: 4px;
     height: 48px;
-    background-color: #00FBDD;
+    background-color: #00fbdd;
     border: none;
     transition: all 0.3s ease;
     padding: 0 20px;
@@ -462,7 +461,7 @@ body>.bg {
 }
 
 .configurable-menu .buttons button:hover {
-    background-color: #00FBDDE5;
+    background-color: #00fbdde5;
 }
 
 .configurable-menu .buttons button p {
@@ -480,16 +479,14 @@ body>.bg {
 }
 
 ::-webkit-scrollbar-track {
-    background: #28282A;
+    background: #28282a;
     border-radius: 23px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #00FBDD;
+    background: #00fbdd;
     border-radius: 23px;
 }
-
-
 
 @media screen and (max-height: 4000px) {
     body {

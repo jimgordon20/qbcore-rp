@@ -125,6 +125,36 @@ end)
 ```
 ![image](https://github.com/helix-game/core-ui/assets/67294331/82e174a1-91eb-4292-88eb-776ec2e03d54)
 
+### Example of how to use QuickMenus class:
+
+The QuickMenus allow you to quickly gather player input or ask for confirmation without building a full context menu. You can show simple input dialogs or confirmation boxes and handle the results easily.
+
+```lua
+-- Showing an input menu example:
+Chat.Subscribe("PlayerSubmit", function(message)
+    if message == "testinput" then
+        local qm = QuickMenus.new()
+        qm:ShowInput("Enter your name:", "Type name here...", function(value)
+            Chat.AddMessage("User entered: " .. value)
+        end, function()
+            Chat.AddMessage("Input canceled")
+        end)
+    end
+end)
+
+-- Showing a confirmation menu example:
+Chat.Subscribe("PlayerSubmit", function(message)
+    if message == "testconfirm" then
+        local qm = QuickMenus.new()
+        qm:ShowConfirm("Are you sure?", "Do you really want to continue?", function()
+            Chat.AddMessage("Confirmed: Yes")
+        end, function()
+            Chat.AddMessage("Confirmed: No")
+        end)
+    end
+end)
+```
+
 ## License
 
 
