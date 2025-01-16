@@ -133,8 +133,8 @@ Config = {
         thigh_r = { label = Lang:t('body.thigh_r'), causeLimp = false, isDamaged = false, severity = 0,  major = 100, minor = 85 },
         calf_l = { label = Lang:t('body.calf_l'), causeLimp = false, isDamaged = false, severity = 0, major = 100, minor = 85 },
         calf_r = { label = Lang:t('body.calf_r'), causeLimp = false, isDamaged = false, severity = 0, major = 100, minor = 85 },
-        foot_l = {  label = Lang:t('body.foot_l'), causeLimp = false, isDamaged = false, severity = 0, major = 100, minor = 100 },
-        foot_r = {  label = Lang:t('body.foot_r'), causeLimp = false, isDamaged = false, severity = 0, major = 100, minor = 100 },
+        foot_l = { label = Lang:t('body.foot_l'), causeLimp = false, isDamaged = false, severity = 0, major = 100, minor = 100 },
+        foot_r = { label = Lang:t('body.foot_r'), causeLimp = false, isDamaged = false, severity = 0, major = 100, minor = 100 },
     },
 
     WoundStates = { -- Translate wound alerts
