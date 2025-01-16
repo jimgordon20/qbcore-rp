@@ -54,19 +54,43 @@ function QBCore.Functions.GetClosestPlayer(coords)
     for i = 1, #players do
         local ped = players[i]
         if ped ~= player_ped then
-            local ped_coords = ped:GetLocation()
-            local distance = player_coords:Distance(ped_coords)
-            if closest_distance == -1 or distance < closest_distance then
-                closest_player = ped
-                closest_distance = distance
+            if ped:GetPlayer() then
+                local ped_coords = ped:GetLocation()
+                local distance = player_coords:Distance(ped_coords)
+                if closest_distance == -1 or distance < closest_distance then
+                    closest_player = ped:GetPlayer()
+                    closest_distance = distance
+                end
             end
         end
     end
     return closest_player, closest_distance
 end
 
+function QBCore.Functions.GetClosestHCharacter(coords)
+    local player = Client.GetLocalPlayer()
+    local player_ped = player:GetControlledCharacter()
+    if not player_ped then return end
+    local player_coords = coords or player_ped:GetLocation()
+    local players = HCharacter.GetAll()
+    local closest_hcharacter, closest_distance = nil, -1
+    for i = 1, #players do
+        local ped = players[i]
+        if ped ~= player_ped then
+            local ped_coords = ped:GetLocation()
+            local distance = player_coords:Distance(ped_coords)
+            if closest_distance == -1 or distance < closest_distance then
+                closest_hcharacter = ped
+                closest_distance = distance
+            end
+        end
+    end
+    return closest_hcharacter, closest_distance
+end
+
 function QBCore.Functions.GetClosestVehicle(coords)
-    local player_ped = Client.GetLocalPlayer():GetControlledCharacter()
+    local player = Client.GetLocalPlayer()
+    local player_ped = player:GetControlledCharacter()
     if not player_ped then return end
     local player_coords = coords or player_ped:GetLocation()
     local vehicles = Vehicle.GetAll()
@@ -83,26 +107,28 @@ function QBCore.Functions.GetClosestVehicle(coords)
     return closest_vehicle, closest_distance
 end
 
-function QBCore.Functions.GetClosestHVehicle(source, coords)
-    local player_ped = source:GetControlledCharacter()
+function QBCore.Functions.GetClosestHVehicle(coords)
+    local player = Client.GetLocalPlayer()
+    local player_ped = player:GetControlledCharacter()
     if not player_ped then return end
     local player_coords = coords or player_ped:GetLocation()
     local vehicles = HSimpleVehicle.GetAll()
-    local closest_vehicle, closest_distance = nil, -1
+    local closest_hvehicle, closest_distance = nil, -1
     for i = 1, #vehicles do
         local vehicle = vehicles[i]
         local vehicle_coords = vehicle:GetLocation()
         local distance = player_coords:Distance(vehicle_coords)
         if closest_distance == -1 or distance < closest_distance then
-            closest_vehicle = vehicle
+            closest_hvehicle = vehicle
             closest_distance = distance
         end
     end
-    return closest_vehicle, closest_distance
+    return closest_hvehicle, closest_distance
 end
 
 function QBCore.Functions.GetClosestWeapon(coords)
-    local player_ped = Client.GetLocalPlayer():GetControlledCharacter()
+    local player = Client.GetLocalPlayer()
+    local player_ped = player:GetControlledCharacter()
     if not player_ped then return end
     local player_coords = coords or player_ped:GetLocation()
     local weapons = Weapon.GetAll()
@@ -119,44 +145,47 @@ function QBCore.Functions.GetClosestWeapon(coords)
     return closest_weapon, closest_distance
 end
 
-function QBCore.Functions.GetClosestCharacter(source, coords)
-    local player_ped = source:GetControlledCharacter()
+function QBCore.Functions.GetClosestCharacter(coords)
+    local player = Client.GetLocalPlayer()
+    local player_ped = player:GetControlledCharacter()
     if not player_ped then return end
     local player_coords = coords or player_ped:GetLocation()
     local characters = Character.GetAll()
-    local closest_ped, closest_distance = nil, -1
+    local closest_character, closest_distance = nil, -1
     for i = 1, #characters do
         local ped = characters[i]
         local ped_coords = ped:GetLocation()
         local distance = player_coords:Distance(ped_coords)
         if closest_distance == -1 or distance < closest_distance then
-            closest_ped = ped
+            closest_character = ped
             closest_distance = distance
         end
     end
-    return closest_ped, closest_distance
+    return closest_character, closest_distance
 end
 
-function QBCore.Functions.GetClosestSCharacter(source, coords)
-    local player_ped = source:GetControlledCharacter()
+function QBCore.Functions.GetClosestSCharacter(coords)
+    local player = Client.GetLocalPlayer()
+    local player_ped = player:GetControlledCharacter()
     if not player_ped then return end
     local player_coords = coords or player_ped:GetLocation()
     local characters = CharacterSimple.GetAll()
-    local closest_ped, closest_distance = nil, -1
+    local closest_charactersimple, closest_distance = nil, -1
     for i = 1, #characters do
         local ped = characters[i]
         local ped_coords = ped:GetLocation()
         local distance = player_coords:Distance(ped_coords)
         if closest_distance == -1 or distance < closest_distance then
-            closest_ped = ped
+            closest_charactersimple = ped
             closest_distance = distance
         end
     end
-    return closest_ped, closest_distance
+    return closest_charactersimple, closest_distance
 end
 
-function QBCore.Functions.GetClosestPawn(source, coords)
-    local player_ped = source:GetControlledCharacter()
+function QBCore.Functions.GetClosestPawn(coords)
+    local player = Client.GetLocalPlayer()
+    local player_ped = player:GetControlledCharacter()
     if not player_ped then return end
     local player_coords = coords or player_ped:GetLocation()
     local characters = HPawn.GetAll()
@@ -174,7 +203,8 @@ function QBCore.Functions.GetClosestPawn(source, coords)
 end
 
 function QBCore.Functions.GetClosestProp(coords)
-    local player_ped = Client.GetLocalPlayer():GetControlledCharacter()
+    local player = Client.GetLocalPlayer()
+    local player_ped = player:GetControlledCharacter()
     if not player_ped then return end
     local player_coords = coords or player_ped:GetLocation()
     local props = Prop.GetAll()

@@ -255,6 +255,28 @@ function QBCore.Functions.GetClosestPlayer(source, coords)
 	for i = 1, #players do
 		local ped = players[i]
 		if ped ~= player_ped then
+			if ped:GetPlayer() then
+				local ped_coords = ped:GetLocation()
+				local distance = player_coords:Distance(ped_coords)
+				if closest_distance == -1 or distance < closest_distance then
+					closest_player = ped:GetPlayer()
+					closest_distance = distance
+				end
+			end
+		end
+	end
+	return closest_player, closest_distance
+end
+
+function QBCore.Functions.GetClosestHCharacter(source, coords)
+	local player_ped = source:GetControlledCharacter()
+	if not player_ped then return end
+	local player_coords = coords or player_ped:GetLocation()
+	local players = HCharacter.GetAll()
+	local closest_player, closest_distance = nil, -1
+	for i = 1, #players do
+		local ped = players[i]
+		if ped ~= player_ped then
 			local ped_coords = ped:GetLocation()
 			local distance = player_coords:Distance(ped_coords)
 			if closest_distance == -1 or distance < closest_distance then
