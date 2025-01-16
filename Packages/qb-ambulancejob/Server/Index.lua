@@ -160,6 +160,13 @@ Events.SubscribeRemote('qb-ambulancejob:server:damageRagdoll', function(source, 
     end, length)
 end)
 
+Events.SubscribeRemote('qb-ambulancejob:server:setDeathStatus', function(source, status)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then return end
+
+    Player.Functions.SetMetaData('isdead', status)
+end)
+
 -- Callbacks
 
 QBCore.Functions.CreateCallback('qb-ambulancejob:server:getPeds', function(_, cb)
