@@ -167,9 +167,12 @@ Events.SubscribeRemote('qb-adminmenu:client:entitylaser', function()
 			local end_location = viewport_3d.Position + viewport_3d.Direction * trace_max_distance
 			local collision_trace = CollisionChannel.WorldStatic
 				| CollisionChannel.WorldDynamic
-				| CollisionChannel.PhysicsBody
-				| CollisionChannel.Vehicle
 				| CollisionChannel.Pawn
+				| CollisionChannel.PhysicsBody
+				| CollisionChannel.Mesh
+				| CollisionChannel.Water
+				| CollisionChannel.Foliage
+				| CollisionChannel.Vehicle
 			local trace_mode = TraceMode.TraceComplex
 				| TraceMode.ReturnPhysicalMaterial
 				| TraceMode.ReturnEntity
