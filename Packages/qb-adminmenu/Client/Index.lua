@@ -10,6 +10,21 @@ my_webui:Subscribe('execute', function(data)
 	Events.CallRemote('QBCore:Console:CallCommand', data.name, data.argsString)
 end)
 
+Input.Subscribe('KeyDown', function(key_name)
+	if key_name == 'LeftShift' and Client.GetLocalPlayer():GetValue('noclip', false) then
+		local player = Client.GetLocalPlayer()
+		if not player then return end
+		local camRotation = player:GetCameraRotation()
+		local forward = camRotation:GetForwardVector()
+		local up = camRotation:GetUpVector()
+		local moveDirection = Vector(0, 0, 0)
+		if Input.IsKeyDown('W') then moveDirection = moveDirection + forward end
+		if Input.IsKeyDown('SpaceBar') then moveDirection = moveDirection + up end
+		if Input.IsKeyDown('LeftControl') then moveDirection = moveDirection - up end
+		player:SetCameraLocation(player:GetCameraLocation() + (moveDirection * 300))
+	end
+end)
+
 Input.Subscribe('KeyPress', function(key_name)
 	if key_name == 'Up' and menu_open then
 		my_webui:CallEvent('navigateUp')

@@ -15,7 +15,7 @@ QBCore.Commands.Add('invisible', '', {}, false, function(source)
     if not ped then return end
     local isVisible = ped:GetValue('invisible', false)
     ped:SetVisibility(not isVisible)
-    ped:SetValue('invisible', not isVisible, false)
+    ped:SetValue('invisible', not isVisible, true)
 end, 'admin')
 
 QBCore.Commands.Add('godmode', '', {}, false, function(source)
@@ -23,7 +23,7 @@ QBCore.Commands.Add('godmode', '', {}, false, function(source)
     if not ped then return end
     local isGodmode = ped:GetValue('godmode', false)
     ped:SetInvulnerable(not isGodmode)
-    ped:SetValue('godmode', not isGodmode, false)
+    ped:SetValue('godmode', not isGodmode, true)
 end, 'admin')
 
 QBCore.Commands.Add('noclip', '', {}, false, function(source)
@@ -31,14 +31,14 @@ QBCore.Commands.Add('noclip', '', {}, false, function(source)
     if ped then
         source:UnPossess()
         ped:Destroy()
-        source:SetValue('noclip', true)
+        source:SetValue('noclip', true, true)
     else
         QBCore.Functions.TriggerClientCallback('qb-adminmenu:client:getCamera', source, function(coords, rotation)
             local newChar = HCharacter(coords, rotation, source)
             local player_dimension = source:GetDimension()
             newChar:SetDimension(player_dimension)
             source:Possess(newChar)
-            source:SetValue('noclip', false)
+            source:SetValue('noclip', false, true)
         end)
     end
 end, 'admin')
