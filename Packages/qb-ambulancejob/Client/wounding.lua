@@ -118,13 +118,13 @@ Player.Subscribe('Possess', function(self, character)
 end)
 
 function StartBleedTimer()
+    if BleedTick then return end
     BleedTick = Timer.SetInterval(function()
         if not PlayerPed then return end -- No ped, nothing to bleed yet, but continue to run interval
         if BleedAmount > 0 then
             prevPos = prevPos or PlayerPed:GetLocation()
             if prevPos:Distance(PlayerPed:GetLocation()) < 200 then return end
             prevPos = PlayerPed:GetLocation() -- Update location if they've moved
-
             -- Begin fading/blacking out timer
             if not isDead then
                 fadeOutTimer = fadeOutTimer + 1
@@ -151,4 +151,5 @@ end
 function StopBleedTimer()
     if not BleedTick then return end
     Timer.ClearInterval(BleedTick)
+    BleedTick = nil
 end
