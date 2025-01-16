@@ -87,15 +87,21 @@ local my_timer = nil
 local coords_canvas = nil
 
 Events.SubscribeRemote('qb-adminmenu:client:showCoords', function()
-	local ped = Client.GetLocalPlayer():GetControlledCharacter()
-	if not ped then return end
 	if not showing_coords then
 		showing_coords = true
 		coords_canvas = Canvas(true, Color.TRANSPARENT, 0, true)
 		coords_canvas:SetVisibility(true)
 		coords_canvas:Subscribe('Update', function(self, width, height)
-			local pos = ped:GetLocation()
-			local rot = ped:GetRotation()
+			local pos, rot
+			local player = Client.GetLocalPlayer()
+			local player_ped = player:GetControlledCharacter()
+			if player_ped then
+				pos = player_ped:GetLocation()
+				rot = player_ped:GetRotation()
+			else
+				pos = player:GetCameraLocation()
+				rot = player:GetCameraRotation()
+			end
 			local coords = 'Vector('
 				.. string.format('%.2f', pos.X)
 				.. ', '
