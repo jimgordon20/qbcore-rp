@@ -41,7 +41,7 @@ Config = {
         ['stash'] = {
             Vector(7195.6, -4366.1, -33.9),
         },
-        ['beds'] = {
+        ['beds'] = { -- Redundant, can be cleaned?
             -- { coords = Vector(353.1, -584.6, 43.11),   taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
             -- { coords = Vector(356.79, -585.86, 43.11), taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
             -- { coords = Vector(354.12, -593.12, 43.1),  taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
@@ -59,22 +59,47 @@ Config = {
         },
         ['hospital'] = {
             {
-                ['name'] = Lang:t('info.pb_hospital'),
-                ['location'] = Vector(6919.1, -4563.8, -299.8),
+                ['name'] = Lang:t('info.ws_hospital'),
+                ['location'] = Vector(-252606.4, 41048.8, 220.0), -- Redundant? Unused currently, same data as stations
                 ['beds'] = {
-                    { coords = Vector(7387.9, -4108.0, -390), taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
-                    { coords = Vector(7166.7, -4095.9, -390), taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
-                    { coords = Vector(6911.6, -4082.0, -390), taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
-                    { coords = Vector(6654.2, -4101.7, -390), taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
-                    { coords = Vector(7411.2, -4348.6, -390), taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
-                    { coords = Vector(7415.1, -4609.3, -390), taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
-                    { coords = Vector(7395.2, -4808.7, -390), taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
+                    { coords = Vector(-252014.6, 39821.7, 121.5), heading = 53.0, taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
+                    { coords = Vector(-251843.6, 39690.0, 121.5), heading = 53.0, taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
+                    { coords = Vector(-251540.2, 40023.4, 121.5), heading = 53.0, taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
+                    { coords = Vector(-251731.7, 40179.6, 121.5), heading = 53.0, taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
+                    { coords = Vector(-251547.5, 40441.7, 121.5), heading = 53.0, taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
+                    { coords = Vector(-251354.9, 40310.3, 121.5), heading = 53.0, taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
                 },
             },
+            {
+                ['name'] = Lang:t('info.dt_hospital'),
+                ['location'] = Vector(-33552.0, 134193.9, 225.2), -- Redundant? Unused currently, same data as stations
+                ['beds'] = {
+                    { coords = Vector(-33144.3, 133058.6, 126.7), heading = 50.0, taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
+                    { coords = Vector(-32944.9, 132881.2, 126.7), heading = 50.0, taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
+                    { coords = Vector(-32730.4, 133104.2, 126.7), heading = 50.0, taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
+                    { coords = Vector(-32904.1, 133274.4, 126.7), heading = 50.0, taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
+                    { coords = Vector(-32672.5, 133533.9, 126.7), heading = 50.0, taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
+                    { coords = Vector(-32494.3, 133380.6, 126.7), heading = 50.0, taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
+                },
+            },
+            {
+                ['name'] = Lang:t('info.es_hospital'),
+                ['location'] = Vector(108301.3, 236084.8, 233.4), -- Redundant? Unused currently, same data as stations
+                ['beds'] = {
+                    { coords = Vector(107123.4, 236424.3, 134.8), heading = -70.0, taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
+                    { coords = Vector(106902.1, 236350.1, 134.8), heading = -70.0, taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
+                    { coords = Vector(107017.0, 236043.7, 134.8), heading = -70.0, taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
+                    { coords = Vector(107245.6, 236112.7, 134.8), heading = -70.0, taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
+                    { coords = Vector(107329.7, 235788.3, 134.8), heading = -70.0, taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
+                    { coords = Vector(107072.5, 235713.1, 134.8), heading = -70.0, taken = false, model = 'abcca-qbcore::SM_HospitalBed' },
+                },
+            }
             -- add more locations here
         },
         ['stations'] = {
-            { label = Lang:t('info.pb_hospital'), coords = Vector(7102.0, -4431.2, -299.8) }
+            { label = Lang:t('info.ws_hospital'), coords = Vector(-252606.4, 41048.8, 220.0) },
+            { label = Lang:t('info.dt_hospital'), coords = Vector(-33552.0, 134193.9, 225.2) },
+            { label = Lang:t('info.es_hospital'), coords = Vector(108301.3, 236084.8, 233.4) },
         }
     },
 
