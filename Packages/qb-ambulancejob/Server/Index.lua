@@ -135,6 +135,7 @@ Events.SubscribeRemote('qb-ambulancejob:server:RespawnAtHospital', function(sour
     if not coords then return end
     local closest_bed = nil
     local closest_distance = 999999
+    -- Instead of calling GetLocation, we could use the locations we already have in the config table
     for _, bed in pairs(hospital_beds) do
         local distance = bed:GetLocation():Distance(coords)
         if distance < closest_distance then
@@ -142,6 +143,7 @@ Events.SubscribeRemote('qb-ambulancejob:server:RespawnAtHospital', function(sour
             closest_distance = distance
         end
     end
+    -- Not checking if beds are taken, could respawn on the same bed as someone else (QOL)
     if not closest_bed then return end
     local bedLocation = closest_bed:GetLocation()
     ped:Respawn(Vector(bedLocation.X, bedLocation.Y, bedLocation.Z + 150.0), closest_bed:GetRotation())
@@ -209,7 +211,18 @@ QBCore.Functions.CreateUseableItem('painkillers', function(source, item)
 end)
 
 QBCore.Functions.CreateUseableItem('firstaid', function(source, item)
-    local Player = QBCore.Functions.GetPlayer(source)
-    if not Player then return end
-    if Player.Functions.RemoveItem(item.name) then Events.CallRemote('qb-ambulancejob:client:UseFirstAid', source) end
+    if not RemoveItem(source, item.name, 1, item.slot) then return end
+    local closestPlayer = QBCore.Functions.GetClosestPlayer(source)
+    if not closestPlayer then return end
+
+    if closestPlayer:GetHealth() > 0 then return Events.CallRemote('QBCore:Notify', source, Lang:t('error.cant_help'), 'error') end
+
+    local ped = source:GetControlledCharacter()
+    if not ped then return end
+
+    ped:PlayAnimation('nanos-world::A_Mannequin_Take_From_Floor', AnimationSlotType.UpperBody, true)
+    Timer.SetTimeout(function()
+        ped:StopAnimation('nanos-world::A_Mannequin_Take_From_Floor')
+        closestPlayer:Respawn(closestPlayer:GetLocation(), closestPlayer:GetRotation())
+    end, 3000)
 end)
