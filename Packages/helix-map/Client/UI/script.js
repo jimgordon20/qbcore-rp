@@ -1,5 +1,5 @@
-const blipsContainer = $('.blips');
-const blipElement = blipsContainer.find('.blip');
+const blipsContainer = $(".blips");
+const blipElement = blipsContainer.find(".blip");
 
 const mapContainer = $(".map-container");
 const mapWrapper = $(".map-wrapper");
@@ -7,15 +7,23 @@ const minimap = $(".map-wrapper .map");
 const playerMarker = $(".player-marker");
 const waypoint = $(".waypoint");
 
-let knownGameCoords = [[0, 0], [0, 0], [0, 0]];
-let knownImageCoords = [[0, 0], [0, 0], [0, 0]];
+let knownGameCoords = [
+    [0, 0],
+    [0, 0],
+    [0, 0],
+];
+let knownImageCoords = [
+    [0, 0],
+    [0, 0],
+    [0, 0],
+];
 
 let mapImageWidth = 7680;
 let mapImageHeight = 4200;
 let scale = 1;
 let scaleValues = {
-    minMapScale: .2,
-    maxMapScale: .6,
+    minMapScale: 0.4,
+    maxMapScale: 2.0,
 };
 let playerMarkerScale = 1;
 let zoomAmount = 2;
@@ -43,7 +51,7 @@ let selectedBlip = -1;
 $(document).on("mousedown", function (event) {
     if ($(event.target).hasClass("map-blip")) return;
     if (event.button === 0 && !animating) {
-        $('body').css("cursor", "grabbing");
+        $("body").css("cursor", "grabbing");
         isDragging = true;
         startX = event.pageX;
         startY = event.pageY;
@@ -77,10 +85,9 @@ $(document).on("mousemove", function (event) {
     }
 });
 
-
 $(document).on("mouseup", function (event) {
     if (event.button === 0 && isDragging) {
-        $('body').css("cursor", "grab");
+        $("body").css("cursor", "grab");
         isDragging = false;
         mapWrapper.css("transition", "all 0.2s linear");
 
@@ -90,8 +97,8 @@ $(document).on("mouseup", function (event) {
         let mapWrapperPos = mapWrapper.position();
         let mapContainerPos = mapContainer.position();
 
-        let mapWrapperBottom = (mapWrapperPos.top / scale) + mapWrapper.height();
-        let mapX = (clickX - mapContainerPos.left) / scale - (mapWrapperPos.left / scale);
+        let mapWrapperBottom = mapWrapperPos.top / scale + mapWrapper.height();
+        let mapX = (clickX - mapContainerPos.left) / scale - mapWrapperPos.left / scale;
         let mapY = (clickY - mapContainerPos.top) / scale - mapWrapperBottom;
 
         console.log(`Map Coordinates - X: ${mapX}, Y: ${-mapY}`);
@@ -126,8 +133,8 @@ $(document).on("dblclick", ".map-container", function (event) {
     let mapWrapperPos = mapWrapper.position();
     let mapContainerPos = mapContainer.position();
 
-    let mapWrapperBottom = (mapWrapperPos.top / scale) + mapWrapper.height();
-    let mapX = (clickX - mapContainerPos.left) / scale - (mapWrapperPos.left / scale);
+    let mapWrapperBottom = mapWrapperPos.top / scale + mapWrapper.height();
+    let mapX = (clickX - mapContainerPos.left) / scale - mapWrapperPos.left / scale;
     let mapY = (clickY - mapContainerPos.top) / scale - mapWrapperBottom;
 
     let gameCoords = reverseBarycentricInterpolation({ x: mapX, y: -mapY });
@@ -154,7 +161,7 @@ $(document).on("wheel", ".map-container", function (e) {
 // Select blip on the map
 $(document).on("click", ".blip", function () {
     let blipName = $(this).data("name");
-    let groupIndex = persistentBlipGroups.findIndex(group => group.name === blipName);
+    let groupIndex = persistentBlipGroups.findIndex((group) => group.name === blipName);
 
     if (groupIndex !== -1) {
         selectedGroupIndex = groupIndex;
@@ -164,9 +171,9 @@ $(document).on("click", ".blip", function () {
         let blipElement = $(this);
 
         if (group.blips.length > 1) {
-            blipElement.find('.blip-counter').text(`1/${group.blips.length}`);
+            blipElement.find(".blip-counter").text(`1/${group.blips.length}`);
         } else {
-            blipElement.find('.blip-counter').text('');
+            blipElement.find(".blip-counter").text("");
         }
 
         blipElement.addClass("active").siblings().removeClass("active");
@@ -224,8 +231,8 @@ $(document).on("mousedown", ".map-container", function (event) {
         let mapWrapperPos = mapWrapper.position();
         let mapContainerPos = mapContainer.position();
 
-        let mapWrapperBottom = (mapWrapperPos.top / scale) + mapWrapper.height();
-        let mapX = (clickX - mapContainerPos.left) / scale - (mapWrapperPos.left / scale);
+        let mapWrapperBottom = mapWrapperPos.top / scale + mapWrapper.height();
+        let mapX = (clickX - mapContainerPos.left) / scale - mapWrapperPos.left / scale;
         let mapY = (clickY - mapContainerPos.top) / scale - mapWrapperBottom;
 
         goToCoords({ x: mapX, y: mapY });
@@ -246,22 +253,22 @@ function goToCoords(coords) {
     let mapContainerWidth = mapContainer.width();
     let mapContainerHeight = mapContainer.height();
 
-    let adjustedX = (mapContainerWidth / 2) - x;
-    let adjustedY = (mapContainerHeight / 2) + y;
+    let adjustedX = mapContainerWidth / 2 - x;
+    let adjustedY = mapContainerHeight / 2 + y;
 
     mapWrapper.css({
         left: adjustedX,
-        bottom: adjustedY
+        bottom: adjustedY,
     });
 }
 
 function setMapScale(s) {
-    $(".map-blip").css("transform", "translate(-50%, -50%) scale(" + (1 / s) + ")");
-    $(".waypoint-marker").css("transform", "scale(" + (1 / s) + ")");
+    $(".map-blip").css("transform", "translate(-50%, -50%) scale(" + 1 / s + ")");
+    $(".waypoint-marker").css("transform", "scale(" + 1 / s + ")");
 
     mapContainer.css({
         transformOrigin: "center",
-        transform: "translate(-50%, -50%) scale(" + s + ")"
+        transform: "translate(-50%, -50%) scale(" + s + ")",
     });
 
     scale = s;
@@ -280,7 +287,7 @@ function updatePlayerPos(playerCoords, playerHeading) {
     playerMarker.css({
         left: x,
         bottom: y,
-        transform: "rotate(" + (playerHeading + 360) + "deg) rotate(-210deg) rotate(-90deg) scale(" + (1 / scale) + ")"
+        transform: "rotate(" + (playerHeading + 360) + "deg) rotate(-210deg) rotate(-90deg) scale(" + 1 / scale + ")",
     });
 }
 
@@ -288,9 +295,9 @@ function setBlips(blips) {
     let blipGroups = [];
     let blipsByName = {};
 
-    blips = blips.filter(blip => blip.type !== 'waypoint');
+    blips = blips.filter((blip) => blip.type !== "waypoint");
 
-    blips.forEach(blip => {
+    blips.forEach((blip) => {
         let { name } = blip;
         if (!blipsByName[name]) {
             blipsByName[name] = [];
@@ -301,7 +308,7 @@ function setBlips(blips) {
     for (let name in blipsByName) {
         blipGroups.push({
             name: name,
-            blips: blipsByName[name]
+            blips: blipsByName[name],
         });
     }
 
@@ -309,13 +316,13 @@ function setBlips(blips) {
     persistentBlipGroups = blipGroups;
 
     blipsContainer.empty();
-    $('.map-blip').remove();
+    $(".map-blip").remove();
 
-    blipGroups.forEach(group => {
+    blipGroups.forEach((group) => {
         let firstBlip = group.blips[0];
         let { imgUrl } = firstBlip;
         let count = group.blips.length;
-        let counterText = count > 1 ? `1/${count}` : '';
+        let counterText = count > 1 ? `1/${count}` : "";
 
         let newBlip = `<div class="blip" data-name="${group.name}">
             <p>${group.name} <span class="blip-counter">${counterText}</span></p>
@@ -324,18 +331,18 @@ function setBlips(blips) {
         blipsContainer.append(newBlip);
     });
 
-    blips.forEach(blip => {
+    blips.forEach((blip) => {
         let { imgUrl, id } = blip;
-        let mapBlip = $('<img>', {
-            'data-id': id,
-            'data-name': blip.name,
-            'src': imgUrl,
-            'alt': '',
-            'class': 'map-blip'
+        let mapBlip = $("<img>", {
+            "data-id": id,
+            "data-name": blip.name,
+            src: imgUrl,
+            alt: "",
+            class: "map-blip",
         });
 
         if (blinkingBlips[id]) {
-            mapBlip.addClass('blinking');
+            mapBlip.addClass("blinking");
         }
 
         mapWrapper.append(mapBlip);
@@ -352,7 +359,7 @@ function setBlips(blips) {
         mapBlip.css({
             left: x,
             bottom: y,
-            transform: "translate(-50%, -50%) scale(" + (1 / scale) + ")"
+            transform: "translate(-50%, -50%) scale(" + 1 / scale + ")",
         });
 
         mapBlip.on("click", function () {
@@ -409,14 +416,14 @@ function scrollBlips(direction) {
     if (selectedGroupIndex == -1) {
         let playerCoords = JSON.parse(playerMarker.data("coords"));
         goToCoords(playerCoords);
-        $('.blip').removeClass("active");
+        $(".blip").removeClass("active");
     } else {
         let group = persistentBlipGroups[selectedGroupIndex];
         let blipElement = $('.blip[data-name="' + group.name + '"]');
         if (group.blips.length > 1) {
-            blipElement.find('.blip-counter').text(`${selectedBlipIndex + 1}/${group.blips.length}`);
+            blipElement.find(".blip-counter").text(`${selectedBlipIndex + 1}/${group.blips.length}`);
         } else {
-            blipElement.find('.blip-counter').text('');
+            blipElement.find(".blip-counter").text("");
         }
         blipElement.addClass("active").siblings().removeClass("active");
 
@@ -463,10 +470,8 @@ function barycentricInterpolation({ x, y }) {
     const [[x1, y1], [x2, y2], [x3, y3]] = knownGameCoords;
     const [[u1, v1], [u2, v2], [u3, v3]] = knownImageCoords;
 
-    const w1 = ((y2 - y3) * (x - x3) + (x3 - x2) * (y - y3)) /
-        ((y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3));
-    const w2 = ((y3 - y1) * (x - x3) + (x1 - x3) * (y - y3)) /
-        ((y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3));
+    const w1 = ((y2 - y3) * (x - x3) + (x3 - x2) * (y - y3)) / ((y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3));
+    const w2 = ((y3 - y1) * (x - x3) + (x1 - x3) * (y - y3)) / ((y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3));
     const w3 = 1 - w1 - w2;
 
     const u = w1 * u1 + w2 * u2 + w3 * u3;
@@ -501,15 +506,15 @@ function setWaypoint(gameCoords) {
 
     let { x, y } = barycentricInterpolation(gameCoords);
 
-    let waypointMarker = $('<img>', {
-        class: 'waypoint-marker',
-        src: './media/map-icons/marker.svg',
-        alt: 'Marker',
+    let waypointMarker = $("<img>", {
+        class: "waypoint-marker",
+        src: "./media/map-icons/marker.svg",
+        alt: "Marker",
     });
 
     waypointMarker.data("coords", JSON.stringify({ x: x, y: y }));
 
-    waypointMarker.on('load', function () {
+    waypointMarker.on("load", function () {
         let markerWidth = waypointMarker.width();
         let markerHeight = waypointMarker.height();
 
@@ -519,7 +524,7 @@ function setWaypoint(gameCoords) {
         waypointMarker.css({
             left: x,
             bottom: y,
-            transform: "scale(" + (1 / scale) + ")"
+            transform: "scale(" + 1 / scale + ")",
         });
     });
 
@@ -532,7 +537,7 @@ function startBlinkingBlip(blipId) {
     blinkingBlips[blipId] = Date.now() + 5000;
     let blipElement = $(`.map-blip[data-id="${blipId}"]`);
     if (blipElement.length > 0) {
-        blipElement.addClass('blinking');
+        blipElement.addClass("blinking");
     }
 }
 
@@ -540,11 +545,11 @@ function stopBlinkingBlip(blipId) {
     delete blinkingBlips[blipId];
     let blipElement = $(`.map-blip[data-id="${blipId}"]`);
     if (blipElement.length > 0) {
-        blipElement.removeClass('blinking');
+        blipElement.removeClass("blinking");
     }
 }
 
-setInterval(function() {
+setInterval(function () {
     let currentTime = Date.now();
     for (let blipId in blinkingBlips) {
         if (currentTime > blinkingBlips[blipId]) {
@@ -553,47 +558,46 @@ setInterval(function() {
     }
 }, 500);
 
-
 const hardcodedBlips = [];
 hardmapBlips = [
-    { id: 1, name: 'car shop', coords: { x: 124069, y: -178853 }, imgUrl: './media/map-icons/cars-icon.svg' },
-    { id: 2, name: 'hotel', coords: { x: -25227, y: 217105 }, imgUrl: './media/map-icons/hotel-icon.svg' },
-    { id: 3, name: 'police station', coords: { x: 19838.9, y: 11656.1 }, imgUrl: './media/map-icons/police-icon.svg' },
-    { id: 4, name: 'park', coords: { x: 50000, y: -60000 }, imgUrl: './media/map-icons/park-icon.svg' },
-    { id: 5, name: 'hospital', coords: { x: -33787.4, y: 134419.7 }, imgUrl: './media/map-icons/medicine-icon.svg' },
-    { id: 6, name: 'fire dept', coords: { x: 17978.9, y: -81652.2 }, imgUrl: './media/map-icons/firedept-icon.svg' },
-    { id: 7, name: 'bank', coords: { x: -15757.2, y: -49698.1 }, imgUrl: './media/map-icons/bank-icon.svg' },
-    { id: 8, name: 'bank', coords: { x: -28861.0, y: -61394.7 }, imgUrl: './media/map-icons/bank-icon.svg' },
-    { id: 9, name: 'bank', coords: { x: -24135.4, y: -81352.9 }, imgUrl: './media/map-icons/bank-icon.svg' },
-    { id: 10, name: 'bank', coords: { x: 19417.4, y: -58780.5 }, imgUrl: './media/map-icons/bank-icon.svg' },
-    { id: 11, name: 'convenience store', coords: { x: -12991, y: -11003 }, imgUrl: './media/map-icons/shop-icon.svg' },
-    { id: 12, name: 'convenience store', coords: { x: -36505, y: -73568 }, imgUrl: './media/map-icons/shop-icon.svg' },
-    { id: 13, name: 'convenience store', coords: { x: 417, y: -97079 }, imgUrl: './media/map-icons/shop-icon.svg' },
-    { id: 14, name: 'convenience store', coords: { x: 16681, y: -46656 }, imgUrl: './media/map-icons/shop-icon.svg' },
-    { id: 15, name: 'convenience store', coords: { x: 4347, y: 95383 }, imgUrl: './media/map-icons/shop-icon.svg' },
-    { id: 16, name: 'convenience store', coords: { x: -66619, y: -93930 }, imgUrl: './media/map-icons/shop-icon.svg' },
-    { id: 17, name: 'convenience store', coords: { x: -54299, y: -42392 }, imgUrl: './media/map-icons/shop-icon.svg' },
-    { id: 18, name: 'convenience store', coords: { x: 14385, y: 148275 }, imgUrl: './media/map-icons/shop-icon.svg' },
-    { id: 19, name: 'convenience store', coords: { x: -29640, y: 171248 }, imgUrl: './media/map-icons/shop-icon.svg' },
-    { id: 20, name: 'convenience store', coords: { x: -42868, y: -113714 }, imgUrl: './media/map-icons/shop-icon.svg' },
-    { id: 21, name: 'convenience store', coords: { x: -6867, y: -72680 }, imgUrl: './media/map-icons/shop-icon.svg' },
-    { id: 22, name: 'convenience store', coords: { x: -49719, y: -26348 }, imgUrl: './media/map-icons/shop-icon.svg' },
-    { id: 23, name: 'convenience store', coords: { x: 13210, y: -20963 }, imgUrl: './media/map-icons/shop-icon.svg' },
-    { id: 24, name: 'convenience store', coords: { x: -12929, y: 118341 }, imgUrl: './media/map-icons/shop-icon.svg' },
-    { id: 25, name: 'convenience store', coords: { x: -23252, y: 121788 }, imgUrl: './media/map-icons/shop-icon.svg' },
-    { id: 26, name: 'convenience store', coords: { x: 12004, y: -17089 }, imgUrl: './media/map-icons/shop-icon.svg' },
-    { id: 27, name: 'convenience store', coords: { x: -19975, y: 127011 }, imgUrl: './media/map-icons/shop-icon.svg' },
-    { id: 28, name: 'convenience store', coords: { x: -12867, y: 122088 }, imgUrl: './media/map-icons/shop-icon.svg' },
-    { id: 30, name: 'gun store', coords: { x: -2541, y: -89358 }, imgUrl: './media/map-icons/gun-icon.svg' },
-    { id: 31, name: 'soft rock cafe', coords: { x: -43221, y: -111533 }, imgUrl: './media/map-icons/food-icon.svg' },
-    { id: 32, name: 'mc lounge', coords: { x: -47806, y: -24400 }, imgUrl: './media/map-icons/bar-icon.svg' },
-    { id: 33, name: 'best burger', coords: { x: -30968, y: 171822 }, imgUrl: './media/map-icons/food-icon.svg' },
-    { id: 34, name: 'mirage theater', coords: { x: -7569, y: -101562 }, imgUrl: './media/map-icons/cinema-icon.svg' },
-    { id: 35, name: 'mirage theater', coords: { x: -37731, y: 49628 }, imgUrl: './media/map-icons/cinema-icon.svg' },
+    { id: 1, name: "car shop", coords: { x: 124069, y: -178853 }, imgUrl: "./media/map-icons/cars-icon.svg" },
+    { id: 2, name: "hotel", coords: { x: -25227, y: 217105 }, imgUrl: "./media/map-icons/hotel-icon.svg" },
+    { id: 3, name: "police station", coords: { x: 19838.9, y: 11656.1 }, imgUrl: "./media/map-icons/police-icon.svg" },
+    { id: 4, name: "park", coords: { x: 50000, y: -60000 }, imgUrl: "./media/map-icons/park-icon.svg" },
+    { id: 5, name: "hospital", coords: { x: -33787.4, y: 134419.7 }, imgUrl: "./media/map-icons/medicine-icon.svg" },
+    { id: 6, name: "fire dept", coords: { x: 17978.9, y: -81652.2 }, imgUrl: "./media/map-icons/firedept-icon.svg" },
+    { id: 7, name: "bank", coords: { x: -15757.2, y: -49698.1 }, imgUrl: "./media/map-icons/bank-icon.svg" },
+    { id: 8, name: "bank", coords: { x: -28861.0, y: -61394.7 }, imgUrl: "./media/map-icons/bank-icon.svg" },
+    { id: 9, name: "bank", coords: { x: -24135.4, y: -81352.9 }, imgUrl: "./media/map-icons/bank-icon.svg" },
+    { id: 10, name: "bank", coords: { x: 19417.4, y: -58780.5 }, imgUrl: "./media/map-icons/bank-icon.svg" },
+    { id: 11, name: "convenience store", coords: { x: -12991, y: -11003 }, imgUrl: "./media/map-icons/shop-icon.svg" },
+    { id: 12, name: "convenience store", coords: { x: -36505, y: -73568 }, imgUrl: "./media/map-icons/shop-icon.svg" },
+    { id: 13, name: "convenience store", coords: { x: 417, y: -97079 }, imgUrl: "./media/map-icons/shop-icon.svg" },
+    { id: 14, name: "convenience store", coords: { x: 16681, y: -46656 }, imgUrl: "./media/map-icons/shop-icon.svg" },
+    { id: 15, name: "convenience store", coords: { x: 4347, y: 95383 }, imgUrl: "./media/map-icons/shop-icon.svg" },
+    { id: 16, name: "convenience store", coords: { x: -66619, y: -93930 }, imgUrl: "./media/map-icons/shop-icon.svg" },
+    { id: 17, name: "convenience store", coords: { x: -54299, y: -42392 }, imgUrl: "./media/map-icons/shop-icon.svg" },
+    { id: 18, name: "convenience store", coords: { x: 14385, y: 148275 }, imgUrl: "./media/map-icons/shop-icon.svg" },
+    { id: 19, name: "convenience store", coords: { x: -29640, y: 171248 }, imgUrl: "./media/map-icons/shop-icon.svg" },
+    { id: 20, name: "convenience store", coords: { x: -42868, y: -113714 }, imgUrl: "./media/map-icons/shop-icon.svg" },
+    { id: 21, name: "convenience store", coords: { x: -6867, y: -72680 }, imgUrl: "./media/map-icons/shop-icon.svg" },
+    { id: 22, name: "convenience store", coords: { x: -49719, y: -26348 }, imgUrl: "./media/map-icons/shop-icon.svg" },
+    { id: 23, name: "convenience store", coords: { x: 13210, y: -20963 }, imgUrl: "./media/map-icons/shop-icon.svg" },
+    { id: 24, name: "convenience store", coords: { x: -12929, y: 118341 }, imgUrl: "./media/map-icons/shop-icon.svg" },
+    { id: 25, name: "convenience store", coords: { x: -23252, y: 121788 }, imgUrl: "./media/map-icons/shop-icon.svg" },
+    { id: 26, name: "convenience store", coords: { x: 12004, y: -17089 }, imgUrl: "./media/map-icons/shop-icon.svg" },
+    { id: 27, name: "convenience store", coords: { x: -19975, y: 127011 }, imgUrl: "./media/map-icons/shop-icon.svg" },
+    { id: 28, name: "convenience store", coords: { x: -12867, y: 122088 }, imgUrl: "./media/map-icons/shop-icon.svg" },
+    { id: 30, name: "gun store", coords: { x: -2541, y: -89358 }, imgUrl: "./media/map-icons/gun-icon.svg" },
+    { id: 31, name: "soft rock cafe", coords: { x: -43221, y: -111533 }, imgUrl: "./media/map-icons/food-icon.svg" },
+    { id: 32, name: "mc lounge", coords: { x: -47806, y: -24400 }, imgUrl: "./media/map-icons/bar-icon.svg" },
+    { id: 33, name: "best burger", coords: { x: -30968, y: 171822 }, imgUrl: "./media/map-icons/food-icon.svg" },
+    { id: 34, name: "mirage theater", coords: { x: -7569, y: -101562 }, imgUrl: "./media/map-icons/cinema-icon.svg" },
+    { id: 35, name: "mirage theater", coords: { x: -37731, y: 49628 }, imgUrl: "./media/map-icons/cinema-icon.svg" },
 ];
 
 setBlips(hardmapBlips);
-setMapScale(.4);
+setMapScale(0.4);
 
 Events.Subscribe("Map:SetBlips", (blips) => {
     setBlips(blips);
@@ -618,14 +622,17 @@ Events.Subscribe("Map:UpdateView", () => {
     if (selectedBlip == -1) {
         let playerCoords = JSON.parse(playerMarker.data("coords"));
         goToCoords(playerCoords);
-        $('.blip').removeClass("active");
+        $(".blip").removeClass("active");
     } else {
         let blipId = persistentBlips[selectedBlip].id;
         let blip = $(`.map-blip[data-id="${blipId}"]`);
         let blipCoords = JSON.parse(blip.data("coords"));
         blipCoords.y -= 10;
         blipCoords.x -= 10;
-        $('.blip[data-id="' + blipId + '"]').addClass("active").siblings().removeClass("active");
+        $('.blip[data-id="' + blipId + '"]')
+            .addClass("active")
+            .siblings()
+            .removeClass("active");
         goToCoords(blipCoords);
     }
 });
@@ -638,16 +645,16 @@ Events.Subscribe("Map:RemoveWaypoint", function () {
     $(".waypoint-marker").remove();
 });
 
-Events.Subscribe("Map:BlinkBlip", function(blipId) {
+Events.Subscribe("Map:BlinkBlip", function (blipId) {
     startBlinkingBlip(blipId);
 });
 
-Events.Subscribe("Map:BlinkWaypoint", function() {
+Events.Subscribe("Map:BlinkWaypoint", function () {
     let waypointMarker = $(".waypoint-marker");
     if (waypointMarker.length > 0) {
-        waypointMarker.addClass('blinking');
-        setTimeout(function() {
-            waypointMarker.removeClass('blinking');
+        waypointMarker.addClass("blinking");
+        setTimeout(function () {
+            waypointMarker.removeClass("blinking");
         }, 5000);
     }
 });

@@ -1,81 +1,71 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="./style.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    </head>
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="./style.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
-    rel="stylesheet" />
+    <body class="">
+        <div class="wrapper">
+            <div class="map-name">
+                <p>SERVER NAME</p>
+            </div>
 
-</head>
+            <div class="map-container">
+                <div class="map-wrapper">
+                    <img src="./media/map.png" alt="" class="map" />
+                    <img src="./media/player-marker.png" alt="" class="player-marker" />
+                </div>
+            </div>
+            <img src="./media/waypoint.png" alt="" class="waypoint" />
 
-<body class="">
-  <div class="wrapper">
-
-    <div class="map-name">
-      <p>SERVER NAME</p>
-    </div>
-
-    <div class="map-container">
-      <div class="map-wrapper">
-        <img src="./media/map.png" alt="" class="map">
-        <img src="./media/player-marker.png" alt="" class="player-marker">
-      </div>
-    </div>
-    <img src="./media/waypoint.png" alt="" class="waypoint">
-
-    <div class="blips">
-      <!-- <div class="blip">
+            <div class="blips">
+                <!-- <div class="blip">
         <p>supermarket</p>
         <img src="./media/map-icons/Shop-icon.svg" alt="">
       </div> -->
-    </div>
+            </div>
 
-    <div class="hotkeys">
-      <!-- <div class="hotkey">
+            <div class="hotkeys">
+                <!-- <div class="hotkey">
           <h1>Q</h1>
           <p>HIDE</p>
       </div> -->
-      <div class="hotkey">
-        <img src="./media/Shortcut-Up.svg" alt="">
-        <img src="./media/Shortcut-Down.svg" alt="">
-        <p>select blip</p>
-      </div>
-      <div class="hotkey">
-        <img src="./media/Mouse-Scroll-Icon.svg" alt="">
-        <p>zoom</p>
-      </div>
-      <div class="hotkey">
-        <h1>M</h1>
-        <p>close</p>
-      </div>
-    </div>
+                <div class="hotkey">
+                    <img src="./media/Shortcut-Up.svg" alt="" />
+                    <img src="./media/Shortcut-Down.svg" alt="" />
+                    <p>select blip</p>
+                </div>
+                <div class="hotkey">
+                    <img src="./media/Mouse-Scroll-Icon.svg" alt="" />
+                    <p>zoom</p>
+                </div>
+                <div class="hotkey">
+                    <h1>M</h1>
+                    <p>close</p>
+                </div>
+            </div>
 
+            <figure class="outline">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </figure>
+            <img src="./media/right-blips_shadow.png" alt="" class="waypoints-shadow" />
+            <div class="bg-darker"></div>
+            <div class="shadow top-left"></div>
+            <div class="shadow bottom-right"></div>
+            <div class="bg"></div>
+        </div>
 
-    <figure class="outline">
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-    </figure>
-    <img src="./media/right-blips_shadow.png" alt="" class="waypoints-shadow">
-    <div class="bg-darker"></div>
-    <div class="shadow top-left"></div>
-    <div class="shadow bottom-right"></div>
-    <div class="bg"></div>
-  </div>
-
-
-  <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-    crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.2/math.js"
-    integrity="sha512-ap888g/h47w/Rp6mra1vA5NJtdPZJRxOuF/x7jkrL2NdRB8XrKwXIt/PMvre+oMPUdYt+6NNDjwbdwl/PkYXrw=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="script.js"></script>
-</body>
-
+        <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.2/math.js" integrity="sha512-ap888g/h47w/Rp6mra1vA5NJtdPZJRxOuF/x7jkrL2NdRB8XrKwXIt/PMvre+oMPUdYt+6NNDjwbdwl/PkYXrw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="script.js"></script>
+    </body>
 </html>
