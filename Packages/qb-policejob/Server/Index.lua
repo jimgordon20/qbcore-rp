@@ -1,131 +1,136 @@
-Package.Require('commands.lua')
-Package.Require('evidence.lua')
-Package.Require('interactions.lua')
-Package.Require('objects.lua')
-Package.Require('vehicle.lua')
+local Lang = Package.Require('../Shared/locales/' .. QBConfig.Language .. '.lua')
+local peds = {}
 
--- Job Blips
+for i = 1, #Config.Locations['duty'], 1 do
+    local location_info = Config.Locations['duty'][i]
+    local coords = location_info.coords
+    local heading = location_info.heading
+    local ped = HCharacter(coords, Rotator(0, heading, 0), '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body')
+    ped:AddSkeletalMeshAttached('head', '/CharacterCreator/CharacterAssets/Avatar_FBX/Head/Male_Head')
+    ped:AddSkeletalMeshAttached('chest', 'helix::SK_Man_Outwear_03')
+    ped:AddSkeletalMeshAttached('legs', 'helix::SK_Man_Pants_05')
+    ped:AddSkeletalMeshAttached('feet', 'helix::SK_Delivery_Shoes')
 
-local function UpdateBlips()
-    local dutyPlayers = {}
-    local players = QBCore.Functions.GetQBPlayers()
-    for i = 1, #players do
-        local v = players[i]
-        if v and (v.PlayerData.job.type == 'leo' or v.PlayerData.job.type == 'ems') and v.PlayerData.job.onduty then
-            local coords = GetEntityCoords(GetPlayerPed(v.PlayerData.source))
-            local heading = GetEntityHeading(GetPlayerPed(v.PlayerData.source))
-            dutyPlayers[#dutyPlayers + 1] = {
-                source = v.PlayerData.source,
-                label = v.PlayerData.metadata['callsign'],
-                job = v.PlayerData.job.name,
-                location = {
-                    x = coords.x,
-                    y = coords.y,
-                    z = coords.z,
-                    w = heading
-                }
-            }
-        end
-    end
-    Events.BroadcastRemote('qb-policejob:client:updateBlips', dutyPlayers)
+    peds[ped] = {
+        options = {
+            {
+                type = 'server',
+                event = 'QBCore:ToggleDuty',
+                label = 'Toggle Duty',
+                icon = 'fas fa-clipboard',
+                jobType = 'leo'
+            },
+        },
+        distance = 400,
+    }
 end
 
-Timer.SetInterval(UpdateBlips, 5000)
+for i = 1, #Config.Locations['vehicle'], 1 do
+    local location_info = Config.Locations['vehicle'][i]
+    local coords = location_info.coords
+    local heading = location_info.heading
+    local ped = HCharacter(coords, Rotator(0, heading, 0), '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body')
+    ped:AddSkeletalMeshAttached('head', '/CharacterCreator/CharacterAssets/Avatar_FBX/Head/Male_Head')
+    ped:AddSkeletalMeshAttached('chest', 'helix::SK_Man_Outwear_03')
+    ped:AddSkeletalMeshAttached('legs', 'helix::SK_Man_Pants_05')
+    ped:AddSkeletalMeshAttached('feet', 'helix::SK_Delivery_Shoes')
 
--- Update Cop Count
-
-local function GetCurrentCops()
-    local amount = 0
-    local players = QBCore.Functions.GetQBPlayers()
-    for _, v in pairs(players) do
-        if v and v.PlayerData.job.type == 'leo' and v.PlayerData.job.onduty then
-            amount = amount + 1
-        end
-    end
-    --return amount
-    Events.BroadcastRemote('qb-policejob:client:setCopCount', amount)
+    peds[ped] = {
+        options = {
+            {
+                type = 'server',
+                event = 'qb-policejob:server:vehicle',
+                label = 'Vehicles',
+                icon = 'fas fa-car',
+                jobType = 'leo'
+            },
+        },
+        distance = 400,
+    }
 end
 
-Timer.SetInterval(GetCurrentCops, 5000)
+for i = 1, #Config.Locations['stash'], 1 do
+    local location_info = Config.Locations['stash'][i]
+    local coords = location_info.coords
+    local heading = location_info.heading
+    local ped = HCharacter(coords, Rotator(0, heading, 0), '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body')
+    ped:AddSkeletalMeshAttached('head', '/CharacterCreator/CharacterAssets/Avatar_FBX/Head/Male_Head')
+    ped:AddSkeletalMeshAttached('chest', 'helix::SK_Man_Outwear_03')
+    ped:AddSkeletalMeshAttached('legs', 'helix::SK_Man_Pants_05')
+    ped:AddSkeletalMeshAttached('feet', 'helix::SK_Delivery_Shoes')
 
-local updatingCops = false
+    peds[ped] = {
+        options = {
+            {
+                type = 'server',
+                event = 'qb-policejob:server:stash',
+                label = 'Open Stash',
+                icon = 'fas fa-box',
+                jobType = 'leo'
+            },
+        },
+        distance = 400,
+    }
+end
 
-Events.SubscribeRemote('qb-policejob:server:updateCurrentCops', function()
-    local amount = 0
-    local players = QBCore.Functions.GetQBPlayers()
-    if updatingCops then return end
-    updatingCops = true
-    for _, v in pairs(players) do
-        if v and v.PlayerData.job.type == 'leo' and v.PlayerData.job.onduty then
-            amount = amount + 1
-        end
-    end
-    Events.BroadcastRemote('qb-policejob:client:setCopCount', amount)
-    updatingCops = false
-end)
+for i = 1, #Config.Locations['evidence'], 1 do
+    local location_info = Config.Locations['evidence'][i]
+    local coords = location_info.coords
+    local heading = location_info.heading
+    local ped = HCharacter(coords, Rotator(0, heading, 0), '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body')
+    ped:AddSkeletalMeshAttached('head', '/CharacterCreator/CharacterAssets/Avatar_FBX/Head/Male_Head')
+    ped:AddSkeletalMeshAttached('chest', 'helix::SK_Man_Outwear_03')
+    ped:AddSkeletalMeshAttached('legs', 'helix::SK_Man_Pants_05')
+    ped:AddSkeletalMeshAttached('feet', 'helix::SK_Delivery_Shoes')
+
+    peds[ped] = {
+        options = {
+            {
+                type = 'client',
+                event = 'qb-policejob:client:evidence',
+                label = 'Evidence Lockers',
+                icon = 'fas fa-dungeon',
+                jobType = 'leo'
+            },
+        },
+        distance = 400,
+    }
+end
+
+for i = 1, #Config.Locations['fingerprint'], 1 do
+    local location_info = Config.Locations['fingerprint'][i]
+    local coords = location_info.coords
+    local heading = location_info.heading
+    local ped = HCharacter(coords, Rotator(0, heading, 0), '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body')
+    ped:AddSkeletalMeshAttached('head', '/CharacterCreator/CharacterAssets/Avatar_FBX/Head/Male_Head')
+    ped:AddSkeletalMeshAttached('chest', 'helix::SK_Man_Outwear_03')
+    ped:AddSkeletalMeshAttached('legs', 'helix::SK_Man_Pants_05')
+    ped:AddSkeletalMeshAttached('feet', 'helix::SK_Delivery_Shoes')
+
+    peds[ped] = {
+        options = {
+            {
+                type = 'server',
+                event = 'qb-policejob:server:fingerprint',
+                label = 'Fingerprint',
+                icon = 'fas fa-fingerprint',
+                jobType = 'leo'
+            },
+        },
+        distance = 400,
+    }
+end
 
 -- Callbacks
 
-QBCore.Functions.CreateCallback('qb-policejob:server:getCops', function(_, cb)
-    local amount = 0
-    local players = QBCore.Functions.GetQBPlayers()
-    for _, v in pairs(players) do
-        if v and v.PlayerData.job.type == 'leo' and v.PlayerData.job.onduty then
-            amount = amount + 1
-        end
-    end
-    cb(amount)
-end)
-
-QBCore.Functions.CreateCallback('qb-policejob:server:isPoliceForcePresent', function(_, cb)
-    local retval = false
-    local players = QBCore.Functions.GetQBPlayers()
-    for _, v in pairs(players) do
-        if v and v.PlayerData.job.type == 'leo' and v.PlayerData.job.grade.level >= 2 then
-            retval = true
-            break
-        end
-    end
-    cb(retval)
-end)
-
-QBCore.Functions.CreateCallback('qb-policejob:getDutyPlayers', function(_, cb)
-    local dutyPlayers = {}
-    local players = QBCore.Functions.GetQBPlayers()
-    for _, v in pairs(players) do
-        if v and v.PlayerData.job.type == 'leo' and v.PlayerData.job.onduty then
-            dutyPlayers[#dutyPlayers + 1] = {
-                source = v.PlayerData.source,
-                label = v.PlayerData.metadata['callsign'],
-                job = v.PlayerData.job.name
-            }
-        end
-    end
-    cb(dutyPlayers)
+QBCore.Functions.CreateCallback('qb-policejob:server:getPeds', function(_, cb)
+    cb(peds)
 end)
 
 -- Events
 
-Events.SubscribeRemote('qb-policejob:server:leaveCamera', function(source, coords)
-    source:SetCameraLocation(coords)
-    local newChar = HCharacter(coords, Rotator(), source)
-    local player_dimension = source:GetDimension()
-    newChar:SetDimension(player_dimension)
-    source:Possess(newChar)
-end)
+Events.SubscribeRemote('qb-policejob:server:vehicle', function(source)
 
-Events.SubscribeRemote('qb-policejob:server:policeAlert', function(source, text)
-    local src = source
-    local ped = GetPlayerPed(src)
-    local coords = GetEntityCoords(ped)
-    local players = QBCore.Functions.GetQBPlayers()
-    for _, v in pairs(players) do
-        if v and v.PlayerData.job.type == 'leo' and v.PlayerData.job.onduty then
-            local alertData = { title = Lang:t('info.new_call'), coords = { x = coords.x, y = coords.y, z = coords.z }, description = text }
-            Events.CallRemote('qb-phone:client:addPoliceAlert', v.PlayerData.source, alertData)
-            Events.CallRemote('qb-policejob:client:policeAlert', v.PlayerData.source, coords, text)
-        end
-    end
 end)
 
 Events.SubscribeRemote('qb-policejob:server:stash', function(source)
@@ -137,24 +142,139 @@ Events.SubscribeRemote('qb-policejob:server:stash', function(source)
     OpenInventory(source, stashName)
 end)
 
-Events.SubscribeRemote('qb-policejob:server:trash', function(source)
+Events.SubscribeRemote('qb-policejob:server:fingerprint', function(source)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
     if Player.PlayerData.job.type ~= 'leo' then return end
-    OpenInventory(source, 'policetrash', {
-        maxweight = 4000000,
-        slots = 300,
-    })
+    local closest_player, distance = QBCore.Functions.GetClosestPlayer(source)
+    if not closest_player or distance > 500 then return end
+    local target_player = closest_player:GetPlayer()
+    Events.CallRemote('qb-policejob:client:fingerprint', target_player)
 end)
 
-Events.SubscribeRemote('qb-policejob:server:evidence', function(source, currentEvidence)
+Events.SubscribeRemote('qb-policejob:server:evidence', function(source, drawer)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
     if Player.PlayerData.job.type ~= 'leo' then return end
-    OpenInventory(source, currentEvidence, {
+    OpenInventory(src, drawer, {
         maxweight = 4000000,
         slots = 500,
     })
+end)
+
+Events.SubscribeRemote('qb-policejob:server:policeAlert', function(source, text)
+    local ped = source:GetControlledCharacter()
+    if not ped then return end
+    local ped_coords = ped:GetLocation()
+    local players = QBCore.Functions.GetQBPlayers()
+    for _, v in pairs(players) do
+        if v and v.PlayerData.job.type == 'leo' and v.PlayerData.job.onduty then
+            Events.CallRemote('qb-policejob:client:policeAlert', v.PlayerData.source, ped_coords, text)
+        end
+    end
+end)
+
+Events.SubscribeRemote('qb-policejob:server:search', function(source, data)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then return end
+    if Player.PlayerData.job.type ~= 'leo' then return end
+
+    local target_ped = data.entity
+    if not target_ped then return end
+    local target_coords = target_ped:GetLocation()
+    local player_coords = source:GetControlledCharacter():GetLocation()
+    local distance = player_coords:Distance(target_coords)
+    if distance > 500 then return end
+    local target_player = target_ped:GetPlayer()
+    OpenInventoryById(source, target_player)
+end)
+
+Events.SubscribeRemote('qb-policejob:server:escort', function(source, data)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then return end
+    if Player.PlayerData.job.type ~= 'leo' then return end
+    local target_ped = data.entity
+    if not target_ped then return end
+    local target_coords = target_ped:GetLocation()
+    local player_ped = source:GetControlledCharacter()
+    local player_coords = player_ped:GetLocation()
+    local distance = player_coords:Distance(target_coords)
+    if distance > 500 then return end
+    local player_rotation = player_ped:GetRotation()
+    local placing_position = player_rotation:GetForwardVector() * 100
+    if target_ped:GetValue('escorted', false) then
+        target_ped:SetInputEnabled(false)
+        target_ped:SetGravityEnabled(false)
+        target_ped:AttachTo(player_ped)
+        target_ped:SetRelativeLocation(placing_position)
+        target_ped:SetCollision(CollisionType.NoCollision)
+        target_ped:SetValue('escorted', true, true)
+    else
+        target_ped:Detach()
+        target_ped:SetInputEnabled(true)
+        target_ped:SetLocation(placing_position + player_coords)
+        target_ped:SetCollision(CollisionType.Normal)
+        target_ped:SetGravityEnabled(true)
+        target_ped:SetValue('escorted', false, true)
+    end
+end)
+
+Events.SubscribeRemote('qb-policejob:server:handcuff', function(source, data)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then return end
+    if Player.PlayerData.job.type ~= 'leo' then return end
+    local closest_player, distance = QBCore.Functions.GetClosestPlayer(source)
+    if not closest_player or distance > 500 then return end
+    Events.CallRemote('qb-policejob:client:handcuff', closest_player)
+end)
+
+Events.SubscribeRemote('qb-policejob:server:putvehicle', function(source, data)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then return end
+    if Player.PlayerData.job.type ~= 'leo' then return end
+    local closest_player, distance = QBCore.Functions.GetClosestPlayer(source)
+    if not closest_player or distance > 500 then return end
+    Events.CallRemote('qb-policejob:client:handcuff', closest_player)
+end)
+
+Events.SubscribeRemote('qb-policejob:server:takeoutvehicle', function(source, data)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then return end
+    if Player.PlayerData.job.type ~= 'leo' then return end
+    local closest_player, distance = QBCore.Functions.GetClosestPlayer(source)
+    if not closest_player or distance > 500 then return end
+    Events.CallRemote('qb-policejob:client:handcuff', closest_player)
+end)
+
+Events.SubscribeRemote('qb-policejob:server:jail', function(source, data)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then return end
+    if Player.PlayerData.job.type ~= 'leo' then return end
+    local target_ped = data.entity
+    if not target_ped then return end
+    local target_coords = target_ped:GetLocation()
+    local player_coords = source:GetControlledCharacter():GetLocation()
+    local distance = player_coords:Distance(target_coords)
+    if distance > 500 then return end
+    local target_player = target_ped:GetPlayer()
+    Events.CallRemote('qb-policejob:client:jail', target_player)
+end)
+
+Events.SubscribeRemote('qb-policejob:server:takelicense', function(source)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then return end
+    if Player.PlayerData.job.type ~= 'leo' then return end
+    local closest_player, distance = QBCore.Functions.GetClosestPlayer(source)
+    if not closest_player or distance > 500 then return end
+    Events.CallRemote('qb-policejob:client:handcuff', closest_player)
+end)
+
+Events.SubscribeRemote('qb-policejob:server:leaveCamera', function(source, coords)
+    source:SetCameraLocation(coords)
+    local newChar = HCharacter(coords, Rotator(), source)
+    local player_dimension = source:GetDimension()
+    newChar:SetDimension(player_dimension)
+    source:Possess(newChar)
 end)
 
 -- Items
@@ -163,14 +283,27 @@ QBCore.Functions.CreateUseableItem('handcuffs', function(source)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
     if not Player.Functions.GetItemByName('handcuffs') then return end
-    Events.CallRemote('qb-policejob:client:CuffPlayerSoft', source)
+    Events.CallRemote('police:client:CuffPlayerSoft', source)
 end)
 
-QBCore.Functions.CreateUseableItem('moneybag', function(source, item)
+-- Commands
+
+QBCore.Commands.Add('cam', Lang:t('commands.camera'), { { name = 'camid', help = Lang:t('info.camera_id') } }, false, function(source, args)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
-    if not Player.Functions.GetItemByName('moneybag') or not item.info or item.info == '' then return end
-    if not Player.PlayerData.job.type == 'leo' then return end
-    if not RemoveItem(source, 'moneybag', 1, item.slot, 'qb-policejob:moneybag') then return end
-    Player.Functions.AddMoney('cash', tonumber(item.info.cash), 'qb-policejob:moneybag')
-end)
+    if Player.PlayerData.job.type ~= 'leo' and not Player.PlayerData.job.onduty then
+        Events.CallRemote('QBCore:Notify', source, Lang:t('error.on_duty_police_only'), 'error')
+        return
+    end
+    local camera_id = tonumber(args[1])
+    if not Config.SecurityCameras.cameras[camera_id] then
+        Events.CallRemote('QBCore:Notify', source, Lang:t('error.no_camera'), 'error')
+        return
+    end
+    local ped = source:GetControlledCharacter()
+    if ped then
+        source:UnPossess()
+        ped:Destroy()
+    end
+    Events.CallRemote('qb-policejob:client:viewCamera', source, camera_id)
+end, 'user')

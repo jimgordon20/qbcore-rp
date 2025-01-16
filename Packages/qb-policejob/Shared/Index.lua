@@ -21,25 +21,25 @@ Config = {
 
     Locations = {
         duty = {
-            Vector(94065.4, -162138.9, 198.6),
-            Vector(46927.3, 240690.4, 198.6),
-            Vector(117647.1, 87226.2, 168.6),
-            Vector(-194893.5, 218828.6, 198.6),
-            Vector(18921.9, 11126.4, 214.8)
+            { coords = Vector(94065.4, -162138.9, 198.6),  heading = 132 },
+            { coords = Vector(46927.3, 240690.4, 198.6),   heading = -48 },
+            { coords = Vector(117647.1, 87226.2, 168.6),   heading = -98 },
+            { coords = Vector(-194893.5, 218828.6, 198.6), heading = 16 },
+            { coords = Vector(18921.9, 11126.4, 214.8),    heading = 87 },
         },
         vehicle = {
-            Vector(93790.6, -162365.5, 198.6),
-            Vector(46669.3, 240460.3, 198.6),
-            Vector(117288.8, 87303.2, 198.6),
-            Vector(-194828.0, 218464.1, 198.6),
-            Vector(19310.0, 11104.6, 214.8)
+            { coords = Vector(93790.6, -162365.5, 198.6),  heading = 132 },
+            { coords = Vector(46669.3, 240460.3, 198.6),   heading = -48 },
+            { coords = Vector(117288.8, 87303.2, 198.6),   heading = -98 },
+            { coords = Vector(-194828.0, 218464.1, 198.6), heading = 16 },
+            { coords = Vector(19310.0, 11104.6, 214.8),    heading = 87 },
         },
         stash = {
-            Vector(93471.0, -162573.3, 198.6),
-            Vector(46391.4, 240198.9, 198.6),
-            Vector(116960.4, 87345.2, 198.6),
-            Vector(-194684.5, 218136.0, 198.6),
-            Vector(19651.5, 11085.4, 214.8)
+            { coords = Vector(93471.0, -162573.3, 198.6),  heading = 132 },
+            { coords = Vector(46391.4, 240198.9, 198.6),   heading = -48 },
+            { coords = Vector(116960.4, 87345.2, 198.6),   heading = -98 },
+            { coords = Vector(-194684.5, 218136.0, 198.6), heading = 16 },
+            { coords = Vector(19651.5, 11085.4, 214.8),    heading = 87 },
         },
         impound = {
             Vector(0, 0, 0)
@@ -51,14 +51,14 @@ Config = {
             Vector(0, 0, 0)
         },
         fingerprint = {
-            Vector(0, 0, 0)
+            { coords = Vector(94619.2, -161676.1, 198.6), heading = 132 },
         },
         evidence = {
-            Vector(94344.3, -161916.0, 198.6),
-            Vector(46137.2, 239955.3, 198.6),
-            Vector(116592.5, 87429.1, 198.6),
-            Vector(-194660.9, 217773.2, 198.7),
-            Vector(20004.2, 11073.7, 214.8)
+            { coords = Vector(94344.3, -161916.0, 198.6),  heading = 132 },
+            { coords = Vector(46137.2, 239955.3, 198.6),   heading = -48 },
+            { coords = Vector(116592.5, 87429.1, 198.6),   heading = -98 },
+            { coords = Vector(-194660.9, 217773.2, 198.7), heading = 16 },
+            { coords = Vector(20004.2, 11073.7, 214.8),    heading = 87 },
         },
         stations = {
             { label = 'Police Station', coords = Vector(93721.3, -161336.4, 198.6) },
@@ -69,7 +69,7 @@ Config = {
         },
     },
 
-    Radars = {
+    SpeedCamera = {
         Vector(13438.7, -46440.2, 209.7)
     },
 

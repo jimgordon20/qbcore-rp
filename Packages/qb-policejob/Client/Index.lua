@@ -1,76 +1,118 @@
 Package.Require('cctv.lua')
 
-Events.Subscribe('qb-policejob:client:sendPoliceEmergencyAlert', function()
-    local Player = QBCore.Functions.GetPlayerData()
-    Events.CallRemote('police:server:policeAlert', Lang:t('info.officer_down', { lastname = Player.charinfo.lastname, callsign = Player.metadata.callsign }))
-    Events.CallRemote('hospital:server:ambulanceAlert', Lang:t('info.officer_down', { lastname = Player.charinfo.lastname, callsign = Player.metadata.callsign }))
-end)
+local Lang = Package.Require('../Shared/locales/' .. QBConfig.Language .. '.lua')
+local player_data = {}
 
-Events.Subscribe('qb-policejob:client:seizeDriverLicense', function()
-    local player, distance = QBCore.Functions.GetClosestPlayer()
-    if player ~= -1 and distance < 2.5 then
-        local playerId = GetPlayerServerId(player)
-        Events.CallRemote('police:server:SeizeDriverLicense', playerId)
-    else
-        QBCore.Functions.Notify(Lang:t('error.none_nearby'), 'error')
-    end
-end)
+-- Functions
 
-Events.Subscribe('qb-policejob:client:checkStatus', function()
-    QBCore.Functions.GetPlayerData(function(PlayerData)
-        if PlayerData.job.type == 'leo' then
-            local player, distance = QBCore.Functions.GetClosestPlayer()
-            if player ~= -1 and distance < 5.0 then
-                local playerId = GetPlayerServerId(player)
-                QBCore.Functions.TriggerCallback('police:GetPlayerStatus', function(result)
-                    if result then
-                        for _, v in pairs(result) do
-                            QBCore.Functions.Notify('' .. v .. '')
-                        end
-                    end
-                end, playerId)
-            else
-                QBCore.Functions.Notify(Lang:t('error.none_nearby'), 'error')
-            end
+local function setupPeds()
+    QBCore.Functions.TriggerCallback('qb-policejob:server:getPeds', function(peds)
+        for ped, data in pairs(peds) do
+            AddTargetEntity(ped, { options = data.options, distance = data.distance })
         end
     end)
-end)
+end
 
-Events.Subscribe('qb-policejob:client:escortPlayer', function()
-    local player, distance = QBCore.Functions.GetClosestPlayer()
-    if player ~= -1 and distance < 2.5 then
-        local playerId = GetPlayerServerId(player)
-        if not isHandcuffed and not isEscorted then
-            Events.CallRemote('police:server:EscortPlayer', playerId)
-        end
-    else
-        QBCore.Functions.Notify(Lang:t('error.none_nearby'), 'error')
-    end
-end)
+for _, v in pairs(Config.Locations.stations) do
+    local coords = v.coords
+    Events.Call('Map:AddBlip', {
+        name = v.label,
+        coords = { x = coords.X, y = coords.Y, z = coords.Z },
+        imgUrl = './media/map-icons/Police-icon.svg',
+        group = 'police'
+    })
+end
 
-Events.Subscribe('qb-policejob:client:jailPlayer', function()
-    local player, distance = QBCore.Functions.GetClosestPlayer()
-    if player ~= -1 and distance < 2.5 then
-        local playerId = GetPlayerServerId(player)
-        ShowInput({
-            header = Lang:t('info.jail_time_input'),
-            submitText = Lang:t('info.submit'),
-            inputs = {
-                {
-                    text = Lang:t('info.time_months'),
-                    name = 'jailtime',
-                    type = 'number',
-                    isRequired = true
-                }
-            }
-        }, function(dialog)
-            if dialog and tonumber(dialog['jailtime']) > 0 then
-                Events.CallRemote('police:server:JailPlayer', playerId, tonumber(dialog['jailtime']))
-            else
-                QBCore.Functions.Notify(Lang:t('error.time_higher'), 'error')
+AddGlobalPlayer({
+    options = {
+        {
+            type = 'server',
+            event = 'qb-policejob:server:jail',
+            label = 'Jail',
+            icon = 'fas fa-user-lock',
+            jobType = 'leo',
+            canInteract = function(entity)
+                return entity:GetPlayer()
             end
-        end)
-    else
-        QBCore.Functions.Notify(Lang:t('error.none_nearby'), 'error')
+        },
+        {
+            type = 'server',
+            event = 'qb-policejob:server:status',
+            label = 'Check Status',
+            icon = 'fas fa-question',
+            jobType = 'leo',
+            canInteract = function(entity)
+                return entity:GetPlayer()
+            end
+        },
+        {
+            type = 'server',
+            event = 'qb-policejob:server:search',
+            label = 'Search',
+            icon = 'fas fa-magnifying-glass',
+            jobType = 'leo',
+            canInteract = function(entity)
+                return entity:GetPlayer()
+            end
+        },
+        {
+            type = 'server',
+            event = 'qb-policejob:server:escort',
+            label = 'Escort',
+            icon = 'fas fa-user-group',
+            jobType = 'leo',
+            -- canInteract = function(entity)
+            --     return entity:GetPlayer()
+            -- end
+        },
+        {
+            type = 'server',
+            event = 'qb-policejob:server:takelicense',
+            label = 'Revoke License',
+            icon = 'fas fa-id-card',
+            jobType = 'leo',
+            canInteract = function(entity)
+                return entity:GetPlayer()
+            end
+        },
+        {
+            type = 'server',
+            event = 'qb-policejob:server:handcuff',
+            label = 'Handcuff',
+            icon = 'fas fa-hand',
+            jobType = 'leo',
+            canInteract = function(entity)
+                return entity:GetPlayer()
+            end
+        }
+    },
+    distance = 500
+})
+
+-- Handlers
+
+Package.Subscribe('Load', function()
+    if Client.GetValue('isLoggedIn', false) then
+        player_data = QBCore.Functions.GetPlayerData()
+        setupPeds()
     end
+end)
+
+Events.SubscribeRemote('QBCore:Client:OnPlayerLoaded', function()
+    player_data = QBCore.Functions.GetPlayerData()
+    setupPeds()
+end)
+
+Events.SubscribeRemote('QBCore:Client:OnPlayerUnload', function()
+    player_data = {}
+end)
+
+Events.SubscribeRemote('QBCore:Client:OnJobUpdate', function(JobInfo)
+    player_data.job = JobInfo
+end)
+
+-- Events
+
+Events.SubscribeRemote('qb-policejob:client:fingerprint', function()
+
 end)

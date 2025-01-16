@@ -4,6 +4,20 @@ local current_location
 
 -- Handler
 
+local blocked_keys = {
+    ['W'] = true,
+    ['A'] = true,
+    ['S'] = true,
+    ['D'] = true,
+    ['SpaceBar'] = true,
+    ['LeftControl'] = true
+}
+Input.Subscribe('KeyPress', function(key_name)
+    if viewing_camera and blocked_keys[key_name] then
+        return false
+    end
+end)
+
 Input.Subscribe('KeyPress', function(key_name)
     if key_name == 'Left' and viewing_camera and current_camera ~= 0 then
         if current_camera == 1 then return end
@@ -33,7 +47,7 @@ Input.Subscribe('KeyPress', function(key_name)
 end)
 
 Input.Subscribe('KeyPress', function(key_name)
-    if key_name == 'BackSpace' and viewing_camera and current_camera ~= 0 then
+    if key_name == 'BackSpace' and viewing_camera then
         current_camera = 0
         viewing_camera = false
         Events.CallRemote('qb-policejob:server:leaveCamera', current_location)
