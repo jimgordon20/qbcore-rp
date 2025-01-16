@@ -9,19 +9,15 @@ local active_sprites, nui_data, send_data, Entities, Types, Zones = {}, {}, {}, 
 Package.Subscribe('Load', function()
 	player_data = QBCore.Functions.GetPlayerData()
 	local player = Client.GetLocalPlayer()
-	if player then
-		player_ped = player:GetControlledCharacter()
-	end
+	if player then player_ped = player:GetControlledCharacter() end
 end)
 
 Events.SubscribeRemote('QBCore:Client:OnPlayerLoaded', function()
 	player_data = QBCore.Functions.GetPlayerData()
-	player_ped = Client.GetLocalPlayer():GetControlledCharacter()
 end)
 
 Events.SubscribeRemote('QBCore:Client:OnPlayerUnload', function()
 	player_data = {}
-	player_ped = nil
 end)
 
 Events.SubscribeRemote('QBCore:Client:OnJobUpdate', function(JobInfo)
@@ -34,6 +30,13 @@ end)
 
 Events.SubscribeRemote('QBCore:Player:SetPlayerData', function(val)
 	player_data = val
+end)
+
+Player.Subscribe('Possess', function(self, character)
+	local player = Client.GetLocalPlayer()
+	if self == player then
+		player_ped = character
+	end
 end)
 
 -- Functions
@@ -147,7 +150,7 @@ local function handleRaycast()
 	local trace_max_distance = Config.MaxDistance
 	local start_location = viewport_3d.Position
 	local end_location = viewport_3d.Position + viewport_3d.Direction * trace_max_distance
-	local trace_result = Trace.LineSingle(start_location, end_location, Config.CollisionTrace, Config.TraceMode, { Client.GetLocalPlayer():GetControlledCharacter() })
+	local trace_result = Trace.LineSingle(start_location, end_location, Config.CollisionTrace, Config.TraceMode, { player_ped })
 	if Config.Debug then print(HELIXTable.Dump(trace_result)) end
 	return trace_result, start_location
 end
@@ -163,11 +166,12 @@ local function drawSprite(entity)
 end
 
 local function enableTarget()
+	if not player_ped then return end
 	if Input.IsMouseEnabled() then return end
 	if target_active then return end
 	target_active = true
 	my_webui:CallEvent('openTarget')
-	local player_coords = player_ped and player_ped:GetLocation()
+	local player_coords = player_ped:GetLocation()
 	if not player_coords then return end
 	for entity, _ in pairs(Entities) do
 		if entity and entity:IsValid() then
