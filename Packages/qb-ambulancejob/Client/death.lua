@@ -36,8 +36,10 @@ HCharacter.Subscribe('Death', function(self)
     if not client then return end
     if client:GetControlledCharacter() == self then
         isDead = true
+        BleedAmount = 0
         DeathTimer(true)
         StopBleedTimer()
+        StopLimbTimer()
         Events.CallRemote('qb-ambulancejob:server:setDeathStatus', true)
         Events.CallRemote('qb-ambulancejob:server:ambulanceAlert', Lang:t('info.civ_died'))
     end
@@ -51,6 +53,8 @@ HCharacter.Subscribe('Respawn', function(self)
         BleedAmount = 0
         DeathTimer(false)
         StopBleedTimer()
+        StopLimbTimer()
+        Events.CallRemote('qb-ambulancejob:server:syncInjuries', Config.Bones, BleedAmount > 0 and true or false)
         Events.CallRemote('qb-ambulancejob:server:setDeathStatus', false)
     end
 end)

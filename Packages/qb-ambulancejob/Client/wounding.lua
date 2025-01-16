@@ -58,6 +58,29 @@ local function PainKillerLoop(pkAmount)
     end
 end
 
+local function DoLimbAlert()
+    if isDead then return end
+    local damagedLimbs = {}
+    -- Gather damaged limbs
+    for _, v in pairs(Config.Bones) do
+        if v.isDamaged then damagedLimbs[#damagedLimbs + 1] = v end
+    end
+
+    if #damagedLimbs == 0 then return end
+
+    local damageMessage = ''
+    if #damagedLimbs <= Config.AlertShowInfo then
+        for k, v in pairs(damagedLimbs) do
+            damageMessage = Lang:t('info.pain_message', { limb = v.label, severity = Config.WoundStates[v.severity] })
+            if k < #damagedLimbs then damageMessage = damageMessage .. ' | ' end
+        end
+    else
+        damageMessage = Lang:t('info.many_places')
+    end
+
+    QBCore.Functions.Notify(damageMessage, 'primary')
+end
+
 -- Handler
 
 HCharacter.Subscribe('TakeDamage', function(self, damage, bone, type, from_direction, instigator, causer)
@@ -82,6 +105,12 @@ HCharacter.Subscribe('TakeDamage', function(self, damage, bone, type, from_direc
     if math.random(1, 100) <= staggerChance then -- If major damage weapon, use major stagger chance
         Events.CallRemote('qb-ambulancejob:server:damageRagdoll', 500)
     end
+
+    Config.Bones[bone].isDamaged = true 
+    Config.Bones[bone].severity = math.random(1, 4)
+    Events.CallRemote('qb-ambulancejob:server:syncInjuries', Config.Bones, BleedAmount > 0 and true or false)
+
+    StartLimbTimer()
     ApplyBleed(severity)
 end)
 
@@ -152,4 +181,18 @@ function StopBleedTimer()
     if not BleedTick then return end
     Timer.ClearInterval(BleedTick)
     BleedTick = nil
+end
+
+-- Limb Damage Tick Logic
+
+function StartLimbTimer()
+    LimbTick = Timer.SetInterval(function()
+        DoLimbAlert()
+    end, Config.MessageTimer * 1000)
+end
+
+function StopLimbTimer()
+    if not LimbTick then return end
+    Timer.ClearInterval(LimbTick)
+    LimbTick = nil
 end

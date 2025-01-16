@@ -2,6 +2,7 @@
 
 local peds = {}
 local hospital_beds = {}
+local PlayerInjuries = {}
 
 for _, v in pairs(Config.Locations['hospital']) do
     for i = 1, #v.beds do
@@ -145,12 +146,39 @@ Events.SubscribeRemote('qb-ambulancejob:server:setDeathStatus', function(source,
     Player.Functions.SetMetaData('isdead', status)
 end)
 
+Events.SubscribeRemote('qb-ambulancejob:server:syncInjuries', function(source, injuries, isBleeding)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then return end
+
+    if not injuries then 
+        -- Reset injuries on player unload
+        PlayerInjuries[source:GetID()] = nil 
+        return
+    end
+
+    PlayerInjuries[source:GetID()] = {
+        limbs = injuries,
+        isBleeding = isBleeding,
+    }
+end)
+
 -- Callbacks
 
 QBCore.Functions.CreateCallback('qb-ambulancejob:server:getPeds', function(_, cb)
     cb(peds)
 end)
 
+QBCore.Functions.CreateCallback('qb-ambulancejob:server:checkStatus', function(source, cb)
+    local closestPlayer = QBCore.Functions.GetClosestPlayer(source)
+    if not closestPlayer then return end
+
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then return end
+
+    if Player.PlayerData.job.type ~= 'ems' then return end
+
+    cb(PlayerInjuries[closestPlayer:GetID()])
+end)
 -- Items
 
 QBCore.Functions.CreateUseableItem('ifaks', function(source, item)
@@ -197,10 +225,10 @@ end)
 
 QBCore.Functions.CreateUseableItem('firstaid', function(source, item)
     if not RemoveItem(source, item.name, 1, item.slot) then return end
-    local closestPlayer = QBCore.Functions.GetClosestPlayer(source)
-    if not closestPlayer then return end
+    local closestCharacter = QBCore.Functions.GetClosestHCharacter(source)
+    if not closestCharacter then return end
 
-    if closestPlayer:GetHealth() > 0 then return Events.CallRemote('QBCore:Notify', source, Lang:t('error.cant_help'), 'error') end
+    if closestCharacter:GetHealth() > 0 then return Events.CallRemote('QBCore:Notify', source, Lang:t('error.cant_help'), 'error') end
 
     local ped = source:GetControlledCharacter()
     if not ped then return end
@@ -208,6 +236,6 @@ QBCore.Functions.CreateUseableItem('firstaid', function(source, item)
     ped:PlayAnimation('nanos-world::A_Mannequin_Take_From_Floor', AnimationSlotType.UpperBody, true)
     Timer.SetTimeout(function()
         ped:StopAnimation('nanos-world::A_Mannequin_Take_From_Floor')
-        closestPlayer:Respawn(closestPlayer:GetLocation(), closestPlayer:GetRotation())
+        closestCharacter:Respawn(closestCharacter:GetLocation(), closestCharacter:GetRotation())
     end, 3000)
 end)
