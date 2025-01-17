@@ -24,7 +24,6 @@ let isMinimapCircular = false;
 let showPlayers = true;
 let minimapPlayerBlipElements = {};
 
-
 // Show the minimap
 const showMinimap = () => {
     $(".minimap-section").removeClass("hidden");
@@ -159,9 +158,7 @@ function createMapBlip(blip, cameraRotation) {
 
     const inView = isBlipInView(x, y);
     if (!inView) {
-        const edgeCoords = isMinimapCircular
-            ? moveBlipToEdgeCircular(x, y, cameraRotation)
-            : moveBlipToEdgeSquare(x, y, cameraRotation);
+        const edgeCoords = isMinimapCircular ? moveBlipToEdgeCircular(x, y, cameraRotation) : moveBlipToEdgeSquare(x, y, cameraRotation);
 
         x = edgeCoords.x - blipW / 2;
         y = edgeCoords.y - blipH / 2;
@@ -176,7 +173,7 @@ function createMapBlip(blip, cameraRotation) {
     if (inView) {
         const fixedCamRot = -cameraRotation;
         $mapBlip.css({
-            transform: `translate(-50%, -50%) rotate(${fixedCamRot}deg)`
+            transform: `translate(-50%, -50%) rotate(${fixedCamRot}deg)`,
         });
     }
 }
@@ -293,7 +290,6 @@ Events.Subscribe("SetBlips", (blips) => {
     setBlips(persistentBlips, 0);
 });
 
-
 // Remove blip by ID
 Events.Subscribe("RemoveBlip", function (id) {
     persistentBlips = persistentBlips.filter((blip) => blip.id !== id);
@@ -337,7 +333,7 @@ Events.Subscribe("Map:UpdatePlayersPos", function (playerBlips) {
             delete minimapPlayerBlipElements[id];
         }
     }
-    playerBlips.forEach(p => {
+    playerBlips.forEach((p) => {
         updatedIds.add(p.id);
         let blip = minimapPlayerBlipElements[p.id];
         if (!blip) {

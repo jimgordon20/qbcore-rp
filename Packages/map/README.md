@@ -2,7 +2,7 @@
 
 ## Overview
 
-This package provides a functional **minimap** and **bigmap** system for a game, allowing players to view their surroundings, add and remove blips, toggle map shape, and teleport to blips.
+This package provides a functional **minimap** and **bigmap** system, allowing players to view their surroundings, see other players, add and remove blips, toggle map shape, and teleport to blips.
 
 ## Features
 
@@ -77,7 +77,7 @@ Config = {
 ### Blip Management
 
 ```lua
--- Add a blip
+-- Add a blip (returns id)
 events.CallRemote("Map:AddBlip", blipData)
 
 -- Remove a blip

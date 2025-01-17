@@ -1,10 +1,13 @@
 Package.Require('../Shared/Index.lua')
 
-local lastBlipId = 0
-
 local function GenerateBlipId()
-    lastBlipId = lastBlipId + 1
-    return lastBlipId
+    local id = math.random(1, 1000)
+    for _, blip in ipairs(Config.MapBlips) do
+        if blip.id == id then
+            return GenerateBlipId()
+        end
+    end
+    return id
 end
 
 local minimapUI = WebUI('Minimap', 'file:///UI/Minimap/index.html')
@@ -17,16 +20,9 @@ end
 -- Remove a blip from the Minimap
 local function Minimap_RemoveBlip(blipId)
     minimapUI:CallEvent('RemoveBlip', blipId)
-
-    for i, b in ipairs(Config.MapBlips) do
-        if b.id == blipId then
-            table.remove(Config.MapBlips, i)
-            break
-        end
-    end
 end
 
--- Update player position on the Minimap
+-- Update player position on the Minimap (each Tick)
 Client.Subscribe('Tick', function(delta_time)
     local player = Client.GetLocalPlayer()
     if not player then return end
@@ -102,7 +98,15 @@ end
 local function Bigmap_RemoveBlip(blipId)
     mapUI:CallEvent('Map:RemoveBlip', blipId)
     Minimap_RemoveBlip(blipId)
+
+    for i, b in ipairs(Config.MapBlips) do
+        if b.id == blipId then
+            table.remove(Config.MapBlips, i)
+            break
+        end
+    end
 end
+
 
 -- Send coords & blips to the Bigmap UI on load
 Package.Subscribe('Load', function()
@@ -121,11 +125,10 @@ end)
 
 -- Bigmap UI subscriptions
 mapUI:Subscribe('Map:AddWaypointBlip', function(x, y)
-    -- Remove any previous waypoint
-    for _, blip in ipairs(Config.MapBlips) do
+    for i = #Config.MapBlips, 1, -1 do
+        local blip = Config.MapBlips[i]
         if blip.name == 'Waypoint' then
             Bigmap_RemoveBlip(blip.id)
-            break
         end
     end
 
@@ -159,18 +162,12 @@ Input.Subscribe('KeyDown', function(key_name)
     end
 end)
 
-Events.Subscribe('Map:AddBlip', function(blipData)
-    return Bigmap_AddBlip(blipData)
-end)
-
+-- Unified remote event for adding blips
 Events.SubscribeRemote('Map:AddBlip', function(blipData)
     return Bigmap_AddBlip(blipData)
 end)
 
-Events.Subscribe('Map:RemoveBlip', function(blipId)
-    Bigmap_RemoveBlip(blipId)
-end)
-
+-- Unified remote event for removing blips
 Events.SubscribeRemote('Map:RemoveBlip', function(blipId)
     Bigmap_RemoveBlip(blipId)
 end)
@@ -185,6 +182,12 @@ Events.SubscribeRemote('Map:UpdatePlayersPos', function(playerBlips)
 
     mapUI:CallEvent('Map:UpdatePlayersPos', playerBlips)
     minimapUI:CallEvent('Map:UpdatePlayersPos', playerBlips)
+end)
+
+Events.SubscribeRemote('Map:UpdateAllBlips', function(blips)
+    Config.MapBlips = blips
+    mapUI:CallEvent('SetBlips', Config.MapBlips)
+    minimapUI:CallEvent('SetBlips', Config.MapBlips)
 end)
 
 

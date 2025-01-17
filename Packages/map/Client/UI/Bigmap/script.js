@@ -1,5 +1,5 @@
-const blipsContainer = $('.blips > div');
-const blipElement = blipsContainer.find('.blip');
+const blipsContainer = $(".blips > div");
+const blipElement = blipsContainer.find(".blip");
 
 const mapContainer = $(".map-container");
 const mapWrapper = $(".map-wrapper");
@@ -7,8 +7,16 @@ const minimap = $(".map-wrapper .map");
 const playerMarker = $(".player-marker");
 const waypoint = $(".waypoint");
 
-let knownGameCoords = [[0, 0], [0, 0], [0, 0]];
-let knownImageCoords = [[0, 0], [0, 0], [0, 0]];
+let knownGameCoords = [
+    [0, 0],
+    [0, 0],
+    [0, 0],
+];
+let knownImageCoords = [
+    [0, 0],
+    [0, 0],
+    [0, 0],
+];
 
 let mapImageWidth = 7680;
 let mapImageHeight = 4200;
@@ -18,7 +26,7 @@ let scaleValues = {
     maxMapScale: 4,
 };
 let playerMarkerScale = 1;
-let zoomAmount = .2;
+let zoomAmount = 0.2;
 let persistentBlips = [];
 let isDragging = false;
 let startX = 0;
@@ -31,27 +39,26 @@ let animating = false;
 // -1 = playerMarker, 0 = waypoint, 0+n = blips
 let selectedBlip = -1;
 
-let allGroups = []
-let startIndex = 0
-let endIndex = 14
-let selectedGroupIndex = -1
-let subGroups = []
-let subStart = 0
-let subEnd = 0
-let selectedInSub = 0
-let visibleCount = 14
-let ringStart = 0
+let allGroups = [];
+let startIndex = 0;
+let endIndex = 14;
+let selectedGroupIndex = -1;
+let subGroups = [];
+let subStart = 0;
+let subEnd = 0;
+let selectedInSub = 0;
+let visibleCount = 14;
+let ringStart = 0;
 let finalOrderedBlips = [];
 let allOriginalBlips = [];
 let playerBlipElements = {};
 let showPlayers = true;
 
-
 // Handle map movement
 $(document).on("mousedown", function (event) {
     if ($(event.target).hasClass("map-blip")) return;
     if (event.button === 0 && !animating) {
-        $('body').css("cursor", "grabbing");
+        $("body").css("cursor", "grabbing");
         isDragging = true;
         startX = event.pageX;
         startY = event.pageY;
@@ -77,14 +84,14 @@ $(document).on("mousemove", function (event) {
 
         mapWrapper.css({
             left: newLeft,
-            bottom: newTop
+            bottom: newTop,
         });
     }
 });
 
 $(document).on("mouseup", function (event) {
     if (event.button === 0 && isDragging) {
-        $('body').css("cursor", "grab");
+        $("body").css("cursor", "grab");
         isDragging = false;
         mapWrapper.css("transition", "all 0.2s ease-in-out");
 
@@ -95,8 +102,8 @@ $(document).on("mouseup", function (event) {
         let mapWrapperPos = mapWrapper.position();
         let mapContainerPos = mapContainer.position();
 
-        let mapWrapperBottom = (mapWrapperPos.top / scale) + mapWrapper.height();
-        let mapX = (clickX - mapContainerPos.left) / scale - (mapWrapperPos.left / scale);
+        let mapWrapperBottom = mapWrapperPos.top / scale + mapWrapper.height();
+        let mapX = (clickX - mapContainerPos.left) / scale - mapWrapperPos.left / scale;
         let mapY = (clickY - mapContainerPos.top) / scale - mapWrapperBottom;
 
         // Print map coordinates
@@ -114,8 +121,8 @@ $(document).on("dblclick", ".map-container", function (event) {
     let mapWrapperPos = mapWrapper.position();
     let mapContainerPos = mapContainer.position();
 
-    let mapWrapperBottom = (mapWrapperPos.top / scale) + mapWrapper.height();
-    let mapX = (clickX - mapContainerPos.left) / scale - (mapWrapperPos.left / scale);
+    let mapWrapperBottom = mapWrapperPos.top / scale + mapWrapper.height();
+    let mapX = (clickX - mapContainerPos.left) / scale - mapWrapperPos.left / scale;
     let mapY = (clickY - mapContainerPos.top) / scale - mapWrapperBottom;
 
     mapX += 10;
@@ -125,10 +132,6 @@ $(document).on("dblclick", ".map-container", function (event) {
 
     // Remove previous waypoint
     $(".waypoint-marker").remove();
-
-    // Add new waypoint
-    let markerHtml = `<img class="waypoint-marker" src="./media/map-icons/marker.svg" alt="Marker" style="left:${mapX}px; top:${-mapY}px;">`;
-    mapWrapper.append(markerHtml);
 
     // Trigger event to add blip
     Events.Call("Map:AddWaypointBlip", ingameClickedCoords.x, ingameClickedCoords.y);
@@ -153,13 +156,13 @@ $(document).on("wheel", ".map-container", function (e) {
 // Handle keyboard input for map navigation
 $(document).on("keydown", function (e) {
     // If the search is focused, ignore Backspace/M
-    if ($('input.search').is(":focus") && (e.key === "Backspace" || e.key === "M" || e.key === "m")) return;
+    if ($("input.search").is(":focus") && (e.key === "Backspace" || e.key === "M" || e.key === "m")) return;
 
     // Arrow navigation according to finalOrderedBlips
     if (e.key === "ArrowUp" || e.key === "ArrowDown") {
         if (finalOrderedBlips.length < 1) return;
         // Find current index in finalOrderedBlips
-        let currentId = (selectedBlip !== -1) ? persistentBlips[selectedBlip].id : null;
+        let currentId = selectedBlip !== -1 ? persistentBlips[selectedBlip].id : null;
         let currentIdx = finalOrderedBlips.indexOf(currentId);
         // If none selected, treat as -1
         if (currentIdx < 0) currentIdx = -1;
@@ -178,7 +181,7 @@ $(document).on("keydown", function (e) {
             blipsContainer.scrollTop(0);
         } else {
             let nextId = finalOrderedBlips[currentIdx];
-            let findNext = persistentBlips.findIndex(b => b.id === nextId);
+            let findNext = persistentBlips.findIndex((b) => b.id === nextId);
             if (findNext !== -1) selectedBlip = findNext;
         }
         highlightBlipByIndex(selectedBlip);
@@ -196,7 +199,6 @@ $(document).on("keydown", function (e) {
         playerBlipElements = {};
         Events.Call("Map:TogglePlayers", showPlayers);
     }
-
 
     // Highlight or revert
     if (selectedBlip === -1) {
@@ -219,7 +221,7 @@ $(document).on("keydown", function (e) {
         if (foundGroup) {
             foundGroup.addClass("active");
             let g = foundGroup.data("groupData");
-            let idx = g.items.findIndex(x => x.id === blipId);
+            let idx = g.items.findIndex((x) => x.id === blipId);
             if (g.items.length === 1) {
                 foundGroup.find("p").text(g.name);
             } else {
@@ -253,37 +255,46 @@ $(document).on("mousedown", ".map-container", function (event) {
     if (event.button === 2) {
         event.preventDefault();
 
+        // si es waypoint marker, borrarlo y retornar
+        if ($(event.target).hasClass("waypoint-marker")) {
+            let waypoints = persistentBlips.filter((b) => b.name === "Waypoint");
+            waypoints.forEach((wp) => {
+                Events.Call("Map:RemoveBlip", wp.id);
+            });
+            $(".waypoint-marker").remove();
+            return;
+        }
+
         let clickX = event.pageX;
         let clickY = event.pageY;
 
         let mapWrapperPos = mapWrapper.position();
         let mapContainerPos = mapContainer.position();
 
-        let mapWrapperBottom = (mapWrapperPos.top / scale) + mapWrapper.height();
-        let mapX = (clickX - mapContainerPos.left) / scale - (mapWrapperPos.left / scale);
+        let mapWrapperBottom = mapWrapperPos.top / scale + mapWrapper.height();
+        let mapX = (clickX - mapContainerPos.left) / scale - mapWrapperPos.left / scale;
         let mapY = (clickY - mapContainerPos.top) / scale - mapWrapperBottom;
 
         goToCoords({ x: mapX, y: mapY });
     }
 });
 
-// Handle context menu on waypoint marker to remove blip
-$(document).on("contextmenu", ".waypoint-marker", function (event) {
+/* $(document).on("contextmenu", ".waypoint-marker", function(event) {
     event.preventDefault();
-    let blipWaypoint = $(".waypoint-marker");
-    let id = blipWaypoint.data("id");
-    Events.Call("Map:RemoveBlip", id);
-});
+    let waypoints = persistentBlips.filter(b => b.name === "Waypoint");
+    console.log("waypoints", JSON.stringify(waypoints), $(this).data("id"));
+    waypoints.forEach(wp => {
+        Events.Call("Map:RemoveBlip", wp.id);
+    });
+    $(".waypoint-marker").remove();
+}); */
 
 $(".search").on("input", function () {
     let q = $(this).val().trim().toLowerCase();
     if (!q) {
         persistentBlips = allOriginalBlips.slice();
     } else {
-        let filtered = allOriginalBlips.filter(b =>
-            b.name.toLowerCase().includes(q) ||
-            (b.group || "").toLowerCase().includes(q)
-        );
+        let filtered = allOriginalBlips.filter((b) => b.name.toLowerCase().includes(q) || (b.group || "").toLowerCase().includes(q));
         persistentBlips = filtered;
     }
     setBlips(persistentBlips);
@@ -301,7 +312,7 @@ function goToCoords(coords) {
 
     mapWrapper.css({
         left: adjustedX,
-        bottom: adjustedY
+        bottom: adjustedY,
     });
 }
 
@@ -315,11 +326,11 @@ function setMapScale(s) {
     }
 
     let actualPlayerMarkerTransform = playerMarker.css("transform");
-    $(".map-blip").css("transform", "translate(-0%, -0%) scale(" + (1 / s) + ")");
+    $(".map-blip").css("transform", "translate(-0%, -0%) scale(" + 1 / s + ")");
 
     mapContainer.css({
         transformOrigin: "center",
-        transform: "translate(-50%, -50%) scale(" + s + ")"
+        transform: "translate(-50%, -50%) scale(" + s + ")",
     });
 
     if (s > scale) {
@@ -345,34 +356,34 @@ function updatePlayerPos(playerCoords, playerHeading) {
     playerMarker.css({
         left: x,
         bottom: y,
-        transform: "rotate(" + (playerHeading + 360) + "deg) rotate(-210deg) rotate(-90deg) scale(" + (1 / scale) + ")"
+        transform: "rotate(" + (playerHeading + 360) + "deg) rotate(-210deg) rotate(-90deg) scale(" + 1 / scale + ")",
     });
 }
 
 function revertAllGroupNames() {
     $(".blip").each(function () {
-        let g = $(this).data("groupData")
-        if (!g) return
-        let total = g.items.length
-        let text = (total === 1) ? g.name : `${g.name} (${total})`
-        $(this).find("p").text(text)
-    })
+        let g = $(this).data("groupData");
+        if (!g) return;
+        let total = g.items.length;
+        let text = total === 1 ? g.name : `${g.name} (${total})`;
+        $(this).find("p").text(text);
+    });
 }
 
 function getGroupDataByBlipId(blipId) {
-    let result = null
+    let result = null;
     $(".blip").each(function () {
-        let idsString = $(this).attr("data-ids") || ""
+        let idsString = $(this).attr("data-ids") || "";
         if (idsString.split(",").includes(String(blipId))) {
-            result = $(this)
+            result = $(this);
         }
-    })
-    return result
+    });
+    return result;
 }
 
 function setBlips(allBlips) {
     // Clear existing
-    $('.blip').remove();
+    $(".blip").remove();
     $(".map-blip").remove();
 
     persistentBlips = allBlips.slice();
@@ -407,7 +418,7 @@ function setBlips(allBlips) {
 
         grp.nameGroups.forEach((ng) => {
             let label = ng.items.length > 1 ? `${ng.name} (${ng.items.length})` : ng.name;
-            let ids = ng.items.map(x => x.id).join(",");
+            let ids = ng.items.map((x) => x.id).join(",");
 
             let div = $(`
           <div class="blip" data-ids="${ids}">
@@ -421,7 +432,7 @@ function setBlips(allBlips) {
                 let ids = $(this).attr("data-ids").split(",");
                 if (!ids.length) return;
                 let firstId = parseInt(ids[0], 10);
-                let newIndex = persistentBlips.findIndex(b => b.id === firstId);
+                let newIndex = persistentBlips.findIndex((b) => b.id === firstId);
                 if (newIndex !== -1) {
                     selectedBlip = newIndex;
                     // same highlight code as arrow keys
@@ -430,7 +441,7 @@ function setBlips(allBlips) {
             });
             // Place each item on the map
             ng.items.forEach((b) => {
-                let html = `<img data-id="${b.id}" src="${b.imgUrl}" class="map-blip">`;
+                let html = `<img data-id="${b.id}" src="${b.imgUrl}" class="map-blip ${b.name === "Waypoint" ? "waypoint-marker" : ""}">`;
                 mapWrapper.append(html);
                 let $mapBlip = $(`.map-blip[data-id="${b.id}"]`);
                 let { x, y } = barycentricInterpolation(b.coords);
@@ -444,7 +455,7 @@ function setBlips(allBlips) {
 
                 $mapBlip.on("click", function () {
                     let bid = parseInt($(this).data("id"), 10);
-                    let newIndex = persistentBlips.findIndex(b => b.id === bid);
+                    let newIndex = persistentBlips.findIndex((b) => b.id === bid);
                     if (newIndex === -1) return;
                     selectedBlip = newIndex;
                     highlightBlipByIndex(newIndex);
@@ -454,141 +465,144 @@ function setBlips(allBlips) {
     });
 
     finalOrderedBlips = [];
-    $(".blips>div .blip").not(".group-header").each(function () {
-        let ids = $(this).attr("data-ids").split(",");
-        ids.forEach(idStr => {
-            let parsed = parseInt(idStr, 10);
-            if (!isNaN(parsed)) finalOrderedBlips.push(parsed);
+    $(".blips>div .blip")
+        .not(".group-header")
+        .each(function () {
+            let ids = $(this).attr("data-ids").split(",");
+            ids.forEach((idStr) => {
+                let parsed = parseInt(idStr, 10);
+                if (!isNaN(parsed)) finalOrderedBlips.push(parsed);
+            });
         });
-    });
-
 }
 
 function selectNextGroup() {
-    if (subGroups.length < 1) return
-    selectedInSub++
+    if (subGroups.length < 1) return;
+    selectedInSub++;
     if (selectedInSub >= subGroups.length) {
-        selectedInSub = subGroups.length - 1
-        if (allGroups.length <= visibleCount) return
-        subGroups.shift()
-        ringStart = (ringStart + 1) % allGroups.length
-        let nextIndex = (ringStart + visibleCount - 1) % allGroups.length
-        let nextGroup = allGroups[nextIndex]
-        if (!subGroups.includes(nextGroup)) subGroups.push(nextGroup)
-        selectedInSub = subGroups.length - 1
-        renderSubGroups()
+        selectedInSub = subGroups.length - 1;
+        if (allGroups.length <= visibleCount) return;
+        subGroups.shift();
+        ringStart = (ringStart + 1) % allGroups.length;
+        let nextIndex = (ringStart + visibleCount - 1) % allGroups.length;
+        let nextGroup = allGroups[nextIndex];
+        if (!subGroups.includes(nextGroup)) subGroups.push(nextGroup);
+        selectedInSub = subGroups.length - 1;
+        renderSubGroups();
     }
-    highlightCurrent()
+    highlightCurrent();
 }
 
 function selectPrevGroup() {
-    if (subGroups.length < 1) return
-    selectedInSub--
+    if (subGroups.length < 1) return;
+    selectedInSub--;
     if (selectedInSub < 0) {
-        selectedInSub = 0
-        if (allGroups.length <= visibleCount) return
-        subGroups.pop()
-        ringStart = (ringStart - 1 + allGroups.length) % allGroups.length
-        let prevGroup = allGroups[ringStart]
-        subGroups.unshift(prevGroup)
-        selectedInSub = 0
-        renderSubGroups()
+        selectedInSub = 0;
+        if (allGroups.length <= visibleCount) return;
+        subGroups.pop();
+        ringStart = (ringStart - 1 + allGroups.length) % allGroups.length;
+        let prevGroup = allGroups[ringStart];
+        subGroups.unshift(prevGroup);
+        selectedInSub = 0;
+        renderSubGroups();
     }
-    highlightCurrent()
+    highlightCurrent();
 }
 
 function renderSubGroups() {
-    blipsContainer.empty()
-    $(".map-blip").remove()
-    subGroups.forEach(g => {
-        let size = g.items.length
-        let label = size === 1 ? g.name : `${g.name} (${size})`
-        let ids = g.items.map(x => x.id).join(",")
+    blipsContainer.empty();
+    $(".map-blip").remove();
+    subGroups.forEach((g) => {
+        let size = g.items.length;
+        let label = size === 1 ? g.name : `${g.name} (${size})`;
+        let ids = g.items.map((x) => x.id).join(",");
         let div = $(`
       <div class="blip" data-ids="${ids}">
         <p>${label}</p>
         <img src="${g.imgUrl}" alt="">
       </div>
-    `)
-        div.data("groupData", g)
-        blipsContainer.append(div)
+    `);
+        div.data("groupData", g);
+        blipsContainer.append(div);
         div.on("mouseenter", function () {
-            revertAllGroupNames()
-            $(".blip").removeClass("active")
-            $(this).addClass("active")
-            $(".map-blip").removeClass("active")
-            let gd = $(this).data("groupData")
-            let idx = subGroups.indexOf(gd)
-            selectedInSub = idx
+            revertAllGroupNames();
+            $(".blip").removeClass("active");
+            $(this).addClass("active");
+            $(".map-blip").removeClass("active");
+            let gd = $(this).data("groupData");
+            let idx = subGroups.indexOf(gd);
+            selectedInSub = idx;
             if (gd.items.length < 2) {
-                let b = gd.items[0]
-                $(`.map-blip[data-id="${b.id}"]`).addClass("active")
-                return
+                let b = gd.items[0];
+                $(`.map-blip[data-id="${b.id}"]`).addClass("active");
+                return;
             }
-            let i = 0
-            $(this).find("p").text(`${gd.name} (${i + 1}/${gd.items.length})`)
-            $(`.map-blip[data-id="${gd.items[i].id}"]`).addClass("active")
-        })
+            let i = 0;
+            $(this)
+                .find("p")
+                .text(`${gd.name} (${i + 1}/${gd.items.length})`);
+            $(`.map-blip[data-id="${gd.items[i].id}"]`).addClass("active");
+        });
         div.on("mouseleave", function () {
-            let gd = $(this).data("groupData")
-            if (gd.items.length === 1) $(this).find("p").text(gd.name)
-            else $(this).find("p").text(`${gd.name} (${gd.items.length})`)
-            $(this).removeClass("active")
-            $(".map-blip").removeClass("active")
-        })
-    })
-    subGroups.forEach(g => {
-        g.items.forEach(b => {
-            let html = `<img data-id="${b.id}" src="${b.imgUrl}" alt="" class="map-blip">`
-            mapWrapper.append(html)
-            let { x, y } = barycentricInterpolation(b.coords)
-            let c = $(`.map-blip[data-id="${b.id}"]`)
-            c.data("coords", JSON.stringify({ x, y: -y }))
-            let w = c.width()
-            let h = c.height()
-            x -= w / 2
-            y -= h / 2
-            c.css({ left: x, bottom: y })
-        })
-    })
+            let gd = $(this).data("groupData");
+            if (gd.items.length === 1) $(this).find("p").text(gd.name);
+            else $(this).find("p").text(`${gd.name} (${gd.items.length})`);
+            $(this).removeClass("active");
+            $(".map-blip").removeClass("active");
+        });
+    });
+    subGroups.forEach((g) => {
+        g.items.forEach((b) => {
+            let html = `<img data-id="${b.id}" src="${b.imgUrl}" alt="" class="map-blip">`;
+            mapWrapper.append(html);
+            let { x, y } = barycentricInterpolation(b.coords);
+            let c = $(`.map-blip[data-id="${b.id}"]`);
+            c.data("coords", JSON.stringify({ x, y: -y }));
+            let w = c.width();
+            let h = c.height();
+            x -= w / 2;
+            y -= h / 2;
+            c.css({ left: x, bottom: y });
+        });
+    });
     $(".map-blip").on("click", function () {
-        revertAllGroupNames()
-        $(".blip").removeClass("active")
-        $(".map-blip").removeClass("active")
-        let bid = $(this).data("id")
-        let coords = JSON.parse($(this).data("coords"))
-        coords.x -= 0
-        coords.y -= 0
-        let found = getGroupDataByBlipId(bid)
+        revertAllGroupNames();
+        $(".blip").removeClass("active");
+        $(".map-blip").removeClass("active");
+        let bid = $(this).data("id");
+        let coords = JSON.parse($(this).data("coords"));
+        coords.x -= 0;
+        coords.y -= 0;
+        let found = getGroupDataByBlipId(bid);
         if (found) {
-            let groupData = found.data("groupData")
-            let idx2 = subGroups.indexOf(groupData)
+            let groupData = found.data("groupData");
+            let idx2 = subGroups.indexOf(groupData);
             if (idx2 >= 0) {
-                selectedInSub = idx2
-                found.addClass("active")
+                selectedInSub = idx2;
+                found.addClass("active");
                 if (groupData.items.length === 1) {
-                    found.find("p").text(groupData.name)
+                    found.find("p").text(groupData.name);
                 } else {
-                    let i2 = groupData.items.findIndex(x => x.id === bid)
-                    found.find("p").text(`${groupData.name} (${i2 + 1}/${groupData.items.length})`)
+                    let i2 = groupData.items.findIndex((x) => x.id === bid);
+                    found.find("p").text(`${groupData.name} (${i2 + 1}/${groupData.items.length})`);
                 }
             }
         }
-        $(this).addClass("active")
-        goToCoords(coords)
-    })
+        $(this).addClass("active");
+        goToCoords(coords);
+    });
 }
 
 function highlightCurrent() {
-    if (selectedInSub < 0 || selectedInSub >= subGroups.length) return
-    let g = subGroups[selectedInSub]
-    $(".blip").removeClass("active")
-    let b = $(".blip").filter((i, el) => $(el).data("groupData") === g)
-    b.addClass("active")
-    $(".map-blip").removeClass("active")
+    if (selectedInSub < 0 || selectedInSub >= subGroups.length) return;
+    let g = subGroups[selectedInSub];
+    $(".blip").removeClass("active");
+    let b = $(".blip").filter((i, el) => $(el).data("groupData") === g);
+    b.addClass("active");
+    $(".map-blip").removeClass("active");
     if (g.items.length > 0) {
-        let first = g.items[0]
-        $(`.map-blip[data-id="${first.id}"]`).addClass("active")
+        let first = g.items[0];
+        $(`.map-blip[data-id="${first.id}"]`).addClass("active");
     }
 }
 
@@ -619,7 +633,7 @@ function highlightBlipByIndex(index) {
     if (foundGroup) {
         foundGroup.addClass("active");
         let g = foundGroup.data("groupData");
-        let idx = g.items.findIndex(x => x.id === blipId);
+        let idx = g.items.findIndex((x) => x.id === blipId);
         if (g.items.length === 1) {
             foundGroup.find("p").text(g.name);
         } else {
@@ -662,10 +676,8 @@ function barycentricInterpolation({ x, y }) {
     const [[x1, y1], [x2, y2], [x3, y3]] = knownGameCoords;
     const [[u1, v1], [u2, v2], [u3, v3]] = knownImageCoords;
 
-    const w1 = ((y2 - y3) * (x - x3) + (x3 - x2) * (y - y3)) /
-        ((y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3));
-    const w2 = ((y3 - y1) * (x - x3) + (x1 - x3) * (y - y3)) /
-        ((y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3));
+    const w1 = ((y2 - y3) * (x - x3) + (x3 - x2) * (y - y3)) / ((y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3));
+    const w2 = ((y3 - y1) * (x - x3) + (x1 - x3) * (y - y3)) / ((y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3));
     const w3 = 1 - w1 - w2;
 
     const u = w1 * u1 + w2 * u2 + w3 * u3;
@@ -714,7 +726,7 @@ Events.Subscribe("Map:AddBlip", function (blip) {
 });
 
 Events.Subscribe("Map:RemoveBlip", function (id) {
-    persistentBlips = persistentBlips.filter(blip => blip.id !== id);
+    persistentBlips = persistentBlips.filter((blip) => blip.id !== id);
     setBlips(persistentBlips);
 });
 
@@ -744,14 +756,17 @@ Events.Subscribe("Map:UpdateView", () => {
     if (selectedBlip == -1) {
         let playerCoords = JSON.parse(playerMarker.data("coords"));
         goToCoords(playerCoords);
-        $('.blip').removeClass("active");
+        $(".blip").removeClass("active");
     } else {
         let blipId = persistentBlips[selectedBlip].id;
         let blip = $(`.map-blip[data-id="${blipId}"]`);
         let blipCoords = JSON.parse(blip.data("coords"));
         blipCoords.y -= 10;
         blipCoords.x -= 10;
-        $('.blip[data-id="' + blipId + '"]').addClass("active").siblings().removeClass("active");
+        $('.blip[data-id="' + blipId + '"]')
+            .addClass("active")
+            .siblings()
+            .removeClass("active");
         goToCoords(blipCoords);
     }
 });
@@ -765,7 +780,7 @@ Events.Subscribe("Map:UpdatePlayersPos", function (playerBlips) {
             delete playerBlipElements[id];
         }
     }
-    playerBlips.forEach(p => {
+    playerBlips.forEach((p) => {
         updatedIds.add(p.id);
         let blip = playerBlipElements[p.id];
         if (!blip) {
