@@ -381,7 +381,7 @@ Events.SubscribeRemote('qb-apartments:client:SetHomeBlip', function(home)
 			y = Apartments.Locations[name].coords[2],
 			z = Apartments.Locations[name].coords[3],
 		}
-		Map:RemoveBlip(Apartments.Locations[name].blip)
+		Events.Call('Map:RemoveBlip', Apartments.Locations[name].blip)
 		Apartments.Locations[name].blip = Events.Call('Map:AddBlip', {
 			id = name,
 			name = Apartments.Locations[name].label,
