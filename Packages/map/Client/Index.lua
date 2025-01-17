@@ -163,11 +163,21 @@ Input.Subscribe('KeyDown', function(key_name)
 end)
 
 -- Unified remote event for adding blips
+
+Events.Subscribe('Map:AddBlip', function(blipData)
+    return Bigmap_AddBlip(blipData)
+end)
+
 Events.SubscribeRemote('Map:AddBlip', function(blipData)
     return Bigmap_AddBlip(blipData)
 end)
 
 -- Unified remote event for removing blips
+
+Events.Subscribe('Map:RemoveBlip', function(blipId)
+    Bigmap_RemoveBlip(blipId)
+end)
+
 Events.SubscribeRemote('Map:RemoveBlip', function(blipId)
     Bigmap_RemoveBlip(blipId)
 end)
