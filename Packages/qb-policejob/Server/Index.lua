@@ -134,10 +134,6 @@ end)
 
 -- Events
 
-Events.SubscribeRemote('qb-policejob:server:vehicle', function(source)
-
-end)
-
 Events.SubscribeRemote('qb-policejob:server:stash', function(source)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
@@ -195,12 +191,12 @@ Events.SubscribeRemote('qb-policejob:server:escort', function(source, data)
     if distance > 500 then return end
     local player_rotation = player_ped:GetRotation()
     local placing_position = player_rotation:GetForwardVector() * 100
-    if target_ped:GetValue('escorted', false) then
+    if not target_ped:GetValue('escorted', false) then
         target_ped:SetInputEnabled(false)
         target_ped:SetGravityEnabled(false)
         target_ped:AttachTo(player_ped)
-        target_ped:SetRelativeLocation(placing_position)
-        target_ped:SetCollision(CollisionType.NoCollision)
+        target_ped:SetRelativeLocation(Vector(99, 9, 0))
+        target_ped:SetCollision(CollisionType.Auto)
         target_ped:SetValue('escorted', true, true)
     else
         target_ped:Detach()
@@ -219,6 +215,10 @@ Events.SubscribeRemote('qb-policejob:server:handcuff', function(source, data)
     local closest_player, distance = QBCore.Functions.GetClosestPlayer(source)
     if not closest_player or distance > 500 then return end
     Events.CallRemote('qb-policejob:client:handcuff', closest_player)
+end)
+
+Events.SubscribeRemote('qb-policejob:server:vehicle', function(source)
+
 end)
 
 Events.SubscribeRemote('qb-policejob:server:putvehicle', function(source, data)

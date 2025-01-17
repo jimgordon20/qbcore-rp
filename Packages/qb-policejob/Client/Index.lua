@@ -31,9 +31,9 @@ AddGlobalPlayer({
             label = 'Jail',
             icon = 'fas fa-user-lock',
             jobType = 'leo',
-            -- canInteract = function(entity)
-            --     return entity:GetPlayer()
-            -- end
+            canInteract = function(entity)
+                return entity:GetPlayer()
+            end
         },
         {
             type = 'server',
