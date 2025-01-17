@@ -1,5 +1,5 @@
 Package.Require('cctv.lua')
-
+local my_webui = WebUI('Fingerprint', 'file://html/index.html')
 local Lang = Package.Require('../Shared/locales/' .. QBConfig.Language .. '.lua')
 local player_data = {}
 
@@ -65,6 +65,26 @@ AddGlobalPlayer({
                 return entity:GetPlayer()
             end
         },
+        {
+            type = 'server',
+            event = 'qb-policejob:server:putvehicle',
+            label = 'Put In Vehicle',
+            icon = 'fas fa-car',
+            jobType = 'leo',
+            canInteract = function(entity)
+                return entity:GetPlayer() and entity:GetValue('escorted', false)
+            end
+        },
+        -- {
+        --     type = 'server',
+        --     event = 'qb-policejob:server:takevehicle',
+        --     label = 'Take Out Vehicle',
+        --     icon = 'fas fa-car',
+        --     jobType = 'leo',
+        --     canInteract = function(entity)
+        --         return entity:GetPlayer()
+        --     end
+        -- },
         -- {
         --     type = 'server',
         --     event = 'qb-policejob:server:handcuff',
@@ -103,8 +123,42 @@ end)
 
 -- Events
 
-Events.SubscribeRemote('qb-policejob:client:fingerprint', function()
+local fingerprint = false
+Input.Subscribe('KeyPress', function(key_name)
+    if key_name == 'BackSpace' and fingerprint then
+        my_webui:CallEvent('qb-policejob:client:closeFingerprint')
+        if Input.IsMouseEnabled() then Input.SetMouseEnabled(false) end
+        my_webui:SetVisibility(WidgetVisibility.Hidden)
+        fingerprint = false
+        Events.CallRemote('qb-adminmenu:server:toggleInput', true)
+    end
+end)
 
+my_webui:Subscribe('qb-policejob:client:scanFinger', function()
+    Events.CallRemote('qb-policejob:server:scanFinger')
+end)
+
+Events.SubscribeRemote('qb-policejob:client:fingerprint', function()
+    Input.SetMouseEnabled(true)
+    my_webui:CallEvent('qb-policejob:client:openFingerprint')
+    my_webui:BringToFront()
+    my_webui:SetVisibility(WidgetVisibility.Visible)
+    Events.CallRemote('qb-adminmenu:server:toggleInput', false)
+    fingerprint = true
+end)
+
+Events.Subscribe('qb-policejob:client:evidence', function()
+    local player = Client.GetLocalPlayer()
+    local player_ped = player:GetControlledCharacter()
+    if not player_ped then return end
+    local player_coords = player_ped:GetLocation()
+    for i = 1, #Config.Locations.evidence do
+        local coords = Config.Locations.evidence[i].coords
+        local distance = player_coords:Distance(coords)
+        if distance < 500 then
+            Events.CallRemote('qb-policejob:server:evidence', i)
+        end
+    end
 end)
 
 local police_alert = 0

@@ -92,7 +92,7 @@ for i = 1, #Config.Locations['evidence'], 1 do
             {
                 type = 'client',
                 event = 'qb-policejob:client:evidence',
-                label = 'Evidence Lockers',
+                label = 'Evidence Locker',
                 icon = 'fas fa-dungeon',
                 jobType = 'leo'
             },
@@ -143,24 +143,32 @@ Events.SubscribeRemote('qb-policejob:server:stash', function(source)
     OpenInventory(source, stashName)
 end)
 
+Events.SubscribeRemote('qb-policejob:server:evidence', function(source, drawer)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then return end
+    if Player.PlayerData.job.type ~= 'leo' then return end
+    OpenInventory(source, 'evidence_' .. drawer, {
+        maxweight = 4000000,
+        slots = 500,
+    })
+end)
+
 Events.SubscribeRemote('qb-policejob:server:fingerprint', function(source)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
     if Player.PlayerData.job.type ~= 'leo' then return end
     local closest_player, distance = QBCore.Functions.GetClosestPlayer(source)
     if not closest_player or distance > 500 then return end
-    local target_player = closest_player:GetPlayer()
-    Events.CallRemote('qb-policejob:client:fingerprint', target_player)
+    Events.CallRemote('qb-policejob:client:fingerprint', closest_player)
 end)
 
-Events.SubscribeRemote('qb-policejob:server:evidence', function(source, drawer)
+Events.SubscribeRemote('qb-policejob:server:scanFinger', function(source)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
-    if Player.PlayerData.job.type ~= 'leo' then return end
-    OpenInventory(source, drawer, {
-        maxweight = 4000000,
-        slots = 500,
-    })
+    local fingerprint = Player.PlayerData.metadata['fingerprint']
+    local closest_player, distance = QBCore.Functions.GetClosestPlayer(source)
+    if not closest_player or distance > 500 then return end
+    Events.CallRemote('QBCore:Notify', closest_player, 'Fingerprint: ' .. fingerprint)
 end)
 
 Events.SubscribeRemote('qb-policejob:server:search', function(source, data)
@@ -227,21 +235,26 @@ Events.SubscribeRemote('qb-policejob:server:putvehicle', function(source, data)
     if Player.PlayerData.job.type ~= 'leo' then return end
     local target_ped = data.entity
     if not target_ped then return end
-    local target_player = target_ped:GetPlayer()
-    if not target_player then return end
+    -- local target_player = target_ped:GetPlayer()
+    -- if not target_player then return end
     local closest_vehicle, distance = QBCore.Functions.GetClosestHVehicle(source)
-    print(closest_vehicle, distance)
+    if not closest_vehicle or distance > 500 then return end
+    local allowed_passengers = closest_vehicle:NumOfAllowedPassanger()
+    local current_passengers = closest_vehicle:NumOfCurrentPassanger()
+    if current_passengers >= allowed_passengers then return end
+    target_ped:EnterVehicle(closest_vehicle)
 end)
 
-Events.SubscribeRemote('qb-policejob:server:takeoutvehicle', function(source, data)
+Events.SubscribeRemote('qb-policejob:server:takevehicle', function(source, data)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
     if Player.PlayerData.job.type ~= 'leo' then return end
     local target_ped = data.entity
     if not target_ped then return end
-    local target_player = target_ped:GetPlayer()
-    if not target_player then return end
+    -- local target_player = target_ped:GetPlayer()
+    -- if not target_player then return end
     local closest_vehicle, distance = QBCore.Functions.GetClosestHVehicle(source)
+    if not closest_vehicle or distance > 500 then return end
     print(closest_vehicle, distance)
 end)
 
