@@ -7,7 +7,6 @@ Events.Subscribe('qb-prison:client:jail', function(data)
     if not target_player then return end
     local jail_menu = ContextMenu.new()
     jail_menu:addNumber('number-1', Lang:t('info.jail_time_input'), 1, function(val)
-        Chat.AddMessage('Number input: ' .. val)
         Events.CallRemote('qb-prison:server:jail', data, val)
     end)
     jail_menu:SetHeader('Jail Menu')
