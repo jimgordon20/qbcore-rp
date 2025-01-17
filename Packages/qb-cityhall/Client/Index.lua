@@ -18,6 +18,7 @@ local function jobMenu()
             Events.CallRemote('qb-cityhall:server:applyJob', job)
         end)
     end
+    job_menu:SetHeader('Jobs')
     job_menu:Open(false, true)
 end
 
@@ -28,6 +29,7 @@ local function licenseMenu()
             Events.CallRemote('qb-cityhall:server:requestId', license)
         end)
     end
+    license_menu:SetHeader('Licenses')
     license_menu:Open(false, true)
 end
 
@@ -39,6 +41,7 @@ local function openCityHall()
     city_hall:addButton('cityhall-licenses', 'Licenses', function()
         licenseMenu()
     end)
+    city_hall:SetHeader('City Hall')
     city_hall:Open(false, true)
 end
 

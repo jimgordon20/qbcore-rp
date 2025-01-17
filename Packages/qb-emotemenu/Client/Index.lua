@@ -24,6 +24,6 @@ Input.Bind('EmoteMenu', InputEvent.Pressed, function()
             }
         })
     end
-    emote_menu:setMenuInfo('Emote Menu', '')
+    emote_menu:SetHeader('Emote Menu', '')
     emote_menu:Open(false, true)
 end)
