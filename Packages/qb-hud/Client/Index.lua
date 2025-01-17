@@ -86,7 +86,7 @@ Timer.SetInterval(function()
         local thirst     = player_data.metadata['thirst']
         local stress     = player_data.metadata['stress']
         local playerDead = player_data.metadata['inlaststand'] or player_data.metadata['isdead'] or false
-        if in_vehicle and current_vehicle then
+        if in_vehicle and current_vehicle and current_vehicle:IsValid() then
             local vehicle_health = current_vehicle:GetHealth()
             local vehicle_max_health = current_vehicle:GetMaxHealth()
             local vehicle_speed = current_vehicle:GetVehicleSpeed()
