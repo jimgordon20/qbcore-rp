@@ -61,8 +61,8 @@ end)
 
 for _, v in pairs(Config.Locations.hospital) do
     local location = v.location
-    Map:AddBlip({
-        name = v.name,
+    Events.Call('Map:AddBlip', {
+        name = 'Hospital',
         coords = {x = location.X, y = location.Y, z = location.Z},
         imgUrl = './media/map-icons/Medicine-icon.svg'
     })
