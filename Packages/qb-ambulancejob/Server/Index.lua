@@ -176,7 +176,7 @@ Events.SubscribeRemote('qb-ambulancejob:server:revivePlayer', function(source)
             ped:StopAnimation('nanos-world::A_Mannequin_Take_From_Floor')
             closestCharacter:Respawn(closestCharacter:GetLocation(), closestCharacter:GetRotation())
             Events.CallRemote('QBCore:Notify', source, Lang:t('success.revived'), 'success')
-            Events.CallRemote('QBCore:Notify', source, Lang:t('success.wounds_healed'), 'success')
+            Events.CallRemote('QBCore:Notify', closestCharacter:GetPlayer(), Lang:t('success.wounds_healed'), 'success')
         end, 3000)
     end
 end)
