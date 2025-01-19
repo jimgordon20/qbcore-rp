@@ -170,10 +170,9 @@ Config.Locations = {
 	['minimart'] = {
 		['label'] = 'MiniMart',
 		['coords'] = Vector(-13049.2, -11017.3, 220.0),
-		['heading'] = Rotator(0.0, 175.09619140625, 0.0),
+		['heading'] = 175,
 		['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
-		['scenario'] = 'WORLD_HUMAN_STAND_MOBILE',
-		['radius'] = 1.5,
+		['animation'] = 'WORLD_HUMAN_STAND_MOBILE',
 		['targetIcon'] = 'fas fa-shopping-basket',
 		['targetLabel'] = 'Open Shop',
 		['products'] = Config.Products['normal'],
@@ -186,10 +185,9 @@ Config.Locations = {
 	['hansons'] = {
 		['label'] = 'Hansons',
 		['coords'] = Vector(16745.4, -46823.2, 171.6),
-		['heading'] = Rotator(0.0, 88.741943359375, 0.0),
+		['heading'] = 88,
 		['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
-		['scenario'] = 'WORLD_HUMAN_STAND_MOBILE',
-		['radius'] = 1.5,
+		['animation'] = 'WORLD_HUMAN_STAND_MOBILE',
 		['targetIcon'] = 'fas fa-shopping-basket',
 		['targetLabel'] = 'Open Shop',
 		['products'] = Config.Products['normal'],
@@ -202,10 +200,9 @@ Config.Locations = {
 	['eastside'] = {
 		['label'] = 'Eastside Market',
 		['coords'] = Vector(-54567.0, -41338.1, 284.1),
-		['heading'] = Rotator(0.0, -108.01155853271, 0.0),
+		['heading'] = -108,
 		['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
-		['scenario'] = 'WORLD_HUMAN_STAND_MOBILE',
-		['radius'] = 1.5,
+		['animation'] = 'WORLD_HUMAN_STAND_MOBILE',
 		['targetIcon'] = 'fas fa-shopping-basket',
 		['targetLabel'] = 'Open Shop',
 		['products'] = Config.Products['normal'],
@@ -218,10 +215,9 @@ Config.Locations = {
 	['fastfood'] = {
 		['label'] = 'Fast Food',
 		['coords'] = Vector(-30773.1, -224791.3, 205.9),
-		['heading'] = Rotator(0.0, -21.956405639648, 0.0),
+		['heading'] = -21,
 		['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
-		['scenario'] = 'WORLD_HUMAN_STAND_MOBILE',
-		['radius'] = 1.5,
+		['animation'] = 'WORLD_HUMAN_STAND_MOBILE',
 		['targetIcon'] = 'fas fa-shopping-basket',
 		['targetLabel'] = 'Open Shop',
 		['products'] = Config.Products['liquor'],
@@ -234,10 +230,9 @@ Config.Locations = {
 	['fastfood1'] = {
 		['label'] = 'Fast Food',
 		['coords'] = Vector(-34032.6, -73824.6, 211.9),
-		['heading'] = Rotator(0.0, 160.05657958984, 0.0),
+		['heading'] = 160,
 		['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
-		['scenario'] = 'WORLD_HUMAN_STAND_MOBILE',
-		['radius'] = 1.5,
+		['animation'] = 'WORLD_HUMAN_STAND_MOBILE',
 		['targetIcon'] = 'fas fa-shopping-basket',
 		['targetLabel'] = 'Open Shop',
 		['products'] = Config.Products['liquor'],
@@ -250,10 +245,9 @@ Config.Locations = {
 	['fastfood2'] = {
 		['label'] = 'Fast Food',
 		['coords'] = Vector(149626.4, -58093.0, 211.9),
-		['heading'] = Rotator(0.0, 2.0494477748871, 0.0),
+		['heading'] = 2,
 		['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
-		['scenario'] = 'WORLD_HUMAN_STAND_MOBILE',
-		['radius'] = 1.5,
+		['animation'] = 'WORLD_HUMAN_STAND_MOBILE',
 		['targetIcon'] = 'fas fa-shopping-basket',
 		['targetLabel'] = 'Open Shop',
 		['products'] = Config.Products['liquor'],
@@ -266,10 +260,9 @@ Config.Locations = {
 	['fastfood3'] = {
 		['label'] = 'Fast Food',
 		['coords'] = Vector(-139078.6, 126519.5, 191.3),
-		['heading'] = Rotator(0.0, 88.331703186035, 0.0),
+		['heading'] = 88,
 		['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
-		['scenario'] = 'WORLD_HUMAN_STAND_MOBILE',
-		['radius'] = 1.5,
+		['animation'] = 'WORLD_HUMAN_STAND_MOBILE',
 		['targetIcon'] = 'fas fa-shopping-basket',
 		['targetLabel'] = 'Open Shop',
 		['products'] = Config.Products['liquor'],
@@ -282,10 +275,9 @@ Config.Locations = {
 	['fastfood4'] = {
 		['label'] = 'Fast Food',
 		['coords'] = Vector(119952.8, 28478.3, 211.9),
-		['heading'] = Rotator(0.0, 37.124965667725, 0.0),
+		['heading'] = 37,
 		['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
-		['scenario'] = 'WORLD_HUMAN_STAND_MOBILE',
-		['radius'] = 1.5,
+		['animation'] = 'WORLD_HUMAN_STAND_MOBILE',
 		['targetIcon'] = 'fas fa-shopping-basket',
 		['targetLabel'] = 'Open Shop',
 		['products'] = Config.Products['liquor'],
@@ -298,10 +290,9 @@ Config.Locations = {
 	['gunshop'] = {
 		['label'] = 'Gun Shop',
 		['coords'] = Vector(-2053.6, -89885.1, 206.7),
-		['heading'] = Rotator(0.0, 178.20947265625, 0.0),
+		['heading'] = 178,
 		['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
-		['scenario'] = 'WORLD_HUMAN_COP_IDLES',
-		['radius'] = 1.5,
+		['animation'] = 'WORLD_HUMAN_COP_IDLES',
 		['targetIcon'] = 'fas fa-gun',
 		['targetLabel'] = 'Open Gun Shop',
 		['products'] = Config.Products['weapons'],
@@ -314,10 +305,9 @@ Config.Locations = {
 	['gunshop1'] = {
 		['label'] = 'Gun Shop',
 		['coords'] = Vector(53952.9, -192375.5, 194.2),
-		['heading'] = Rotator(0.0, 124.63243103027, 0.0),
+		['heading'] = 124,
 		['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
-		['scenario'] = 'WORLD_HUMAN_COP_IDLES',
-		['radius'] = 1.5,
+		['animation'] = 'WORLD_HUMAN_COP_IDLES',
 		['targetIcon'] = 'fas fa-gun',
 		['targetLabel'] = 'Open Gun Shop',
 		['products'] = Config.Products['weapons'],
@@ -330,10 +320,9 @@ Config.Locations = {
 	['gunshop2'] = {
 		['label'] = 'Gun Shop',
 		['coords'] = Vector(69022.5, 197398.7, 194.2),
-		['heading'] = Rotator(0.0, -126.47484588623, 0.0),
+		['heading'] = -126,
 		['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
-		['scenario'] = 'WORLD_HUMAN_COP_IDLES',
-		['radius'] = 1.5,
+		['animation'] = 'WORLD_HUMAN_COP_IDLES',
 		['targetIcon'] = 'fas fa-gun',
 		['targetLabel'] = 'Open Gun Shop',
 		['products'] = Config.Products['weapons'],
@@ -346,10 +335,9 @@ Config.Locations = {
 	['gunshop3'] = {
 		['label'] = 'Gun Shop',
 		['coords'] = Vector(-139307.4, 184192.9, 190.0),
-		['heading'] = Rotator(0.0, 2.1893579959869, 0.0),
+		['heading'] = 2,
 		['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
-		['scenario'] = 'WORLD_HUMAN_COP_IDLES',
-		['radius'] = 1.5,
+		['animation'] = 'WORLD_HUMAN_COP_IDLES',
 		['targetIcon'] = 'fas fa-gun',
 		['targetLabel'] = 'Open Gun Shop',
 		['products'] = Config.Products['weapons'],
@@ -359,13 +347,13 @@ Config.Locations = {
 		['blipcolor'] = 0,
 		['delivery'] = Vector(-660.61, -938.14, 21.83),
 	},
-	-- -- Weedshop Locations
+
 	-- ['weedshop'] = {
 	--     ['label'] = 'Smoke On The Water',
 	--     ['coords'] = Vector(-1168.26, -1573.2, 4.66),
 	--     ['heading'] = Rotator(0, 0, 0),
 	--     ['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
-	--     ['scenario'] = 'WORLD_HUMAN_AA_SMOKE',
+	--     ['animation'] = 'WORLD_HUMAN_AA_SMOKE',
 	--     ['radius'] = 1.5,
 	--     ['targetIcon'] = 'fas fa-cannabis',
 	--     ['targetLabel'] = 'Open Weed Shop',
@@ -377,13 +365,12 @@ Config.Locations = {
 	--     ['delivery'] = Vector(-1162.13, -1568.57, 4.39)
 	-- },
 
-	-- -- Sea Word Locations
 	-- ['seaword'] = {
 	--     ['label'] = 'Sea Word',
 	--     ['coords'] = Vector(-1687.03, -1072.18, 13.15),
 	--     ['heading'] = Rotator(0, 0, 0),
 	--     ['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
-	--     ['scenario'] = 'WORLD_HUMAN_STAND_IMPATIENT',
+	--     ['animation'] = 'WORLD_HUMAN_STAND_IMPATIENT',
 	--     ['radius'] = 1.5,
 	--     ['targetIcon'] = 'fas fa-fish',
 	--     ['targetLabel'] = 'Sea Word',
@@ -395,13 +382,12 @@ Config.Locations = {
 	--     ['delivery'] = Vector(-1674.18, -1073.7, 13.15)
 	-- },
 
-	-- -- Leisure Shop Locations
 	-- ['leisureshop'] = {
 	--     ['label'] = 'Leisure Shop',
 	--     ['coords'] = Vector(-1505.91, 1511.95, 115.29),
 	--     ['heading'] = Rotator(0, 0, 0),
 	--     ['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
-	--     ['scenario'] = 'WORLD_HUMAN_STAND_MOBILE_CLUBHOUSE',
+	--     ['animation'] = 'WORLD_HUMAN_STAND_MOBILE_CLUBHOUSE',
 	--     ['radius'] = 1.5,
 	--     ['targetIcon'] = 'fas fa-leaf',
 	--     ['targetLabel'] = 'Open Leisure Shop',
@@ -413,34 +399,6 @@ Config.Locations = {
 	--     ['delivery'] = Vector(-1507.64, 1505.52, 115.29)
 	-- },
 
-	-- ['police'] = {
-	--     ['label'] = 'Police Shop',
-	--     ['coords'] = Vector(461.8498, -981.0677, 30.6896),
-	--     ['heading'] = Rotator(0, 0, 0),
-	--     ['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
-	--     ['scenario'] = 'WORLD_HUMAN_COP_IDLES',
-	--     ['radius'] = 1.5,
-	--     ['targetIcon'] = 'fas fa-gun',
-	--     ['targetLabel'] = 'Open Armory',
-	--     ['products'] = Config.Products['police'],
-	--     ['delivery'] = Vector(459.0441, -1008.0366, 28.2627),
-	--     ['requiredJob'] = 'police',
-	-- },
-
-	-- ['ambulance'] = {
-	--     ['label'] = 'Ambulance Shop',
-	--     ['coords'] = Vector(309.93, -602.94, 43.29),
-	--     ['heading'] = Rotator(0, 0, 0),
-	--     ['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
-	--     ['scenario'] = 'WORLD_HUMAN_STAND_MOBILE',
-	--     ['radius'] = 1.5,
-	--     ['targetIcon'] = 'fas fa-hand',
-	--     ['targetLabel'] = 'Open Armory',
-	--     ['products'] = Config.Products['ambulance'],
-	--     ['delivery'] = Vector(283.5821, -614.8570, 43.3792),
-	--     ['requiredJob'] = 'ambulance'
-	-- },
-
 	-- ['mechanic'] = {
 	--     ['label'] = 'Mechanic Shop',
 	--     ['coords'] = Vector(-343.66, -140.78, 39.02),
@@ -449,54 +407,96 @@ Config.Locations = {
 	--     ['requiredJob'] = 'mechanic',
 	-- },
 
-	-- ['mechanic2'] = {
-	--     ['label'] = 'Mechanic Shop',
-	--     ['coords'] = Vector(1189.36, 2641.00, 38.44),
-	--     ['products'] = Config.Products['mechanic'],
-	--     ['delivery'] = Vector(1189.9852, 2651.1873, 37.8351),
-	--     ['requiredJob'] = 'mechanic2'
-	-- },
-
-	-- ['mechanic3'] = {
-	--     ['label'] = 'Mechanic Shop',
-	--     ['coords'] = Vector(-1156.56, -1999.85, 13.19),
-	--     ['products'] = Config.Products['mechanic'],
-	--     ['delivery'] = Vector(-1131.9661, -1972.0144, 13.1603),
-	--     ['requiredJob'] = 'mechanic3'
-	-- },
-
-	-- ['bennys'] = {
-	--     ['label'] = 'Mechanic Shop',
-	--     ['coords'] = Vector(-195.80, -1318.24, 31.08),
-	--     ['products'] = Config.Products['mechanic'],
-	--     ['delivery'] = Vector(-232.5028, -1311.7202, 31.2960),
-	--     ['requiredJob'] = 'bennys'
-	-- },
-
-	-- ['beeker'] = {
-	--     ['label'] = 'Mechanic Shop',
-	--     ['coords'] = Vector(100.92, 6616.00, 32.47),
-	--     ['products'] = Config.Products['mechanic'],
-	--     ['delivery'] = Vector(119.3033, 6626.7358, 31.9558),
-	--     ['requiredJob'] = 'beeker'
-	-- },
-
-	-- ['prison'] = {
-	--     ['label'] = 'Canteen Shop',
-	--     ['coords'] = Vector(1777.59, 2560.52, 44.62),
+	-- ['ambulance'] = {
+	--     ['label'] = 'Ambulance Shop',
+	--     ['coords'] = Vector(309.93, -602.94, 43.29),
 	--     ['heading'] = Rotator(0, 0, 0),
 	--     ['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
-	--     ['scenario'] = 'WORLD_HUMAN_COP_IDLES',
+	--     ['animation'] = 'WORLD_HUMAN_STAND_MOBILE',
 	--     ['radius'] = 1.5,
-	--     ['targetIcon'] = 'fas fa-clipboard',
-	--     ['targetLabel'] = 'Open Shop',
-	--     ['products'] = Config.Products['prison'],
-	--     ['showblip'] = true,
-	--     ['blipsprite'] = 52,
-	--     ['blipscale'] = 0.8,
-	--     ['blipcolor'] = 0,
-	--     ['delivery'] = Vector(1845.8175, 2585.9312, 45.6721)
+	--     ['targetIcon'] = 'fas fa-hand',
+	--     ['targetLabel'] = 'Open Armory',
+	--     ['products'] = Config.Products['ambulance'],
+	--     ['delivery'] = Vector(283.5821, -614.8570, 43.3792),
+	--     ['requiredJob'] = 'ambulance'
 	-- },
+
+	['police'] = {
+		['label'] = 'Police Shop',
+		['coords'] = Vector(94931.0, -161470.7, 198.6),
+		['heading'] = 132,
+		['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
+		['animation'] = 'WORLD_HUMAN_COP_IDLES',
+		['targetIcon'] = 'fas fa-gun',
+		['targetLabel'] = 'Open Armory',
+		['products'] = Config.Products['police'],
+		['delivery'] = Vector(459.0441, -1008.0366, 28.2627),
+		['requiredJob'] = 'police',
+	},
+	['police1'] = {
+		['label'] = 'Police Shop',
+		['coords'] = Vector(45635.8, 239429.4, 198.6),
+		['heading'] = -48,
+		['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
+		['animation'] = 'WORLD_HUMAN_COP_IDLES',
+		['targetIcon'] = 'fas fa-gun',
+		['targetLabel'] = 'Open Armory',
+		['products'] = Config.Products['police'],
+		['delivery'] = Vector(459.0441, -1008.0366, 28.2627),
+		['requiredJob'] = 'police',
+	},
+	['police2'] = {
+		['label'] = 'Police Shop',
+		['coords'] = Vector(115873.2, 87536.2, 198.8),
+		['heading'] = -98,
+		['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
+		['animation'] = 'WORLD_HUMAN_COP_IDLES',
+		['targetIcon'] = 'fas fa-gun',
+		['targetLabel'] = 'Open Armory',
+		['products'] = Config.Products['police'],
+		['delivery'] = Vector(459.0441, -1008.0366, 28.2627),
+		['requiredJob'] = 'police',
+	},
+	['police3'] = {
+		['label'] = 'Police Shop',
+		['coords'] = Vector(-194487.4, 217043.2, 198.6),
+		['heading'] = 16,
+		['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
+		['animation'] = 'WORLD_HUMAN_COP_IDLES',
+		['targetIcon'] = 'fas fa-gun',
+		['targetLabel'] = 'Open Armory',
+		['products'] = Config.Products['police'],
+		['delivery'] = Vector(459.0441, -1008.0366, 28.2627),
+		['requiredJob'] = 'police',
+	},
+	['police4'] = {
+		['label'] = 'Police Shop',
+		['coords'] = Vector(20383.7, 11079.0, 214.8),
+		['heading'] = 87,
+		['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
+		['animation'] = 'WORLD_HUMAN_COP_IDLES',
+		['targetIcon'] = 'fas fa-gun',
+		['targetLabel'] = 'Open Armory',
+		['products'] = Config.Products['police'],
+		['delivery'] = Vector(459.0441, -1008.0366, 28.2627),
+		['requiredJob'] = 'police',
+	},
+
+	['prison'] = {
+		['label'] = 'Canteen Shop',
+		['coords'] = Vector(-134199.4, -171627.3, 207.9),
+		['heading'] = -65,
+		['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
+		['animation'] = 'WORLD_HUMAN_COP_IDLES',
+		['targetIcon'] = 'fas fa-clipboard',
+		['targetLabel'] = 'Open Shop',
+		['products'] = Config.Products['prison'],
+		['showblip'] = true,
+		['blipsprite'] = 52,
+		['blipscale'] = 0.8,
+		['blipcolor'] = 0,
+		['delivery'] = Vector(1845.8175, 2585.9312, 45.6721)
+	},
 }
 
 return Config

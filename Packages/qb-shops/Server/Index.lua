@@ -174,14 +174,12 @@ end)
 for shop, shopData in pairs(Config.Locations) do
 	if shopData.ped then
 		local coords = shopData.coords
-		local heading = shopData.heading
+		local heading = Rotator(0, shopData.heading, 0)
 		local ped = HCharacter(coords, heading, shopData.ped)
-		ped:AddSkeletalMeshAttached('head', '/CharacterCreator/CharacterAssets/Avatar_FBX/Head/Male_Head')
+		ped:AddSkeletalMeshAttached('head', 'helix::SK_Male_Head')
 		ped:AddSkeletalMeshAttached('chest', 'helix::SK_Man_Outwear_03')
 		ped:AddSkeletalMeshAttached('legs', 'helix::SK_Man_Pants_05')
 		ped:AddSkeletalMeshAttached('feet', 'helix::SK_Delivery_Shoes')
-		--ped:SetInvulnerable(true)
-		--ped:SetImpactDamageTaken(0)
 		peds[ped] = {
 			options = {
 				{
