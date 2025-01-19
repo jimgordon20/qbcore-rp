@@ -1,7 +1,7 @@
 local Lang = Package.Require('../Shared/locales/' .. QBConfig.Language .. '.lua')
 local peds = {}
 
-for i = 1, #Config.Locations['duty'], 1 do
+for i = 1, #Config.Locations['duty'] do
     local location_info = Config.Locations['duty'][i]
     local coords = location_info.coords
     local heading = location_info.heading
@@ -26,7 +26,7 @@ for i = 1, #Config.Locations['duty'], 1 do
     }
 end
 
-for i = 1, #Config.Locations['vehicle'], 1 do
+for i = 1, #Config.Locations['vehicle'] do
     local location_info = Config.Locations['vehicle'][i]
     local coords = location_info.coords
     local heading = location_info.heading
@@ -51,7 +51,7 @@ for i = 1, #Config.Locations['vehicle'], 1 do
     }
 end
 
-for i = 1, #Config.Locations['stash'], 1 do
+for i = 1, #Config.Locations['stash'] do
     local location_info = Config.Locations['stash'][i]
     local coords = location_info.coords
     local heading = location_info.heading
@@ -76,7 +76,7 @@ for i = 1, #Config.Locations['stash'], 1 do
     }
 end
 
-for i = 1, #Config.Locations['evidence'], 1 do
+for i = 1, #Config.Locations['evidence'] do
     local location_info = Config.Locations['evidence'][i]
     local coords = location_info.coords
     local heading = location_info.heading
@@ -101,7 +101,7 @@ for i = 1, #Config.Locations['evidence'], 1 do
     }
 end
 
-for i = 1, #Config.Locations['fingerprint'], 1 do
+for i = 1, #Config.Locations['fingerprint'] do
     local location_info = Config.Locations['fingerprint'][i]
     local coords = location_info.coords
     local heading = location_info.heading

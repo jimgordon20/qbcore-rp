@@ -51,7 +51,11 @@ Config = {
             Vector(0, 0, 0)
         },
         fingerprint = {
-            { coords = Vector(94619.2, -161676.1, 198.6), heading = 132 },
+            { coords = Vector(94619.2, -161676.1, 198.6),  heading = 132 },
+            { coords = Vector(45885.5, 239700.9, 198.6),   heading = -48 },
+            { coords = Vector(116244.7, 87500.5, 198.7),   heading = -98 },
+            { coords = Vector(-194589.1, 217415.6, 198.6), heading = 16 },
+            { coords = Vector(20377.5, 11091.7, 208.8),    heading = 87 },
         },
         evidence = {
             { coords = Vector(94344.3, -161916.0, 198.6),  heading = 132 },
