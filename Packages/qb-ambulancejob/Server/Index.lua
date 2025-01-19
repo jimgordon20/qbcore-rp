@@ -17,7 +17,7 @@ end
 
 for _, location in ipairs(Config.Locations['checking']) do
     local ped = HCharacter(location.coords, Rotator(0.0, location.heading, 0.0), '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body')
-    ped:AddSkeletalMeshAttached('head', '/CharacterCreator/CharacterAssets/Avatar_FBX/Head/Male_Head')
+    ped:AddSkeletalMeshAttached('head', 'helix::SK_Male_Head')
     ped:AddSkeletalMeshAttached('chest', 'helix::SK_Man_Outwear_03')
     ped:AddSkeletalMeshAttached('legs', 'helix::SK_Man_Pants_05')
     ped:AddSkeletalMeshAttached('feet', 'helix::SK_Delivery_Shoes')
@@ -37,7 +37,7 @@ end
 
 for _, location in ipairs(Config.Locations['duty']) do
     local ped = HCharacter(location.coords, Rotator(0.0, location.heading, 0.0), '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body')
-    ped:AddSkeletalMeshAttached('head', '/CharacterCreator/CharacterAssets/Avatar_FBX/Head/Male_Head')
+    ped:AddSkeletalMeshAttached('head', 'helix::SK_Male_Head')
     ped:AddSkeletalMeshAttached('chest', 'helix::SK_Man_Outwear_03')
     ped:AddSkeletalMeshAttached('legs', 'helix::SK_Man_Pants_05')
     ped:AddSkeletalMeshAttached('feet', 'helix::SK_Delivery_Shoes')
@@ -58,7 +58,7 @@ end
 
 for _, location in ipairs(Config.Locations['stash']) do
     local ped = HCharacter(location.coords, Rotator(0.0, location.heading, 0.0), '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body')
-    ped:AddSkeletalMeshAttached('head', '/CharacterCreator/CharacterAssets/Avatar_FBX/Head/Male_Head')
+    ped:AddSkeletalMeshAttached('head', 'helix::SK_Male_Head')
     ped:AddSkeletalMeshAttached('chest', 'helix::SK_Man_Outwear_03')
     ped:AddSkeletalMeshAttached('legs', 'helix::SK_Man_Pants_05')
     ped:AddSkeletalMeshAttached('feet', 'helix::SK_Delivery_Shoes')
@@ -167,9 +167,9 @@ Events.SubscribeRemote('qb-ambulancejob:server:setDeathStatus', function(source,
 end)
 
 Events.SubscribeRemote('qb-ambulancejob:server:syncInjuries', function(source, injuries, isBleeding)
-    if not injuries then 
+    if not injuries then
         -- Reset injuries on player unload
-        PlayerInjuries[source:GetID()] = nil 
+        PlayerInjuries[source:GetID()] = nil
         return
     end
 

@@ -7,7 +7,7 @@ local peds = {}
 
 for i = 1, #Config.locations do
 	local ped = HCharacter(Config.locations[i][1], Config.locations[i][2], '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body')
-	ped:AddSkeletalMeshAttached('head', '/CharacterCreator/CharacterAssets/Avatar_FBX/Head/Male_Head')
+	ped:AddSkeletalMeshAttached('head', 'helix::SK_Male_Head')
 	ped:AddSkeletalMeshAttached('chest', 'helix::SK_Man_Outwear_03')
 	ped:AddSkeletalMeshAttached('legs', 'helix::SK_Man_Pants_05')
 	ped:AddSkeletalMeshAttached('feet', 'helix::SK_Delivery_Shoes')
