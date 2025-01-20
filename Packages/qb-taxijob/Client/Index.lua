@@ -30,21 +30,34 @@ Events.Subscribe('qb-taxijob:client:start', function()
     Events.CallRemote('qb-taxijob:server:spawnTaxi')
     dropoff_Location = Config.NPCLocations[math.random(#Config.NPCLocations)]
     print(dropoff_Location)
-    current_marker = Prop(dropoff_location, Rotator(0, 0, 0), 'pco-markers::SM_MarkerArrow')
+    current_marker = Prop(dropoff_Location, Rotator(0, 0, 0), 'pco-markers::SM_MarkerArrow')
     current_marker:SetMaterialColorParameter('Color', Color(255, 0, 0, 1))
     current_marker:SetScale(Vector(100, 100, 100))
+    Events.Call('Map:AddBlip', {
+        id = 'taxi_job',
+        name = 'Taxi Job',
+        coords = { x = dropoff_Location.X, y = dropoff_Location.Y, z = dropoff_Location.Z},
+        imgUrl = './media/map-icons/Marker.svg',
+    })
 end)
 
 local function getNextLocation()
     if current_marker then
         current_marker:Destroy()
         current_marker = nil
+        Events.Call('Map:RemoveBlip', 'taxi_job')
     end
     dropoff_Location = Config.NPCLocations[math.random(#Config.NPCLocations)]
     print(dropoff_Location)
-    current_marker = Prop(dropoff_location, Rotator(0, 0, 0), 'pco-markers::SM_MarkerArrow')
+    current_marker = Prop(dropoff_Location, Rotator(0, 0, 0), 'pco-markers::SM_MarkerArrow')
     current_marker:SetMaterialColorParameter('Color', Color(255, 0, 0, 1))
     current_marker:SetScale(Vector(100, 100, 100))
+    Events.Call('Map:AddBlip', {
+        id = 'taxi_job',
+        name = 'Taxi Job',
+        coords = { x = dropoff_Location.X, y = dropoff_Location.Y, z = dropoff_Location.Z},
+        imgUrl = './media/map-icons/Marker.svg',
+    })
 end
 
 Input.Subscribe('KeyDown', function(key_name)
