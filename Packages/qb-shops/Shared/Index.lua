@@ -471,7 +471,7 @@ Config.Locations = {
 	},
 	['police4'] = {
 		['label'] = 'Police Shop',
-		['coords'] = Vector(20383.7, 11079.0, 214.8),
+		['coords'] = Vector(20754.8, 11098.2, 208.8),
 		['heading'] = 87,
 		['ped'] = '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body',
 		['animation'] = 'WORLD_HUMAN_COP_IDLES',
