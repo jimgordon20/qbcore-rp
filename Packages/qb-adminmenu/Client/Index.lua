@@ -1,89 +1,133 @@
-local my_webui = WebUI('admin-menu', 'file://html/index.html', WidgetVisibility.Hidden)
-local menu_open = false
+local Lang = Package.Require('../Shared/locales/' .. QBConfig.Language .. '.lua')
 
-my_webui:Subscribe('mouseInput', function(bool)
-	Input.SetMouseEnabled(bool)
-	my_webui:BringToFront()
-end)
+local function openAdmin()
+	local admin_menu = ContextMenu.new()
 
-my_webui:Subscribe('execute', function(data)
-	Events.CallRemote('QBCore:Console:CallCommand', data.name, data.argsString)
-end)
-
-Input.Subscribe('KeyDown', function(key_name)
-	if key_name == 'LeftShift' and Client.GetLocalPlayer():GetValue('noclip', false) then
-		local player = Client.GetLocalPlayer()
-		if not player then return end
-		local camRotation = player:GetCameraRotation()
-		local forward = camRotation:GetForwardVector()
-		local up = camRotation:GetUpVector()
-		local moveDirection = Vector(0, 0, 0)
-		if Input.IsKeyDown('W') then moveDirection = moveDirection + forward end
-		if Input.IsKeyDown('SpaceBar') then moveDirection = moveDirection + up end
-		if Input.IsKeyDown('LeftControl') then moveDirection = moveDirection - up end
-		player:SetCameraLocation(player:GetCameraLocation() + (moveDirection * 300))
+	-- Admin Options
+	local adminOptions = {}
+	for i = 1, #Config.adminOptions do
+		adminOptions[i] = {
+			id = i,
+			label = Config.adminOptions[i].name,
+			command = Config.adminOptions[i].command
+		}
 	end
-end)
 
-Input.Subscribe('KeyPress', function(key_name)
-	if key_name == 'Up' and menu_open then
-		my_webui:CallEvent('navigateUp')
-	end
-end)
+	admin_menu:addListPicker('admin-options', 'Admin Options', adminOptions, function(id)
+		local selectedItem = Config.adminOptions[id]
+		Events.CallRemote('QBCore:Console:CallCommand', selectedItem.command)
+	end)
 
-Input.Subscribe('KeyPress', function(key_name)
-	if key_name == 'Down' and menu_open then
-		my_webui:CallEvent('navigateDown')
+	-- Dev Options
+	local devOptions = {}
+	for i = 1, #Config.devOptions do
+		devOptions[i] = {
+			id = i,
+			label = Config.devOptions[i].name,
+			command = Config.devOptions[i].command
+		}
 	end
-end)
 
-Input.Subscribe('KeyPress', function(key_name)
-	if key_name == 'Left' and menu_open then
-		my_webui:CallEvent('navigateLeft')
-	end
-end)
+	admin_menu:addListPicker('dev-options', 'Developer Options', devOptions, function(id)
+		local selectedItem = Config.devOptions[id]
+		Events.CallRemote('QBCore:Console:CallCommand', selectedItem.command)
+	end)
 
-Input.Subscribe('KeyPress', function(key_name)
-	if key_name == 'Right' and menu_open then
-		my_webui:CallEvent('navigateRight')
+	-- Weapon Spawn
+	local weapons = QBShared.Weapons
+	local availableWeapons = {}
+	for weapon_name in pairs(weapons) do
+		availableWeapons[#availableWeapons + 1] = {
+			id = weapon_name,
+			label = weapon_name
+		}
 	end
-end)
 
-Input.Subscribe('KeyPress', function(key_name)
-	if key_name == 'Enter' and menu_open then
-		my_webui:CallEvent('select')
-	end
-end)
+	admin_menu:addListPicker('spawn-weapon', 'Spawn Weapon: ', availableWeapons, function(id)
+		Events.CallRemote('QBCore:Console:CallCommand', 'weapon', id)
+	end)
 
-Input.Subscribe('KeyPress', function(key_name)
-	if key_name == 'BackSpace' and menu_open then
-		my_webui:CallEvent('closeMenu')
-		if Input.IsMouseEnabled() then
-			Input.SetMouseEnabled(false)
-		end
-		my_webui:SetVisibility(WidgetVisibility.Hidden)
-		menu_open = false
-		Events.CallRemote('qb-adminmenu:server:toggleInput', true)
+	-- Weapon Options
+	local weaponOptions = {}
+	for i = 1, #Config.weaponOptions do
+		weaponOptions[i] = {
+			id = i,
+			label = Config.weaponOptions[i].name,
+			command = Config.weaponOptions[i].command
+		}
 	end
-end)
+
+	admin_menu:addListPicker('weapon-options', 'Weapon Options', weaponOptions, function(id)
+		local selectedItem = Config.weaponOptions[id]
+		Events.CallRemote('QBCore:Console:CallCommand', selectedItem.command)
+	end)
+
+	-- Vehicle Spawn
+	local vehicles = QBShared.Vehicles
+	local availableVehicles = {}
+	for vehicle_name in pairs(vehicles) do
+		availableVehicles[#availableVehicles + 1] = {
+			id = vehicle_name,
+			label = vehicle_name
+		}
+	end
+
+	admin_menu:addListPicker('spawn-vehicle', 'Spawn Vehicle: ', availableVehicles, function(id)
+		Events.CallRemote('QBCore:Console:CallCommand', 'car', id)
+	end)
+
+	-- Vehicle Options
+	local vehicleOptions = {}
+	for i = 1, #Config.vehicleOptions do
+		vehicleOptions[i] = {
+			id = i,
+			label = Config.vehicleOptions[i].name,
+			command = Config.vehicleOptions[i].command
+		}
+	end
+
+	admin_menu:addListPicker('vehicle-options', 'Vehicle Options', vehicleOptions, function(id)
+		local selectedItem = Config.vehicleOptions[id]
+		Events.CallRemote('QBCore:Console:CallCommand', selectedItem.command)
+	end)
+
+	-- Time Options
+
+	local timeOptions = {}
+	for i = 1, 24 do
+		timeOptions[i] = {
+			id = i,
+			label = string.format('%02d:00', i),
+		}
+	end
+
+	admin_menu:addListPicker('time-options', 'Time Options', timeOptions, function(id)
+		local selectedItem = timeOptions[id]
+		Events.CallRemote('QBCore:Console:CallCommand', 'time', tostring(selectedItem.id))
+	end)
+
+	-- Weather Options
+	local weatherOptions = {}
+	for i = 1, #Config.weatherOptions do
+		weatherOptions[i] = {
+			id = i,
+			label = Config.weatherOptions[i].name,
+			command = Config.weatherOptions[i].command
+		}
+	end
+
+	admin_menu:addListPicker('weather-options', 'Weather Options', weatherOptions, function(id)
+		local selectedItem = Config.weatherOptions[id]
+		Events.CallRemote('QBCore:Console:CallCommand', selectedItem.command, selectedItem.name)
+	end)
+
+	admin_menu:SetHeader('Admin Menu', '')
+	admin_menu:Open(false, false)
+end
 
 Input.Register('AdminMenu', 'F9')
-
 Input.Bind('AdminMenu', InputEvent.Pressed, function()
-	if not menu_open then
-		my_webui:CallEvent('openMenu')
-		my_webui:SetVisibility(WidgetVisibility.Visible)
-		menu_open = true
-		Events.CallRemote('qb-adminmenu:server:toggleInput', false)
-	else
-		my_webui:CallEvent('closeMenu')
-		if Input.IsMouseEnabled() then
-			Input.SetMouseEnabled(false)
-		end
-		my_webui:SetVisibility(WidgetVisibility.Hidden)
-		menu_open = false
-		Events.CallRemote('qb-adminmenu:server:toggleInput', true)
-	end
+	openAdmin()
 end)
 
 -- Callback
@@ -100,7 +144,6 @@ end)
 local showing_coords = false
 local my_timer = nil
 local coords_canvas = nil
-
 Events.SubscribeRemote('qb-adminmenu:client:showCoords', function()
 	if not showing_coords then
 		showing_coords = true
@@ -232,7 +275,6 @@ end)
 -- Names
 
 local showing_names = false
-
 function AddNametag(player, character)
 	if not character then
 		character = player:GetControlledCharacter()
