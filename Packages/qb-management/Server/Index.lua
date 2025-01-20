@@ -96,7 +96,7 @@ Events.SubscribeRemote('qb-management:server:hireEmployee', function(source, tar
         Events.CallRemote('QBCore:Notify', source, Lang:t('error.unavailable'), 'error')
         return
     end
-    if Target.Functions.SetJob(player_job.name, 0) then
+    if Target.Functions.SetJob(player_job.name) then
         Target.Functions.Save()
         Events.CallRemote('QBCore:Notify', source, Lang:t('success.e_hired'), 'success')
         Events.CallRemote('QBCore:Notify', Target.PlayerData.source, Lang:t('success.e_hiredt'), 'success')
@@ -118,7 +118,7 @@ Events.SubscribeRemote('qb-management:server:fireEmployee', function(source, tar
         Events.CallRemote('QBCore:Notify', source, Lang:t('error.unavailable'), 'error')
         return
     end
-    if Target.Functions.SetJob('unemployed', 0) then
+    if Target.Functions.SetJob('unemployed') then
         Target.Functions.Save()
         Events.CallRemote('QBCore:Notify', source, Lang:t('success.e_fired'), 'success')
         Events.CallRemote('QBCore:Notify', Target.PlayerData.source, Lang:t('error.e_fired'), 'error')

@@ -110,7 +110,7 @@ function QBCore.Player.CreatePlayer(PlayerData, Offline)
 
     function self.Functions.SetJob(job, grade)
         job = job:lower()
-        grade = grade or '0'
+        grade = grade or 1
         if not QBShared.Jobs[job] then return false end
         self.PlayerData.job = {
             name = job,
@@ -119,16 +119,15 @@ function QBCore.Player.CreatePlayer(PlayerData, Offline)
             type = QBShared.Jobs[job].type or 'none',
             grade = {
                 name = 'No Grades',
-                level = 0,
+                level = 1,
                 payment = 30,
                 isboss = false
             }
         }
-        local gradeKey = tostring(grade)
-        local jobGradeInfo = QBShared.Jobs[job].grades[gradeKey]
+        local jobGradeInfo = QBShared.Jobs[job].grades[grade]
         if jobGradeInfo then
             self.PlayerData.job.grade.name = jobGradeInfo.name
-            self.PlayerData.job.grade.level = tonumber(gradeKey)
+            self.PlayerData.job.grade.level = grade
             self.PlayerData.job.grade.payment = jobGradeInfo.payment
             self.PlayerData.job.grade.isboss = jobGradeInfo.isboss or false
             self.PlayerData.job.isboss = jobGradeInfo.isboss or false
@@ -145,22 +144,21 @@ function QBCore.Player.CreatePlayer(PlayerData, Offline)
 
     function self.Functions.SetGang(gang, grade)
         gang = gang:lower()
-        grade = grade or '0'
+        grade = grade or 1
         if not QBShared.Gangs[gang] then return false end
         self.PlayerData.gang = {
             name = gang,
             label = QBShared.Gangs[gang].label,
             grade = {
                 name = 'No Grades',
-                level = 0,
+                level = 1,
                 isboss = false
             }
         }
-        local gradeKey = tostring(grade)
-        local gangGradeInfo = QBShared.Gangs[gang].grades[gradeKey]
+        local gangGradeInfo = QBShared.Gangs[gang].grades[grade]
         if gangGradeInfo then
             self.PlayerData.gang.grade.name = gangGradeInfo.name
-            self.PlayerData.gang.grade.level = tonumber(gradeKey)
+            self.PlayerData.gang.grade.level = grade
             self.PlayerData.gang.grade.isboss = gangGradeInfo.isboss or false
             self.PlayerData.gang.isboss = gangGradeInfo.isboss or false
         end

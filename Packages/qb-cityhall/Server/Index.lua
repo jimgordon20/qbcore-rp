@@ -120,7 +120,7 @@ Events.SubscribeRemote('qb-cityhall:server:applyJob', function(source, job)
     if not JobInfo then return end
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
-    if Player.Functions.SetJob(job, 0) then
+    if Player.Functions.SetJob(job) then
         Events.CallRemote('QBCore:Notify', source, Lang:t('info.new_job', { value = JobInfo.label }))
     else
         Events.CallRemote('QBCore:Notify', source, Lang:t('error.job_failed', { value = JobInfo.label }))

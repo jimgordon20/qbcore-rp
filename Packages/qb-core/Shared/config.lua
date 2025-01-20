@@ -94,7 +94,7 @@ QBConfig.Player.PlayerDefaults = {
 		isboss = false,
 		grade = {
 			name = 'Freelancer',
-			level = 0,
+			level = 1,
 		},
 	},
 	gang = {
@@ -103,7 +103,7 @@ QBConfig.Player.PlayerDefaults = {
 		isboss = false,
 		grade = {
 			name = 'none',
-			level = 0,
+			level = 1,
 		},
 	},
 	metadata = {
