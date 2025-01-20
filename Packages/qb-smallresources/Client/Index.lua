@@ -72,11 +72,11 @@ Timer.SetInterval(function()
     local pedLocation = ped:GetLocation()
     local zIndex = 1000
     local traceFinal = Vector(pedLocation.X, pedLocation.Y, pedLocation.Z + zIndex)
-    local trace = Trace.LineSingle(pedLocation, traceFinal, CollisionChannel.WorldStatic, TraceMode.DrawDebug)
+    local trace = Trace.LineSingle(pedLocation, traceFinal, CollisionChannel.WorldStatic)
     
     while not trace.Success do
         zIndex = zIndex + 1000
-        trace = Trace.LineSingle(pedLocation, Vector(pedLocation.X, pedLocation.Y, pedLocation.Z + zIndex), CollisionChannel.WorldStatic, TraceMode.DrawDebug)
+        trace = Trace.LineSingle(pedLocation, Vector(pedLocation.X, pedLocation.Y, pedLocation.Z + zIndex), CollisionChannel.WorldStatic)
         if trace.Success then
             break
         end
