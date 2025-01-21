@@ -273,19 +273,22 @@ end)
 QBCore.Functions.CreateUseableItem('bandage', function(source, item)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
-    if Player.Functions.RemoveItem(item.name) then
-        Events.CallRemote('qb-ambulancejob:client:UseBandage', source)
-        local ped = source:GetControlledCharacter()
-        if not ped then return end
-        local health = ped:GetHealth()
-        local max_health = ped:GetMaxHealth()
-        local heal_amount = 10
+    if not RemoveItem(source, item.name, 1) then return end
+    Events.CallRemote('qb-ambulancejob:client:UseBandage', source)
+    local ped = source:GetControlledCharacter()
+    if not ped then return end
+    local health = ped:GetHealth()
+    local max_health = ped:GetMaxHealth()
+    local heal_amount = 10
+    ped:PlayAnimation('qb-core-animations::Bandaging_self_wound', AnimationSlotType.FullBody, true)
+    Timer.SetTimeout(function()
+        ped:StopAnimation('qb-core-animations::Bandaging_self_wound')
         if health + heal_amount > max_health then
             ped:SetHealth(max_health)
         else
             ped:SetHealth(health + heal_amount)
         end
-    end
+    end, 5000)
 end)
 
 QBCore.Functions.CreateUseableItem('painkillers', function(source, item)
@@ -295,7 +298,7 @@ QBCore.Functions.CreateUseableItem('painkillers', function(source, item)
 end)
 
 QBCore.Functions.CreateUseableItem('firstaid', function(source, item)
-    if not RemoveItem(source, item.name, 1, item.slot) then return end
+    if not RemoveItem(source, item.name, 1) then return end
     local closestCharacter, distance = QBCore.Functions.GetClosestHCharacter(source)
     if not closestCharacter or distance > 800 then return end
 
@@ -304,9 +307,9 @@ QBCore.Functions.CreateUseableItem('firstaid', function(source, item)
     local ped = source:GetControlledCharacter()
     if not ped then return end
 
-    ped:PlayAnimation('nanos-world::A_Mannequin_Take_From_Floor', AnimationSlotType.UpperBody, true)
+    ped:PlayAnimation('qb-core-animations::Rescuscitating_Someone', AnimationSlotType.FullBody, true)
     Timer.SetTimeout(function()
-        ped:StopAnimation('nanos-world::A_Mannequin_Take_From_Floor')
+        ped:StopAnimation('qb-core-animations::Rescuscitating_Someone')
         closestCharacter:Respawn(closestCharacter:GetLocation(), closestCharacter:GetRotation())
-    end, 3000)
+    end, 10000)
 end)
