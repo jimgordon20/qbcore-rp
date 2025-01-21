@@ -42,15 +42,22 @@ end
 function ContextMenu:addDropdown(id, label, options, callback)
     local dropdownOptions = {}
     for _, item in ipairs(options) do
-        local newItem = {
-            type     = item.type,
-            id       = item.id,
-            label    = item.label,
-            callback = item.callback
-        }
-        if item.type == 'dropdown' and item.options then
-            newItem.options = item.options
+        local newItem = {}
+        for k, v in pairs(item) do
+            newItem[k] = v
         end
+
+        if newItem.type == 'dropdown' and newItem.options then
+            newItem.options = {}
+            for _, subItem in ipairs(item.options) do
+                local newSubItem = {}
+                for k, v in pairs(subItem) do
+                    newSubItem[k] = v
+                end
+                table.insert(newItem.options, newSubItem)
+            end
+        end
+
         table.insert(dropdownOptions, newItem)
     end
 
@@ -134,6 +141,21 @@ function ContextMenu:addSelect(id, label, selectOptions, callback)
         label = label,
         options = selectOptions,
         callback = callback
+    })
+end
+
+-- Add a text display (or list) to the menu
+function ContextMenu:addText(id, data)
+    local is_list = false
+    if type(data) == 'table' then
+        is_list = true
+    end
+
+    table.insert(self.items, {
+        id = id,
+        type = 'text-display',
+        data = data,
+        is_list = is_list
     })
 end
 
@@ -569,9 +591,16 @@ Chat.Subscribe('PlayerSubmit', function(message, player)
         })
 
         -- Range / slider
-        myMenu:addRange('quantity', 'Quantity', 0, 100, 50, function(value)
-            Chat.AddMessage('Range value: ' .. value)
-        end)
+        myMenu:addRange(
+            'quantity-example',
+            'Quantity',
+            1,
+            10,
+            5,
+            function(finalValue)
+                Chat.AddMessage('Submitted quantity: ' .. tostring(finalValue))
+            end
+        )
 
         -- Text input normal
         myMenu:addTextInput('text-input', 'Text input', function(text)
@@ -624,6 +653,33 @@ Chat.Subscribe('PlayerSubmit', function(message, player)
         }, function(selectedItem)
             Chat.AddMessage('Weapon selected: ' .. selectedItem.id)
         end)
+
+        -- Single text
+        myMenu:addText('static-1', 'Hello from a single-line text')
+
+        -- Multi-line text
+        myMenu:addText('static-2', {
+            'First line of text',
+            'Second line of text',
+            'Another line here'
+        })
+
+
+        myMenu:addDropdown('my-text-drop', 'Dropdown with Text Displays', {
+            {
+                id = 'td-single',
+                type = 'text-display',
+                data = 'This is a single line of text'
+            },
+            {
+                id = 'td-multi',
+                type = 'text-display',
+                data = { 'Line1', 'Line2', 'Line3' },
+                is_list = true
+            }
+        })
+
+
 
         myMenu:setMenuInfo('Menu Title', 'Menu Description')
         myMenu:Open(false, true)

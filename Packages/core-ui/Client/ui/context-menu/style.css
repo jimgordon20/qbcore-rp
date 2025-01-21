@@ -265,7 +265,7 @@ body > .bg {
 .context-menu .content .options .option {
     flex-shrink: 0;
     width: 100%;
-    height: 44px;
+    /* height: 44px; */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -395,23 +395,13 @@ body > .bg {
     transition: all 0.3s ease;
     pointer-events: none;
     margin: 0;
-}
+    overflow: hidden;
 
-.context-menu .content .options .dropdown:has(> .option.active) .sub-list {
     margin-top: 8px;
     margin-left: 17px;
-    opacity: 1;
-    pointer-events: all;
-}
-
-.context-menu .content .options .dropdown .sub-list .option {
-    height: 0px;
-    transition: all 0.3s ease;
-}
-
-.context-menu .content .options .dropdown:has(> .option.active) .sub-list .option {
-    height: 44px;
-    overflow: hidden;
+    border-left: 1px solid #343437;
+    padding-left: 10px;
+    transition: height 0.3s ease, opacity 0.3s ease;
 }
 
 .context-menu .content .options .dropdown .sub-list .option:last-child {
@@ -602,6 +592,7 @@ body > .bg {
     outline: 1px solid #343437;
     background-color: #121212;
     border-radius: 4px;
+    margin-right: 8px;
 }
 
 .option.password-input .input input[type="password"],
@@ -662,7 +653,7 @@ body > .bg {
     display: flex;
     align-items: center;
     gap: 8px;
-    width: 187px;
+    width: fit-content;
     outline: 1px solid #343437;
     background-color: #121212;
     border-radius: 4px;
@@ -690,7 +681,7 @@ body > .bg {
 }
 
 .option.range-input .slider-container .number-value {
-    width: 50px;
+    width: 35px;
     background: transparent;
     border: none;
     color: white;
@@ -703,6 +694,46 @@ body > .bg {
 
 .option.range-input .slider-container .number-value:focus {
     outline: 1px solid #00fbdd;
+}
+
+.option .range-submit-btn,
+.option .number-submit-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    border: none;
+    height: 20px;
+    min-width: 5px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #8c8c91;
+    font-family: Inter, sans-serif;
+    font-size: 14px;
+    padding: 0 6px;
+}
+
+.option.range-input .send-value,
+.option.number-input .send-value {
+    fill: transparent;
+    stroke: transparent;
+    margin-right: 3px;
+    cursor: pointer;
+    fill: #8c8c91;
+    stroke: #8c8c91;
+}
+
+.option.range-input .send-value:hover,
+.option.number-input .send-value:hover {
+    fill: #8c8c91;
+    stroke: #8c8c91;
+}
+
+.option.range-input .send-value.selected,
+.option.number-input .send-value.selected {
+    fill: #121212;
+    stroke: #121212;
 }
 
 .option.color-input .input,
@@ -804,6 +835,44 @@ body > .bg {
 
 .option.list-picker.selected .controls .value {
     color: white !important;
+}
+
+.option.text-display {
+    outline: 1px solid #343437;
+    outline-offset: -1px;
+    display: flex;
+    align-items: start !important;
+}
+
+.option.text-display.single-line {
+    pointer-events: none;
+    cursor: default;
+}
+
+.option.text-display.multi-line {
+    pointer-events: none;
+    width: 100%;
+    cursor: default;
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    flex-direction: column;
+    padding: 0;
+}
+
+.option.text-display.multi-line .text-line {
+    height: 44px;
+    margin-bottom: 0;
+    display: flex;
+    align-items: start;
+    width: fit-content;
+    padding: 0 8px;
+    pointer-events: none;
+    color: #ffffff;
+}
+
+.option:not(.text-display) {
+    height: 44px;
 }
 
 .notifications {

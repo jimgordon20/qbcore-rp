@@ -231,6 +231,9 @@ const setOptions = (options) => {
             case "list-picker":
                 $options.append(getListPicker(option));
                 break;
+            case "text-display":
+                $options.append(getTextDisplay(option));
+                break;
             default:
                 break;
         }
@@ -268,25 +271,33 @@ const setOptions = (options) => {
     });
 
     $(".dropdown > .option svg").on("click", function () {
-        let id = $(this).parent().parent().data("id");
+        let $dropdown = $(this).closest(".dropdown");
+        let id = $dropdown.data("id");
         let option = findOptionById(options, id);
-        $(".option").removeClass("selected");
-        $(this).parent().toggleClass("active").addClass("selected");
 
-        if ($(this).parent().hasClass("active")) {
-            $(this)
-                .parent()
-                .parent()
-                .find(".sub-list")
-                .css("height", 52 * option.options.length - 8 + "px");
+        // Toggle
+        $(".option").removeClass("selected");
+        let $mainOpt = $(this).parent();
+        $mainOpt.toggleClass("active").addClass("selected");
+
+        let $subList = $dropdown.find(".sub-list");
+
+        if ($mainOpt.hasClass("active")) {
+            let totalHeight = calcDropdownHeight(option.options);
+            $subList.css({
+                height: totalHeight + "px",
+                opacity: 1,
+                pointerEvents: "all",
+            });
             isInDropdown = true;
         } else {
-            $(this).parent().parent().find(".sub-list").removeClass(".hidden");
-            $(this).parent().parent().find(".sub-list").css("height", "0px");
+            $subList.css({
+                height: "0px",
+                opacity: 0,
+                pointerEvents: "none",
+            });
             isInDropdown = false;
         }
-
-        $(".options-qty .qty").text(parseInt($(".option.selected").parent().index()) + 1 + "/" + options.length);
     });
 
     $(".option.action").on("click", function () {
@@ -326,6 +337,44 @@ const setOptions = (options) => {
         $this.val(val);
         $parent.find(".slider").val(val);
         option.value = val;
+        Events.Call("ExecuteCallback", id, val);
+    });
+
+    $(".option.range-input .range-submit-btn").on("click", function () {
+        let $option = $(this).closest(".option.range-input");
+        let id = $option.data("id");
+        let option = findOptionById(persistentOptions, id);
+
+        let val = parseInt($option.find(".number-value").val());
+        if (isNaN(val)) {
+            val = option.min || 0;
+        }
+
+        if (option.min !== undefined && val < option.min) val = option.min;
+        if (option.max !== undefined && val > option.max) val = option.max;
+
+        $option.find(".slider").val(val);
+        $option.find(".number-value").val(val);
+
+        Events.Call("ExecuteCallback", id, val);
+    });
+
+    $(".option.number-input .number-submit-btn").on("click", function () {
+        let $option = $(this).closest(".option.number-input");
+        let id = $option.data("id");
+        let option = findOptionById(persistentOptions, id);
+
+        let val = parseInt($option.find('input[type="number"]').val());
+        if (isNaN(val)) val = 0;
+
+        // If your package sometimes includes min/max for number inputs, clamp them:
+        if (option.min !== undefined && val < option.min) val = option.min;
+        if (option.max !== undefined && val > option.max) val = option.max;
+
+        // Update the input field so it reflects any clamping
+        $option.find('input[type="number"]').val(val);
+
+        // Trigger Lua callback
         Events.Call("ExecuteCallback", id, val);
     });
 
@@ -520,7 +569,7 @@ const getDropdown = (option) => {
                 subOptions += getTextInput(opt);
                 break;
             case "list":
-                $options.append(getList(opt));
+                subOptions += getList(opt);
                 break;
             case "range":
                 subOptions += getRange(opt);
@@ -538,7 +587,10 @@ const getDropdown = (option) => {
                 subOptions += getSelectInput(opt);
                 break;
             case "list-picker":
-                $options.append(getListPicker(opt));
+                subOptions += getListPicker(opt);
+                break;
+            case "text-display":
+                subOptions += getTextDisplay(opt);
                 break;
             default:
                 break;
@@ -589,7 +641,12 @@ const getRange = (option) => {
         <div class="slider-container">
             <input type="range" class="slider" min="${option.min}" max="${option.max}" value="${option.value}">
             <input type="number" class="number-value" min="${option.min}" max="${option.max}" value="${option.value}">
-        </div>
+            </div>
+            <svg class="send-value" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M7.90784 12.6219L4.66811 9.3822C4.47662 9.19071 4.2169 9.08313 3.94609 9.08313C3.67528 9.08313 3.41556 9.19071 3.22407 9.3822C3.03258 9.5737 2.925 9.83341 2.925 10.1042C2.925 10.2383 2.95141 10.3711 3.00272 10.495C3.05404 10.6189 3.12925 10.7314 3.22407 10.8262L7.19053 14.7927C7.5899 15.1921 8.2352 15.1921 8.63457 14.7927L16.7763 6.65102C16.9677 6.45952 17.0753 6.19981 17.0753 5.929C17.0753 5.65819 16.9677 5.39847 16.7763 5.20698C16.5848 5.01549 16.325 4.90791 16.0542 4.90791C15.7834 4.90791 15.5237 5.01548 15.3323 5.20695C15.3322 5.20696 15.3322 5.20697 15.3322 5.20698M7.90784 12.6219L15.3322 5.20698"
+                    stroke-width="0.150002" />
+            </svg>
     </div>`;
 };
 
@@ -654,8 +711,17 @@ const getNumberInput = (option) => {
     <div class="option number-input ${option.active ? "active" : ""}" data-id="${option.id}">
         <p class="name">${option.label || "Number Input"}</p>
         <div class="input">
-            <input type="number" placeholder="${option.placeholder || "Enter number"}" value="${option.value || ""}">
+            <input
+                type="number"
+                placeholder="${option.placeholder || "Enter number"}"
+                value="${option.value !== undefined ? option.value : ""}"
+            >
         </div>
+        <svg class="send-value" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+                d="M7.90784 12.6219L4.66811 9.3822C4.47662 9.19071 4.2169 9.08313 3.94609 9.08313C3.67528 9.08313 3.41556 9.19071 3.22407 9.3822C3.03258 9.5737 2.925 9.83341 2.925 10.1042C2.925 10.2383 2.95141 10.3711 3.00272 10.495C3.05404 10.6189 3.12925 10.7314 3.22407 10.8262L7.19053 14.7927C7.5899 15.1921 8.2352 15.1921 8.63457 14.7927L16.7763 6.65102C16.9677 6.45952 17.0753 6.19981 17.0753 5.929C17.0753 5.65819 16.9677 5.39847 16.7763 5.20698C16.5848 5.01549 16.325 4.90791 16.0542 4.90791C15.7834 4.90791 15.5237 5.01548 15.3323 5.20695C15.3322 5.20696 15.3322 5.20697 15.3322 5.20698M7.90784 12.6219L15.3322 5.20698"
+                stroke-width="0.150002" />
+        </svg>
     </div>`;
 };
 
@@ -700,6 +766,50 @@ function getListPicker(option) {
         </div>
     </div>
     `;
+}
+
+function getTextDisplay(option) {
+    if (option.is_list && Array.isArray(option.data)) {
+        const lineCount = option.data.length;
+        const totalHeight = lineCount * 44;
+
+        let linesHtml = option.data
+            .map((line) => {
+                return `<div class="text-line">${line}</div>`;
+            })
+            .join("");
+
+        return `
+        <div class="option text-display multi-line"
+             data-id="${option.id}"
+             style="height:${totalHeight}px">
+            <div class="text-list">
+                ${linesHtml}
+            </div>
+        </div>`;
+    } else {
+        return `
+        <div class="option text-display single-line"
+             data-id="${option.id}"
+             style="height:44px">
+            <p class="name">${option.data}</p>
+        </div>`;
+    }
+}
+
+function calcDropdownHeight(subOptions) {
+    let total = 0;
+    subOptions.forEach((opt) => {
+        if (opt.type === "text-display" && opt.is_list && Array.isArray(opt.data)) {
+            const lineCount = opt.data.length;
+            total += lineCount * 44;
+            total += 8;
+        } else {
+            total += 44;
+            total += 8;
+        }
+    });
+    return total;
 }
 
 function findOptionById(items, id) {
