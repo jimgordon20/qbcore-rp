@@ -3,7 +3,7 @@ name: Deploy World to HELIX
 on:
   push:
     branches:
-      - staging
+      - main
 
 jobs:
   upload-package:
