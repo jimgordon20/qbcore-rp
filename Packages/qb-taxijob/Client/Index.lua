@@ -28,38 +28,24 @@ local function getNextLocation()
     if current_marker then
         current_marker:Destroy()
         current_marker = nil
-        
     end
     Events.Call('Map:RemoveBlip', 'taxi_job')
-    if not Passenger then -- Refactor this into one
-        QBCore.Functions.TriggerCallback('qb-taxijob:server:getJob', function(jobLocation, newPassenger)
+    QBCore.Functions.TriggerCallback('qb-taxijob:server:getJob', function(jobLocation, newPassenger)
+        if newPassenger then
             pickupLocation = jobLocation
---[[             current_marker = Prop(pickupLocation, Rotator(0, 0, 0), 'pco-markers::SM_MarkerArrow')
-            current_marker:SetMaterialColorParameter('Color', Color(255, 0, 0, 1))
-            current_marker:SetScale(Vector(100, 100, 100)) ]]
-            Events.Call('Map:AddBlip', {
-                id = 'taxi_job',
-                name = 'Taxi Job',
-                coords = { x = pickupLocation.X, y = pickupLocation.Y, z = pickupLocation.Z},
-                imgUrl = './media/map-icons/Marker.svg',
-                group = 'Taxi Pickup',
-            })
             Passenger = newPassenger
-        end, Passenger)
-    else
-        QBCore.Functions.TriggerCallback('qb-taxijob:server:getJob', function(jobLocation, _)
+        else
             dropoff_location = jobLocation
---[[             current_marker = Prop(dropoff_Location, Rotator(0, 0, 0), 'pco-markers::SM_MarkerArrow')
-            current_marker:SetMaterialColorParameter('Color', Color(255, 0, 0, 1))
-            current_marker:SetScale(Vector(100, 100, 100)) ]]
-            Events.Call('Map:AddBlip', {
-                id = 'taxi_job',
-                name = 'Taxi Job',
-                coords = { x = dropoff_Location.X, y = dropoff_Location.Y, z = dropoff_Location.Z},
-                imgUrl = './media/map-icons/Marker.svg',
-                group = 'Taxi Dropoff',
-            })
-        end, Passenger)
+        end
+
+        Events.Call('Map:AddBlip', {
+            id = 'taxi_job',
+            name = 'Taxi Job',
+            coords = { x = jobLocation.X, y = jobLocation.Y, z = jobLocation.Z},
+            imgUrl = './media/map-icons/Marker.svg',
+            group = newPassenger and 'Taxi Pickup' or 'Taxi Dropoff',
+        })
+    end, Passenger)
     end
 end
 
@@ -91,11 +77,10 @@ Input.Subscribe('KeyDown', function(key_name)
         if pickupLocation and Passenger then
             if playerPed:Distance(pickupLocation) > 1000 then return end
             Events.CallRemote('qb-taxijob:server:pickupPassenger', Passenger)
-            return
         elseif dropoff_location then
             if playerPed:Distance(dropoffLocation) > 1000 then return end
             Events.CallRemote('qb-taxijob:server:dropoff')
-
+            Passenger = nil
         end
     end
 end)
