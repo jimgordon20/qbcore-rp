@@ -1,21 +1,28 @@
-name: Update World
+name: Deploy World to HELIX
 
 on:
   push:
     branches:
-      - main
+      - staging
 
 jobs:
-  update-package:
+  upload-package:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Use update world action
-        uses: hypersonic-laboratories/update-world@main
+      - name: Use deploy world action
+        uses: hypersonic-laboratories/deploy-world@main
         with:
-          # Note: Config.toml will override any other definitions from this action!
-          config_toml_path: "Config.toml"
-          access_token: ${{ secrets.ACCESS_TOKEN }}
-          packages: '{}'
-          world_name : 's3f05a0'
-          master_endpoint: "https://dev.helixgame.com/v1"
+          # Required inputs:
+          access_token: ${{ secrets.ACCESS_TOKEN_STAGING }}
+          world_name: 's3f05a0'
+
+          # Optional inputs:
+          # this Action supports access to private repositories using deploy keys
+          private_ssh_key: ${{ secrets.PRIVATE_SSH_KEY }}
+
+          # If your Packages folder is in another place you can specify it here
+          packages_path: './Packages'
+
+          # You can change the default master endpoint to staging if needed
+          master_endpoint: 'https://dev.helixgame.com/v1'
