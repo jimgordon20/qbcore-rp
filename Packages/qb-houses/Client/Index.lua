@@ -103,6 +103,7 @@ local function createEntrance(id, house)
             event = 'qb-houses:server:sell',
             icon = 'fas fa-dollar-sign',
             label = Lang:t('menu.sell_house'),
+            house = id,
             canInteract = function()
                 return is_owned and has_key
             end

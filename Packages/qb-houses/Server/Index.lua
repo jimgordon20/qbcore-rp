@@ -2,10 +2,10 @@ local Lang = Package.Require('../Shared/locales/' .. QBConfig.Language .. '.lua'
 local houseowneridentifier = {}
 local houseownercid = {}
 local housekeyholders = {}
+local HouseGarages = {}
 
 -- Setup
 
-local HouseGarages = {}
 local result = MySQL.query.await('SELECT * FROM houselocations', {})
 if result and result[1] then
     for _, v in pairs(result) do
@@ -30,8 +30,6 @@ if result and result[1] then
         }
     end
 end
---Events.BroadcastRemote('qb-garages:client:houseGarageConfig', HouseGarages)
---Events.BroadcastRemote('qb-houses:client:setHouseConfig', Config.Houses)
 
 MySQL.query('SELECT * FROM player_houses', {}, function(houses)
     if houses then
@@ -55,11 +53,8 @@ local function isHouseOwner(identifier, cid, house)
 end
 
 local function isHouseOwned(house)
-    local result = MySQL.query.await('SELECT owned FROM houselocations WHERE name = ?', { house })
-    if result and result[1] then
-        if result[1].owned == 1 then
-            return true
-        end
+    if houseowneridentifier[house] and houseownercid[house] then
+        return true
     end
     return false
 end
@@ -107,11 +102,12 @@ QBCore.Functions.CreateCallback('qb-houses:server:ownership', function(source, c
 end)
 
 QBCore.Functions.CreateCallback('qb-houses:server:locations', function(_, cb, house)
-    local retval = nil
-    local result = MySQL.query.await('SELECT * FROM player_houses WHERE house = ?', { house })
-    if result and result[1] then
-        retval = result[1]
-    end
+    local house_data = Config.Houses[house]
+    local retval = {
+        stash = house_data.stash,
+        outfit = house_data.outfit,
+        logout = house_data.logout,
+    }
     cb(retval)
 end)
 
@@ -169,12 +165,6 @@ Events.SubscribeRemote('qb-houses:server:logout', function(source)
     Events.CallRemote('qb-multicharacter:client:chooseChar', source)
 end)
 
-Events.SubscribeRemote('qb-houses:server:sell', function(source)
-    local Player = QBCore.Functions.GetPlayer(source)
-    if not Player then return end
-    -- TODO
-end)
-
 Events.SubscribeRemote('qb-houses:server:view', function(source, house)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
@@ -183,32 +173,6 @@ Events.SubscribeRemote('qb-houses:server:view', function(source, house)
     local bankfee = (houseprice / 100 * 10)
     local taxes = (houseprice / 100 * 6)
     Events.CallRemote('qb-houses:client:view', source, house, houseprice, brokerfee, bankfee, taxes)
-end)
-
-Events.SubscribeRemote('qb-houses:server:buy', function(source, house)
-    local Player = QBCore.Functions.GetPlayer(source)
-    if not Player then return end
-    local price = Config.Houses[house].price
-    local house_price = math.ceil(price * 1.21)
-    local bank_balance = Player.PlayerData.money['bank']
-    local is_owned = isHouseOwned(house)
-    if is_owned then
-        Events.CallRemote('QBCore:Notify', source, Lang:t('error.already_owned'), 'error')
-        return
-    end
-    if bank_balance >= house_price then
-        houseowneridentifier[house] = Player.PlayerData.license
-        houseownercid[house] = Player.PlayerData.citizenid
-        housekeyholders[house] = { { Player.PlayerData.citizenid } }
-        MySQL.insert('INSERT INTO player_houses (house, identifier, citizenid, keyholders) VALUES (?, ?, ?, ?)', { house, Player.PlayerData.license, Player.PlayerData.citizenid, JSON.stringify(housekeyholders[house]) })
-        MySQL.update('UPDATE houselocations SET owned = ? WHERE name = ?', { 1, house })
-        Player.Functions.RemoveMoney('bank', house_price, 'bought-house')
-        --AddMoney("realestate", (house_price / 100) * math.random(18, 25), "House purchase")
-        --Events.Call('qb-log:server:CreateLog', 'house', Lang:t('log.house_purchased'), 'green', Lang:t('log.house_purchased_by', { house = house:upper(), price = house_price, firstname = Player.PlayerData.charinfo.firstname, lastname = Player.PlayerData.charinfo.lastname }))
-        Events.CallRemote('QBCore:Notify', source, Lang:t('success.house_purchased'), 'success', 5000)
-    else
-        Events.CallRemote('QBCore:Notify', source, Lang:t('error.not_enough_money'), 'error')
-    end
 end)
 
 Events.SubscribeRemote('qb-houses:server:setLocation', function(source, coords, house, type)
@@ -255,6 +219,52 @@ Events.SubscribeRemote('qb-houses:server:removekey', function(source, house, tar
     MySQL.update('UPDATE player_houses SET keyholders = ? WHERE house = ?', { JSON.stringify(housekeyholders[house]), house })
 end)
 
+Events.SubscribeRemote('qb-houses:server:sell', function(source, house)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then return end
+    local is_owned = isHouseOwned(house)
+    if not is_owned then return end
+    local license = Player.PlayerData.license
+    local citizenid = Player.PlayerData.citizenid
+    if not isHouseOwner(license, citizenid, house) then return end
+    local price = Config.Houses[house].price
+    Player.Functions.AddMoney('bank', math.ceil(price * 0.75), 'sold-house')
+    houseowneridentifier[house] = nil
+    houseownercid[house] = nil
+    housekeyholders[house] = nil
+    Config.Houses[house].owned = false
+    MySQL.update('UPDATE houselocations SET owned = ? WHERE name = ?', { false, house })
+    MySQL.delete('DELETE FROM player_houses WHERE house = ?', { house })
+    Events.CallRemote('QBCore:Notify', source, Lang:t('success.house_sold'), 'success')
+    Events.BroadcastRemote('qb-houses:client:refresh', Config.Houses)
+end)
+
+Events.SubscribeRemote('qb-houses:server:buy', function(source, house)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then return end
+    local price = Config.Houses[house].price
+    local house_price = math.ceil(price * 1.21)
+    local bank_balance = Player.PlayerData.money['bank']
+    local is_owned = isHouseOwned(house)
+    if is_owned then
+        Events.CallRemote('QBCore:Notify', source, Lang:t('error.already_owned'), 'error')
+        return
+    end
+    if bank_balance >= house_price then
+        houseowneridentifier[house] = Player.PlayerData.license
+        houseownercid[house] = Player.PlayerData.citizenid
+        housekeyholders[house] = { { Player.PlayerData.citizenid } }
+        Config.Houses[house].owned = true
+        MySQL.insert('INSERT INTO player_houses (house, identifier, citizenid, keyholders) VALUES (?, ?, ?, ?)', { house, Player.PlayerData.license, Player.PlayerData.citizenid, JSON.stringify(housekeyholders[house]) })
+        MySQL.update('UPDATE houselocations SET owned = ? WHERE name = ?', { 1, house })
+        Player.Functions.RemoveMoney('bank', house_price, 'bought-house')
+        Events.CallRemote('QBCore:Notify', source, Lang:t('success.house_purchased'), 'success', 5000)
+        Events.BroadcastRemote('qb-houses:client:refresh', Config.Houses)
+    else
+        Events.CallRemote('QBCore:Notify', source, Lang:t('error.not_enough_money'), 'error')
+    end
+end)
+
 -- Commands
 
 local function GetHouseStreetCount(street)
@@ -285,6 +295,9 @@ local function AddNewHouse(source, street, coords, price, tier)
         tier = tier,
         garage = {},
         decorations = {},
+        stash = nil,
+        outfit = nil,
+        logout = nil,
     }
     Events.CallRemote('QBCore:Notify', source, Lang:t('info.added_house', { value = label }))
     Events.BroadcastRemote('qb-houses:client:refresh', Config.Houses)
