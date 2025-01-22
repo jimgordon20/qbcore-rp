@@ -281,6 +281,10 @@ my_webui:Subscribe('selectTarget', function(option)
 		if data.type == 'client' then
 			Events.Call(data.event, data)
 		elseif data.type == 'server' then
+			if data.canInteract then data.canInteract = nil end
+			if data.action then data.action = nil end
+			local networked_entity = data.entity:IsNetworkDistributed()
+			if not networked_entity then data.entity = nil end
 			Events.CallRemote(data.event, data)
 		elseif data.type == 'command' then
 			Events.CallRemote('QBCore:CallCommand', data.event, data)
@@ -325,3 +329,4 @@ configureType('WorldProp', Config.GlobalWorldPropOptions)
 configureType('WorldWeapon', Config.GlobalWorldWeaponOptions)
 configureType('WorldStaticMesh', Config.GlobalWorldStaticMeshOptions)
 configureType('ALS_WorldCharacterBP_C', Config.ALS_WorldCharacterBP_C)
+configureType('WorldVehicleDoorComponent', Config.GlobalWorldVehicleDoorOptions)
