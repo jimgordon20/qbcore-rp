@@ -24,25 +24,38 @@ for i = 1, #Config.JobLocations do
     }
 end
 
+local function GetRandomLocation(currentCoords)
+    local location = Config.NPCLocations[math.random(#Config.NPCLocations)]
+    if location:Distance(currentCoords) < 1000 then return GetRandomLocation(currentCoords) end
+    return location
+end
+
 QBCore.Functions.CreateCallback('qb-taxijob:server:getPeds', function(_, cb)
-    cb(peds)
+    cb(peds) -- Returns null/destroyed peds sometimes due to networking
 end)
 
-QBCore.Functions.CreateCallback('qb-taxijob:server:getJob', function(source, cb, currentPassenger)
-    local location = Config.NPCLocations[math.random(#Config.NPCLocations)]
+QBCore.Functions.CreateCallback('qb-taxijob:server:getJob', function(source, cb)
+    local location = GetRandomLocation(source:GetControlledCharacter():GetLocation())
     -- Need to figure a way for rotations
-
-    if not currentPassenger then
+    if not activeJobs[source:GetID()] then
         local ped = HCharacter(location, Rotator(0, 0, 0), '/CharacterCreator/CharacterAssets/Avatar_FBX/Body/Male/Mesh/Male_Full_Body')
         ped:AddSkeletalMeshAttached('head', 'helix::SK_Male_Head')
         ped:AddSkeletalMeshAttached('chest', 'helix::SK_Man_Outwear_03')
         ped:AddSkeletalMeshAttached('legs', 'helix::SK_Man_Pants_05')
         ped:AddSkeletalMeshAttached('feet', 'helix::SK_Delivery_Shoes')
-        activeJobs[source:GetID()] = source:GetControlledCharacter():GetLocation():Distance(location) -- Pre-calculate distance, used for calculating reward rather than listening to client for reward
-        return cb(location, ped)
+        activeJobs[source:GetID()] = { passenger = ped }
+        return cb(location, true) -- location, isPickingUp
     end
+    activeJobs[source:GetID()].distance = source:GetControlledCharacter():GetLocation():Distance(location) -- Pre-calculate distance, used for calculating reward rather than listening to client for reward
+    cb(location, false) -- location, isPickingUp
+end)
 
-    cb(location)
+Events.Subscribe('QBCore:Server:OnPlayerUnload', function(source)
+    local job = activeJobs[source:GetID()]
+    if not job then return end
+    
+    if job.passenger and job.passenger:IsValid() then job.passenger:Destroy() end
+    activeJobs[source:GetID()] = nil -- Remove job if player unloads
 end)
 
 Events.SubscribeRemote('qb-taxijob:server:spawnTaxi', function(source)
@@ -52,16 +65,19 @@ Events.SubscribeRemote('qb-taxijob:server:spawnTaxi', function(source)
     ped:EnterVehicle(vehicle)
 end)
 
-Events.SubscribeRemote('qb-taxijob:server:pickupPassenger', function(source, ped)
-    local playerPed = source:GetControlledCharacter()
-    if not playerPed or not ped then return end
-    ped:Destroy()
+Events.SubscribeRemote('qb-taxijob:server:pickupPassenger', function(source)
+    local job = activeJobs[source:GetID()]
+    if not job.passenger or not job.passenger:IsValid() then return end
+    activeJobs[source:GetID()].passenger:Destroy() -- Remove ped, simulate getting into vehicle
 end)
 
 Events.SubscribeRemote('qb-taxijob:server:dropoff', function(source)
     if not activeJobs[source:GetID()] then return end
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
-    local jobDistance = activeJobs[source:GetID()]
-    Player.Functions.AddMoney('cash', jobDistance * Config.Meter.Rate + Config.Meter.StartingPrice)
+
+    local amount = math.floor(activeJobs[source:GetID()].distance * Config.Meter.Rate + Config.Meter.StartingPrice)
+    activeJobs[source:GetID()] = nil
+    Player.Functions.AddMoney('cash', amount, 'qb-taxijob:server:dropoff')
+    Events.CallRemote('QBCore:Notify', source, 'You were paid $'.. amount, 'success')
 end)
