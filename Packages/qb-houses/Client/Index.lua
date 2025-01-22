@@ -83,16 +83,16 @@ local function createEntrance(id, house)
             event = 'qb-houses:client:keys',
             icon = 'fas fa-key',
             label = Lang:t('menu.manage_keys'),
-            house = id,
             canInteract = function()
                 return is_owned and has_key
             end,
         },
         {
-            type = 'client',
-            event = 'qb-houses:client:lock',
+            type = 'server',
+            event = 'qb-houses:server:lock',
             icon = 'fas fa-lock',
             label = Lang:t('menu.doorlock'),
+            house = id,
             canInteract = function()
                 return is_owned and has_key
             end
@@ -108,12 +108,13 @@ local function createEntrance(id, house)
             end
         },
         {
-            type = 'server',
-            event = 'qb-houses:server:ring',
             icon = 'fas fa-bell',
             label = Lang:t('menu.ring_door'),
             canInteract = function()
                 return is_owned and not has_key
+            end,
+            action = function()
+                Events.CallRemote('qb-houses:server:ring', closest_house)
             end
         },
         {
@@ -182,19 +183,19 @@ local function registerExit(id)
             event = 'qb-houses:client:keys',
             icon = 'fas fa-key',
             label = Lang:t('menu.manage_keys'),
-            house = id,
             canInteract = function()
                 return is_owned and has_key
             end
         },
         {
-            type = 'client',
-            event = 'qb-houses:client:lock',
+            type = 'server',
+            event = 'qb-houses:server:lock',
             icon = 'fas fa-lock',
             label = Lang:t('menu.doorlock'),
+            house = id,
             canInteract = function()
                 return is_owned and has_key
-            end
+            end,
         },
         {
             type = 'client',
@@ -213,16 +214,6 @@ local function registerExit(id)
         options = options,
         distance = 500,
     })
-end
-
-local function houseBlips()
-    if Config.Houses and next(Config.Houses) then
-        for id, house in pairs(Config.Houses) do
-            if house and house.coords and house.coords['enter'] then
-
-            end
-        end
-    end
 end
 
 local function getDataForHouseTier(house, coords)
@@ -311,20 +302,17 @@ local function logoutTarget(logoutLocation)
 end
 
 local function setHouseLocations()
-    if closest_house then
-        QBCore.Functions.TriggerCallback('qb-houses:server:locations', function(result)
-            if result then
-                if result.stash then
-                    stashTarget(JSON.parse(result.stash))
-                end
-                if result.outfit then
-                    outfitTarget(JSON.parse(result.outfit))
-                end
-                if result.logout then
-                    logoutTarget(JSON.parse(result.logout))
-                end
-            end
-        end, closest_house)
+    if not current_house then return end
+    local house_data = Config.Houses[current_house]
+    if not house_data then return end
+    if house_data.stash then
+        stashTarget(JSON.parse(house_data.stash))
+    end
+    if house_data.outfit then
+        outfitTarget(JSON.parse(house_data.outfit))
+    end
+    if house_data.logout then
+        logoutTarget(JSON.parse(house_data.logout))
     end
 end
 
@@ -381,15 +369,30 @@ local function viewCamera()
     player:SetCameraLocation(coords)
 end
 
+local function houseBlips()
+    for id, house in pairs(Config.Houses) do
+        if house and house.coords and house.coords['enter'] then
+            local blipImage = './media/map-icons/house_sale.svg'
+            if house.owned then blipImage = './media/map-icons/house_owned.svg' end
+            Config.Houses[id].blip = Events.Call('Map:AddBlip', {
+                id = id,
+                name = house.adress,
+                imgUrl = blipImage,
+                coords = { x = house.coords.enter.x, y = house.coords.enter.y, z = house.coords.enter.z },
+            })
+        end
+    end
+end
+
 -- Handlers
 
 Package.Subscribe('Load', function()
     if Client.GetValue('isLoggedIn', false) then
         QBCore.Functions.TriggerCallback('qb-houses:server:getHouses', function(houses)
             Config.Houses = houses
+            setClosestHouse()
             registerEntrance()
             houseBlips()
-            if Config.UnownedBlips then Events.Call('qb-houses:client:setupHouseBlips2') end
             if closest_house and next(Config.Houses[closest_house].garage) == nil then return end
             Events.Call('qb-garages:client:setHouseGarage', closest_house, has_key)
         end)
@@ -399,9 +402,9 @@ end)
 Events.Subscribe('QBCore:Client:OnPlayerLoaded', function()
     QBCore.Functions.TriggerCallback('qb-houses:server:getHouses', function(houses)
         Config.Houses = houses
+        setClosestHouse()
         registerEntrance()
         houseBlips()
-        if Config.UnownedBlips then Events.Call('qb-houses:client:setupHouseBlips2') end
         if closest_house and next(Config.Houses[closest_house].garage) == nil then return end
         Events.Call('qb-garages:client:setHouseGarage', closest_house, has_key)
     end)
@@ -427,6 +430,8 @@ end)
 Events.SubscribeRemote('qb-houses:client:refresh', function(house_config)
     Config.Houses = house_config
     registerEntrance()
+    houseBlips()
+    if is_inside then setHouseLocations() end
 end)
 
 Events.Subscribe('qb-houses:client:logout', function()
@@ -443,19 +448,6 @@ end)
 
 Events.Subscribe('qb-houses:client:outfit', function()
     -- TODO: Implement outfit menu
-end)
-
-Events.Subscribe('qb-houses:client:lock', function()
-    local house_info = Config.Houses[closest_house]
-    if CheckDistance(Vector(house_info.coords.enter.x, house_info.coords.enter.y, house_info.coords.enter.z), 800) then
-        if house_info.locked then
-            Config.Houses[closest_house].locked = false
-            QBCore.Functions.Notify(Lang:t('success.unlocked'), 'success')
-        else
-            Config.Houses[closest_house].locked = true
-            QBCore.Functions.Notify(Lang:t('error.locked'), 'error')
-        end
-    end
 end)
 
 Events.SubscribeRemote('qb-houses:client:ring', function(house)
@@ -507,6 +499,22 @@ Events.Subscribe('qb-houses:client:camera', function()
     end
 end)
 
+Events.Subscribe('qb-houses:client:setLocation', function(cData)
+    local client = Client.GetLocalPlayer()
+    local ped = client:GetControlledCharacter()
+    if not ped then return end
+    local pos = ped:GetLocation()
+    local coords = { x = pos.X, y = pos.Y, z = pos.Z }
+    if not is_inside or not has_key then return end
+    if cData.id == 'setstash' then
+        Events.CallRemote('qb-houses:server:setLocation', coords, closest_house, 1)
+    elseif cData.id == 'setoutift' then
+        Events.CallRemote('qb-houses:server:setLocation', coords, closest_house, 2)
+    elseif cData.id == 'setlogout' then
+        Events.CallRemote('qb-houses:server:setLocation', coords, closest_house, 3)
+    end
+end)
+
 Events.SubscribeRemote('qb-houses:client:view', function(house, houseprice, brokerfee, bankfee, taxes)
     local house_label = Config.Houses[house].adress
     local view_menu = ContextMenu:new()
@@ -521,14 +529,43 @@ Events.SubscribeRemote('qb-houses:client:view', function(house, houseprice, brok
 end)
 
 Events.Subscribe('qb-houses:client:keys', function()
-    --local keys_menu = ContextMenu:new()
+    local house = is_inside and current_house or closest_house
+    if not house then return end
+    local keys_menu = ContextMenu:new()
+    local coords = Client.GetLocalPlayer():GetControlledCharacter():GetLocation()
 
+    -- Add Keys
+    local closest_players = QBCore.Functions.GetClosestPlayers(coords, 500)
+    local dropdown_options = {}
+    for i = 1, #closest_players do
+        table.insert(dropdown_options, {
+            id = 'key_holder_' .. i,
+            label = closest_players[i]:GetName(),
+            type = 'button',
+            callback = function()
+                Events.CallRemote('qb-houses:server:giveKey', closest_players[i], house)
+            end
+        })
+    end
+    keys_menu:addDropdown('give_keys', 'Give Keys', dropdown_options)
+
+    -- Remove Keys
     QBCore.Functions.TriggerCallback('qb-houses:server:getKeys', function(key_holders)
-        print(keyholders)
-    end, current_house)
-
-    --keys_menu:SetHeader('Manage Keys', '')
-    --keys_menu:Open(false, true)
+        local remove_options = {}
+        for i = 1, #key_holders do
+            table.insert(remove_options, {
+                id = 'remove_key_holder_' .. i,
+                label = key_holders[i],
+                type = 'button',
+                callback = function()
+                    Events.CallRemote('qb-houses:server:removeKey', key_holders[i], house)
+                end
+            })
+        end
+        keys_menu:addDropdown('remove_keys', 'Remove Keys', remove_options)
+        keys_menu:SetHeader('Manage Keys', '')
+        keys_menu:Open(false, true)
+    end, house)
 end)
 
 Events.Subscribe('qb-houses:client:createHouse', function()

@@ -153,6 +153,16 @@ Events.SubscribeRemote('qb-houses:server:camera', function(source, data)
     Events.CallRemote('qb-houses:client:camera', source)
 end)
 
+Events.SubscribeRemote('qb-houses:server:lock', function(source, house)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then return end
+    local house_data = Config.Houses[house]
+    if not house_data then return end
+    if not hasKey(Player.PlayerData.license, Player.PlayerData.citizenid, house) then return end
+    house_data.locked = not house_data.locked
+    Events.BroadcastRemote('qb-houses:client:refresh', Config.Houses)
+end)
+
 Events.SubscribeRemote('qb-houses:server:logout', function(source)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
@@ -171,50 +181,58 @@ Events.SubscribeRemote('qb-houses:server:view', function(source, house)
 end)
 
 Events.SubscribeRemote('qb-houses:server:setLocation', function(source, coords, house, type)
-    if type == 1 then
-        MySQL.update('UPDATE player_houses SET stash = ? WHERE house = ?', { JSON.stringify(coords), house })
-    elseif type == 2 then
-        MySQL.update('UPDATE player_houses SET outfit = ? WHERE house = ?', { JSON.stringify(coords), house })
-    elseif type == 3 then
-        MySQL.update('UPDATE player_houses SET logout = ? WHERE house = ?', { JSON.stringify(coords), house })
-    end
-    Events.BroadcastRemote('qb-houses:client:refreshLocations', house, JSON.stringify(coords), type)
-end)
-
-Events.SubscribeRemote('qb-houses:server:givekey', function(source, house, target)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
-    local TargetPlayer = QBCore.Functions.GetPlayer(target)
-    if not TargetPlayer then return end
     local license = Player.PlayerData.license
     local citizenid = Player.PlayerData.citizenid
     if not isHouseOwner(license, citizenid, house) then return end
+    if type == 1 then
+        MySQL.update('UPDATE player_houses SET stash = ? WHERE house = ?', { JSON.stringify(coords), house })
+        Config.Houses[house].stash = coords
+        Events.BroadcastRemote('qb-houses:client:refresh', Config.Houses)
+    elseif type == 2 then
+        MySQL.update('UPDATE player_houses SET outfit = ? WHERE house = ?', { JSON.stringify(coords), house })
+        Config.Houses[house].outfit = coords
+        Events.BroadcastRemote('qb-houses:client:refresh', Config.Houses)
+    elseif type == 3 then
+        MySQL.update('UPDATE player_houses SET logout = ? WHERE house = ?', { JSON.stringify(coords), house })
+        Config.Houses[house].logout = coords
+        Events.BroadcastRemote('qb-houses:client:refresh', Config.Houses)
+    end
+end)
+
+Events.SubscribeRemote('qb-houses:server:giveKey', function(source, target, house)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then return end
+    local license = Player.PlayerData.license
+    local citizenid = Player.PlayerData.citizenid
+    if not isHouseOwner(license, citizenid, house) then return end
+    local TargetPlayer = QBCore.Functions.GetPlayer(target)
+    if not TargetPlayer then return end
     housekeyholders[house][#housekeyholders[house] + 1] = TargetPlayer.PlayerData.citizenid
     MySQL.update('UPDATE player_houses SET keyholders = ? WHERE house = ?', { JSON.stringify(housekeyholders[house]), house })
 end)
 
-Events.SubscribeRemote('qb-houses:server:removekey', function(source, house, target)
+Events.SubscribeRemote('qb-houses:server:removeKey', function(source, target_cid, house)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
-    local TargetPlayer = QBCore.Functions.GetPlayer(target)
-    if not TargetPlayer then return end
     local license = Player.PlayerData.license
     local citizenid = Player.PlayerData.citizenid
     if not isHouseOwner(license, citizenid, house) then return end
     local newHolders = {}
     if housekeyholders[house] then
-        for k in pairs(housekeyholders[house]) do
-            if housekeyholders[house][k] ~= TargetPlayer.PlayerData.citizenid then
-                newHolders[#newHolders + 1] = housekeyholders[house][k]
+        for i = 1, #housekeyholders[house], 1 do
+            if housekeyholders[house][i] ~= target_cid then
+                newHolders[#newHolders + 1] = housekeyholders[house][i]
             end
         end
     end
     housekeyholders[house] = newHolders
-    Events.CallRemote('QBCore:Notify', source, Lang:t('error.remove_key_from', { firstname = TargetPlayer.PlayerData.charinfo.firstname, lastname = TargetPlayer.PlayerData.charinfo.lastname }), 'error')
     MySQL.update('UPDATE player_houses SET keyholders = ? WHERE house = ?', { JSON.stringify(housekeyholders[house]), house })
 end)
 
-Events.SubscribeRemote('qb-houses:server:sell', function(source, house)
+Events.SubscribeRemote('qb-houses:server:sell', function(source, data)
+    local house = data.house
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
     local is_owned = isHouseOwned(house)
@@ -229,7 +247,7 @@ Events.SubscribeRemote('qb-houses:server:sell', function(source, house)
     housekeyholders[house] = nil
     Config.Houses[house].owned = false
     MySQL.update('UPDATE houselocations SET owned = ? WHERE name = ?', { false, house })
-    MySQL.delete('DELETE FROM player_houses WHERE house = ?', { house })
+    MySQL.query('DELETE FROM player_houses WHERE house = ?', { house })
     Events.CallRemote('QBCore:Notify', source, Lang:t('success.house_sold'), 'success')
     Events.BroadcastRemote('qb-houses:client:refresh', Config.Houses)
 end)
@@ -248,7 +266,7 @@ Events.SubscribeRemote('qb-houses:server:buy', function(source, house)
     if bank_balance >= house_price then
         houseowneridentifier[house] = Player.PlayerData.license
         houseownercid[house] = Player.PlayerData.citizenid
-        housekeyholders[house] = { { Player.PlayerData.citizenid } }
+        housekeyholders[house] = { Player.PlayerData.citizenid }
         Config.Houses[house].owned = true
         MySQL.insert('INSERT INTO player_houses (house, identifier, citizenid, keyholders) VALUES (?, ?, ?, ?)', { house, Player.PlayerData.license, Player.PlayerData.citizenid, JSON.stringify(housekeyholders[house]) })
         MySQL.update('UPDATE houselocations SET owned = ? WHERE name = ?', { 1, house })
@@ -264,11 +282,13 @@ end)
 
 local function GetHouseStreetCount(street)
     local count = 0
-    local query = '%' .. street .. '%'
-    local result = MySQL.query.await('SELECT * FROM houselocations WHERE name LIKE ? ORDER BY LENGTH(name) desc, name DESC', { query })
-    if result and result[1] then
-        local houseAddress = result.name
-        count = tonumber(string.match(houseAddress, '%d[%d.,]*'))
+    for name, _ in pairs(Config.Houses) do
+        if string.find(name, street:lower()) then
+            local houseNumber = tonumber(string.match(name, '%d+'))
+            if houseNumber and houseNumber > count then
+                count = houseNumber
+            end
+        end
     end
     return (count + 1)
 end
@@ -309,6 +329,6 @@ QBCore.Commands.Add('createhouse', Lang:t('info.create_house'), { { name = 'pric
     local price = tonumber(args[1])
     local tier = tonumber(args[2])
     local coords = { enter = { x = pos.X, y = pos.Y, z = pos.Z, h = heading.Yaw } }
-    local street = 'test_' .. math.random(1, 1000)
+    local street = 'helix_' .. math.random(1, 1000)
     AddNewHouse(source, street, coords, price, tier)
 end, 'user')
