@@ -1,8 +1,7 @@
 local is_working = false
 local current_marker = nil
-local dropoff_Location = Vector(0, 0, 0)
-local pickupLocation = nil
-local Passenger = ped
+local location = nil
+local hasPassenger = false
 
 for k, blip in pairs(Config.JobLocations) do
     Events.Call('Map:AddBlip', {
@@ -30,14 +29,10 @@ local function getNextLocation()
         current_marker = nil
     end
     Events.Call('Map:RemoveBlip', 'taxi_job')
-    QBCore.Functions.TriggerCallback('qb-taxijob:server:getJob', function(jobLocation, newPassenger)
-        if newPassenger then
-            pickupLocation = jobLocation
-            Passenger = newPassenger
-        else
-            dropoff_Location = jobLocation
-        end
-
+    QBCore.Functions.TriggerCallback('qb-taxijob:server:getJob', function(jobLocation, isPickingUp)
+        hasPassenger = not isPickingUp -- if new job, hasPassenger is false
+        location = jobLocation -- Could be pickup, or dropoff (tracked server-side per source)
+        QBCore.Functions.Notify(hasPassenger and 'Go to dropoff' or 'Pick up passenger')
         Events.Call('Map:AddBlip', {
             id = 'taxi_job',
             name = 'Taxi Job',
@@ -45,7 +40,7 @@ local function getNextLocation()
             imgUrl = './media/map-icons/Marker.svg',
             group = newPassenger and 'Taxi Pickup' or 'Taxi Dropoff',
         })
-    end, Passenger)
+    end)
 end
 
 -- Event Handlers
@@ -72,16 +67,13 @@ Input.Subscribe('KeyDown', function(key_name)
     if key_name == 'F' then
         local playerPed = Client.GetLocalPlayer():GetControlledCharacter()
         if not playerPed then return end
-
-        if pickupLocation and Passenger then
-            if playerPed:GetLocation():Distance(pickupLocation) > 1000 then return end
-            Events.CallRemote('qb-taxijob:server:pickupPassenger', Passenger)
-            pickupLocation = nil
-        elseif dropoff_Location then
-            if playerPed:GetLocation():Distance(dropoff_Location) > 1000 then return end
+        if playerPed:GetLocation():Distance(location) > 1000 then return end
+        if not hasPassenger then -- If passenger isn't in vehicle
+            Events.CallRemote('qb-taxijob:server:pickupPassenger')
+            QBCore.Functions.Notify('You have picked up your passenger, head to the location marked.', 'success')
+            hasPassenger = true -- Passenger is in vehicle
+        else
             Events.CallRemote('qb-taxijob:server:dropoff')
-            Passenger = nil
-            dropoff_Location = nil
         end
         getNextLocation()
     end
