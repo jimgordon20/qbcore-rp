@@ -70,6 +70,16 @@ function QBCore.Player.Login(source, citizenid, newData)
     return true
 end
 
+function QBCore.Player.GetPlayerByLicense(license)
+    if license then
+        local source = QBCore.Functions.GetSource(license)
+        if source > 0 then
+            return QBCore.Players[source]
+        end
+    end
+    return nil
+end
+
 local function applyDefaults(playerData, defaults)
     for key, value in pairs(defaults) do
         if type(value) == 'function' then
