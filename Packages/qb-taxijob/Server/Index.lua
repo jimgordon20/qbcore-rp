@@ -30,6 +30,7 @@ local function CancelJob(source)
     
     if job.passenger and job.passenger:IsValid() then job.passenger:Destroy() end
     activeJobs[source:GetID()] = nil
+    Events.Call('Map:RemoveBlip', source, 'taxi_job')
 end
 
 local function GetRandomLocation(currentCoords)
