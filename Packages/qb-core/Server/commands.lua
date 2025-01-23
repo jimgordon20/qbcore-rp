@@ -345,3 +345,13 @@ QBCore.Commands.Add('setgang', Lang:t('command.setgang.help'), { { name = Lang:t
 	end
 	Player.Functions.SetGang(tostring(args[2]), tonumber(args[3]))
 end, 'admin')
+
+Console.RegisterCommand('reloadshared', function(fileType)
+	local allowedFiles = {gangs = true, items = true, jobs = true, vehicles = true, weapons = true}
+	if not allowedFiles[fileType] then return print('Shared file not allowed') end
+
+	local file, err = loadfile(string.format('./Packages/qb-core/Shared/%s.lua', fileType), "t")
+	if err then return print(err) end
+
+	if file then file() end
+end, 'Refreshes a shared file without needing to restart the core', {'gangs', 'items', 'jobs', 'vehicles', 'weapons'})
