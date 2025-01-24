@@ -44,7 +44,7 @@ Console.RegisterCommand('ToggleMinimapShape', function(args)
         Config.Shape = 'circle'
     end
     minimapUI:CallEvent('SetMinimapShape', Config.Shape)
-end)
+end, '', {})
 
 -- Initial Minimap config on package load
 Package.Subscribe('Load', function()
@@ -147,8 +147,10 @@ mapUI:Subscribe('Map:ExitMap', function()
     Bigmap_ToggleVisibility()
 end)
 
-mapUI:Subscribe('Map:TeleportToBlip', function(x, y)
-    Events.CallRemote('Map:Server:TeleportPlayer', x, y)
+mapUI:Subscribe('Map:TeleportToBlip', function(blipId)
+    local blip_data = Config.MapBlips[blipId]
+    local coords = Vector(blip_data.coords.x, blip_data.coords.y, 500)
+    Events.CallRemote('Map:Server:TeleportPlayer', coords)
 end)
 
 mapUI:Subscribe('Map:TogglePlayers', function(state)

@@ -10,13 +10,12 @@ local function GenerateBlipId()
     return id
 end
 
-Events.SubscribeRemote('Map:Server:TeleportPlayer', function(source, x, y)
+Events.SubscribeRemote('Map:Server:TeleportPlayer', function(source, coords)
     if not source then return end
     local character = source:GetControlledCharacter()
     if not character then return end
     source:UnPossess()
     character:Destroy()
-    local coords = Vector(x, y, 500)
     source:SetCameraLocation(coords)
     Timer.SetTimeout(function()
         local newChar = HCharacter(coords, Rotator(0, 0, 0), source)
@@ -24,7 +23,7 @@ Events.SubscribeRemote('Map:Server:TeleportPlayer', function(source, x, y)
     end, 2000)
 end)
 
-Events.SubscribeRemote('Map:Server:AddBlip', function(source, blipData)
+Events.SubscribeRemote('Map:Server:AddBlip', function(_, blipData)
     if not blipData then return end
     if not blipData.id then
         blipData.id = GenerateBlipId()
@@ -34,7 +33,7 @@ Events.SubscribeRemote('Map:Server:AddBlip', function(source, blipData)
     return blipData.id
 end)
 
-Events.SubscribeRemote('Map:Server:RemoveBlip', function(source, blipId)
+Events.SubscribeRemote('Map:Server:RemoveBlip', function(_, blipId)
     for i, b in ipairs(Config.MapBlips) do
         if b.id == blipId then
             table.remove(Config.MapBlips, i)
@@ -44,11 +43,10 @@ Events.SubscribeRemote('Map:Server:RemoveBlip', function(source, blipId)
     Events.BroadcastRemote('Map:UpdateAllBlips', Config.MapBlips)
 end)
 
-Server.Subscribe('Tick', function(delta_time)
+Server.Subscribe('Tick', function()
     local playerBlips = {}
     for _, p in pairs(Player.GetAll()) do
         local character = p:GetControlledCharacter()
-
         if character then
             local loc = character:GetLocation()
             table.insert(playerBlips, { id = p:GetAccountID(), x = loc.X, y = loc.Y })

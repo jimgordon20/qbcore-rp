@@ -239,10 +239,9 @@ $(".teleport-confirm .btn-yes").on("click", function () {
         $(".teleport-confirm").addClass("hidden");
         return;
     }
-
-    let chosen = persistentBlips[selectedBlip];
-    let parsedCoords = barycentricInterpolation(chosen.coords);
-    Events.Call("Map:TeleportToBlip", parsedCoords.x, parsedCoords.y);
+    //let chosen = persistentBlips[selectedBlip];
+    //let parsedCoords = barycentricInterpolation(chosen.coords);
+    Events.Call("Map:TeleportToBlip", selectedBlip);
     $(".teleport-confirm").addClass("hidden");
 });
 
