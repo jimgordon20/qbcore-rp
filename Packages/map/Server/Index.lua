@@ -14,7 +14,15 @@ Events.SubscribeRemote('Map:Server:TeleportPlayer', function(source, x, y)
     if not source then return end
     local character = source:GetControlledCharacter()
     if not character then return end
-    character:SetLocation(Vector(x, y, 0))
+    source:UnPossess()
+    character:Destroy()
+    local coords = Vector(x, y, 0)
+    local modifiedCoords = coords + Vector(0, 0, 500)
+    source:SetCameraLocation(modifiedCoords)
+    Timer.SetTimeout(function()
+        local newChar = HCharacter(modifiedCoords, Rotator(0, 0, 0), source)
+        source:Possess(newChar)
+    end, charLoadTime)
 end)
 
 Events.SubscribeRemote('Map:Server:AddBlip', function(source, blipData)
