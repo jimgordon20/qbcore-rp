@@ -10,6 +10,10 @@ end)
 
 -- Commands
 
+QBCore.Commands.Add('admin', '', {}, false, function(source)
+    Events.CallRemote('qb-adminmenu:client:openMenu', source)
+end, 'admin')
+
 QBCore.Commands.Add('invisible', '', {}, false, function(source)
     local ped = source:GetControlledCharacter()
     if not ped then return end
@@ -98,7 +102,9 @@ QBCore.Commands.Add('tp', Lang:t('command.tp.help'), { { name = Lang:t('command.
         end
     elseif args[1] and args[2] and args[3] then
         local x, y, z = tonumber(args[1]), tonumber(args[2]), tonumber(args[3])
-        if x and y and z then ped:SetLocation(Vector(x, y, z)) end
+        if x and y and z then
+            ped:SetLocation(Vector(x, y, z))
+        end
     end
 end, 'admin')
 

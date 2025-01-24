@@ -126,7 +126,12 @@ local function openAdmin()
 end
 
 Input.Register('Admin Menu', 'F9')
-Input.Bind('AdminMenu', InputEvent.Pressed, function()
+Input.Bind('Admin Menu', InputEvent.Pressed, function()
+	if Input.IsMouseEnabled() then return end
+	openAdmin()
+end)
+
+Events.SubscribeRemote('qb-adminmenu:client:openMenu', function()
 	if Input.IsMouseEnabled() then return end
 	openAdmin()
 end)
