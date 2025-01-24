@@ -88,9 +88,7 @@ my_webui:Subscribe('qb-spawn:setCam', function(data)
 	local location = tostring(data.posname)
 	local type = tostring(data.type)
 	if type == 'current' then
-		QBCore.Functions.GetPlayerData(function(PlayerData)
-			SetCam(PlayerData.position)
-		end)
+
 	elseif type == 'house' then
 		SetCam(Houses[location].coords.enter)
 	elseif type == 'normal' then

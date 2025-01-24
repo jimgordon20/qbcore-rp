@@ -2,27 +2,39 @@ QBCore.Commands.Add('cash', 'Check Cash Balance', {}, false, function(source)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
     local cashamount = Player.PlayerData.money.cash
-    Events.CallRemote('hud:client:ShowAccounts', source, 'cash', cashamount)
+    Events.CallRemote('qb-hud:client:ShowAccounts', source, 'cash', cashamount)
 end, 'user')
 
 QBCore.Commands.Add('bank', 'Check Bank Balance', {}, false, function(source)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
     local bankamount = Player.PlayerData.money.bank
-    Events.CallRemote('hud:client:ShowAccounts', source, 'bank', bankamount)
+    Events.CallRemote('qb-hud:client:ShowAccounts', source, 'bank', bankamount)
 end, 'user')
 
 QBCore.Commands.Add('fix', 'Fix Vehicle', {}, false, function(source)
-    Events.CallRemote('hud:client:fixVehicle', source)
+    Events.CallRemote('qb-hud:client:fixVehicle', source)
 end, 'admin')
 
--- Player.Subscribe('Ready', function(self)
---     self:AddVOIPChannel(1)
--- end)
+Player.Subscribe('Ready', function(self)
+    self:AddVOIPChannel(1)
+end)
 
 -- Events
 
-Events.SubscribeRemote('hud:server:fixVehicle', function(_, vehicle)
+Events.SubscribeRemote('qb-hud:server:enterVehicle', function(source, vehicle)
+    local ped = source:GetControlledCharacter()
+    if not ped then return end
+    ped:EnterVehicle(vehicle, 0)
+end)
+
+Events.SubscribeRemote('qb-hud:server:leaveVehicle', function(source)
+    local ped = source:GetControlledCharacter()
+    if not ped then return end
+    ped:LeaveVehicle()
+end)
+
+Events.SubscribeRemote('qb-hud:server:fixVehicle', function(_, vehicle)
     vehicle:SetHealth(vehicle:GetMaxHealth())
     vehicle:SetVehicleHealthState(0)
     vehicle:SetTrunkState(0)
@@ -35,7 +47,7 @@ Events.SubscribeRemote('hud:server:fixVehicle', function(_, vehicle)
     end
 end)
 
-Events.Subscribe('hud:server:GainStress', function(source, amount)
+Events.Subscribe('qb-hud:server:GainStress', function(source, amount)
     if Config.DisableStress then return end
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
@@ -56,11 +68,11 @@ Events.Subscribe('hud:server:GainStress', function(source, amount)
         newStress = 100
     end
     Player.Functions.SetMetaData('stress', newStress)
-    Events.CallRemote('hud:client:UpdateStress', source, newStress)
+    Events.CallRemote('qb-hud:client:UpdateStress', source, newStress)
     Events.CallRemote('QBCore:Notify', source, Lang:t('notify.stress_gain'), 'error', 1500)
 end)
 
-Events.Subscribe('hud:server:RelieveStress', function(source, amount)
+Events.Subscribe('qb-hud:server:RelieveStress', function(source, amount)
     if Config.DisableStress then return end
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
@@ -78,6 +90,6 @@ Events.Subscribe('hud:server:RelieveStress', function(source, amount)
         newStress = 100
     end
     Player.Functions.SetMetaData('stress', newStress)
-    Events.CallRemote('hud:client:UpdateStress', source, newStress)
+    Events.CallRemote('qb-hud:client:UpdateStress', source, newStress)
     Events.CallRemote('QBCore:Notify', source, Lang:t('notify.stress_removed'))
 end)

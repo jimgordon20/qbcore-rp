@@ -524,25 +524,13 @@ function QBCore.Functions.CreateVehicle(source, vehicle_name, coords, rotation, 
 	local ped = source:GetControlledCharacter()
 	if not ped then return false end
 	local location = ped:GetLocation()
-	local control_rotation = ped:GetControlRotation()
+	local control_rotation = ped:GetRotation()
 	local forward_vector = control_rotation:GetForwardVector()
-	local spawn_location = location + Vector(0, 0, 40) + forward_vector * Vector(200)
+	local spawn_location = location + forward_vector * 500
 	if not coords then coords = spawn_location end
-	if not rotation then rotation = Rotator(0, 0, 0) end
+	if not rotation then rotation = control_rotation end
 	local vehicle = HSimpleVehicle(coords, rotation, vehicle_data.asset_name, vehicle_data.collision_type, vehicle_data.gravity_enabled)
 	if not vehicle then return false end
-	if vehicle_data.doors then
-		for door_index, door_data in pairs(vehicle_data.doors) do
-			vehicle:SetDoor(
-				door_index,
-				door_data.offset_location,
-				door_data.seat_location,
-				door_data.seat_rotation,
-				door_data.trigger_radius,
-				door_data.leave_lateral_offset
-			)
-		end
-	end
 	local plate_number = plate or QBCore.Functions.GeneratePlate(vehicle)
 	vehicle:SetValue('plate', plate_number, true)
 	local fuel_value = fuel or 100

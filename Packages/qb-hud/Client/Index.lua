@@ -2,6 +2,7 @@ local my_webui = WebUI('HUD', 'file://html/index.html')
 local player_data = QBCore.Functions.GetPlayerData()
 local in_vehicle, current_vehicle = false, nil
 local has_weapon, current_weapon = false, nil
+local round = math.floor
 local voice_level = 2
 local voiceLevels = {
     { level = 'whisper', radius = 1.0 },
@@ -43,17 +44,15 @@ end)
 
 -- Money HUD
 
-local Round = math.floor
-
-Events.SubscribeRemote('hud:client:ShowAccounts', function(type, amount)
+Events.SubscribeRemote('qb-hud:client:ShowAccounts', function(type, amount)
     if type == 'cash' then
-        my_webui:CallEvent('ShowCashAmount', Round(amount))
+        my_webui:CallEvent('ShowCashAmount', round(amount))
     else
-        my_webui:CallEvent('ShowBankAmount', Round(amount))
+        my_webui:CallEvent('ShowBankAmount', round(amount))
     end
 end)
 
-Events.SubscribeRemote('hud:client:OnMoneyChange', function(type, amount, isMinus)
+Events.SubscribeRemote('qb-hud:client:OnMoneyChange', function(type, amount, isMinus)
     local cashAmount = player_data.money['cash']
     local bankAmount = player_data.money['bank']
     my_webui:CallEvent('UpdateMoney', Round(cashAmount), Round(bankAmount), Round(amount), isMinus, type)
@@ -148,9 +147,9 @@ end)
 
 -- Vehicles
 
-Events.SubscribeRemote('hud:client:fixVehicle', function()
+Events.SubscribeRemote('qb-hud:client:fixVehicle', function()
     if in_vehicle and current_vehicle then
-        Events.CallRemote('hud:server:fixVehicle', current_vehicle)
+        Events.CallRemote('qb-hud:server:fixVehicle', current_vehicle)
     end
 end)
 
@@ -172,4 +171,20 @@ HCharacter.Subscribe('LeaveVehicle', function(self, vehicle)
     in_vehicle = false
     current_vehicle = nil
     my_webui:CallEvent('ShowSpeedometer', false)
+end)
+
+Input.Subscribe('KeyPress', function(key_name)
+    if key_name == 'E' then
+        if not in_vehicle then
+            local vehicle, distance = QBCore.Functions.GetClosestHVehicle()
+            if vehicle and distance < 300 and distance > 150 then
+                local current_passengers = vehicle:NumOfCurrentPassanger()
+                local allowed_passengers = vehicle:NumOfAllowedPassanger()
+                if current_passengers >= allowed_passengers then return end
+                Events.CallRemote('qb-hud:server:enterVehicle', vehicle)
+            end
+        else
+            Events.CallRemote('qb-hud:server:leaveVehicle')
+        end
+    end
 end)

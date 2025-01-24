@@ -215,7 +215,6 @@ QBCore.Commands.Add('car', Lang:t('command.car.help'), { { name = Lang:t('comman
 	if not vehicle then return end
 	local ped = source:GetControlledCharacter()
 	if not ped then return end
-	ped:EnterVehicle(vehicle)
 end, 'admin')
 
 QBCore.Commands.Add('weapon', Lang:t('command.weapon.help'), { { name = Lang:t('command.weapon.params.model.name'), help = Lang:t('command.weapon.params.model.help') } }, true, function(source, args)
@@ -347,11 +346,11 @@ QBCore.Commands.Add('setgang', Lang:t('command.setgang.help'), { { name = Lang:t
 end, 'admin')
 
 Console.RegisterCommand('reloadshared', function(fileType)
-	local allowedFiles = {gangs = true, items = true, jobs = true, vehicles = true, weapons = true}
+	local allowedFiles = { gangs = true, items = true, jobs = true, vehicles = true, weapons = true }
 	if not allowedFiles[fileType] then return print('Shared file not allowed') end
 
-	local file, err = loadfile(string.format('./Packages/qb-core/Shared/%s.lua', fileType), "t")
+	local file, err = loadfile(string.format('./Packages/qb-core/Shared/%s.lua', fileType), 't')
 	if err then return print(err) end
 
 	if file then file() end
-end, 'Refreshes a shared file without needing to restart the core', {'gangs', 'items', 'jobs', 'vehicles', 'weapons'})
+end, 'Refreshes a shared file without needing to restart the core', { 'gangs', 'items', 'jobs', 'vehicles', 'weapons' })
