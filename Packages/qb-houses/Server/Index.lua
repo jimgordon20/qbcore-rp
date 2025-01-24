@@ -19,10 +19,13 @@ if result and result[1] then
             owned = owned,
             price = v.price,
             locked = true,
-            adress = v.label,
+            address = v.label,
             tier = v.tier,
             garage = garage,
             decorations = {},
+            stash = nil,
+            outfit = nil,
+            logout = nil,
         }
         HouseGarages[v.name] = {
             label = v.label,
@@ -37,6 +40,11 @@ MySQL.query('SELECT * FROM player_houses', {}, function(houses)
             houseowneridentifier[house.house] = house.identifier
             houseownercid[house.house] = house.citizenid
             housekeyholders[house.house] = JSON.parse(house.keyholders)
+            Config.Houses[house.house].owned = true
+            Config.Houses[house.house].decorations = house.decorations and JSON.parse(house.decorations) or {}
+            Config.Houses[house.house].stash = house.stash and JSON.parse(house.stash) or nil
+            Config.Houses[house.house].outfit = house.outfit and JSON.parse(house.outfit) or nil
+            Config.Houses[house.house].logout = house.logout and JSON.parse(house.logout) or nil
         end
     end
 end)
@@ -117,6 +125,19 @@ end)
 
 QBCore.Functions.CreateCallback('qb-houses:server:getHouses', function(_, cb)
     cb(Config.Houses)
+end)
+
+QBCore.Functions.CreateCallback('qb-houses:server:getOwnedHouses', function(_, cb, citizenid)
+    local houses = {}
+    for house, cid in pairs(houseownercid) do
+        if cid == citizenid then
+            houses[#houses + 1] = {
+                house = house,
+                address = Config.Houses[house].address,
+            }
+        end
+    end
+    cb(houses)
 end)
 
 -- Events
@@ -306,7 +327,7 @@ local function AddNewHouse(source, street, coords, price, tier)
         owned = false,
         price = price,
         locked = true,
-        adress = label,
+        address = label,
         tier = tier,
         garage = {},
         decorations = {},

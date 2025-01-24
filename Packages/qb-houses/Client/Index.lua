@@ -376,7 +376,7 @@ local function houseBlips()
             if house.owned then blipImage = './media/map-icons/house_owned.svg' end
             Config.Houses[id].blip = Events.Call('Map:AddBlip', {
                 id = id,
-                name = house.adress,
+                name = house.address,
                 imgUrl = blipImage,
                 coords = { x = house.coords.enter.x, y = house.coords.enter.y, z = house.coords.enter.z },
             })
@@ -516,7 +516,7 @@ Events.Subscribe('qb-houses:client:setLocation', function(cData)
 end)
 
 Events.SubscribeRemote('qb-houses:client:view', function(house, houseprice, brokerfee, bankfee, taxes)
-    local house_label = Config.Houses[house].adress
+    local house_label = Config.Houses[house].address
     local view_menu = ContextMenu:new()
     view_menu:addText('broker-fee', 'Broker Fee $' .. brokerfee)
     view_menu:addText('bank-fee', 'Bank Fee $' .. bankfee)

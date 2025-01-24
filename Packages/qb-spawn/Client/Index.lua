@@ -46,13 +46,13 @@ end)
 
 Events.SubscribeRemote('qb-spawn:client:setupSpawns', function(cData, new, apps)
 	if not new then
-		QBCore.Functions.TriggerCallback('qb-spawn:server:getOwnedHouses', function(houses)
+		QBCore.Functions.TriggerCallback('qb-houses:server:getOwnedHouses', function(houses)
 			local myHouses = {}
-			if houses ~= nil then
-				for i = 1, #houses, 1 do
+			if houses then
+				for i = 1, #houses do
 					myHouses[#myHouses + 1] = {
 						house = houses[i].house,
-						label = Houses[houses[i].house].adress,
+						label = houses[i].address,
 					}
 				end
 			end
@@ -65,13 +65,13 @@ end)
 
 Events.Subscribe('qb-spawn:client:setupSpawns', function(cData, new, apps)
 	if not new then
-		QBCore.Functions.TriggerCallback('qb-spawn:server:getOwnedHouses', function(houses)
+		QBCore.Functions.TriggerCallback('qb-houses:server:getOwnedHouses', function(houses)
 			local myHouses = {}
-			if houses ~= nil then
+			if houses then
 				for i = 1, #houses, 1 do
 					myHouses[#myHouses + 1] = {
 						house = houses[i].house,
-						label = Houses[houses[i].house].adress,
+						label = houses[i].address,
 					}
 				end
 			end
