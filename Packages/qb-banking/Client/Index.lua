@@ -1,5 +1,13 @@
 local my_webui = WebUI('HUD', 'file://html/index.html')
 
+local function setupPeds()
+	QBCore.Functions.TriggerCallback('qb-banking:server:getPeds', function(peds)
+		for ped, data in pairs(peds) do
+			AddTargetEntity(ped, { options = data.options, distance = data.distance })
+		end
+	end)
+end
+
 local function OpenATM()
 	QBCore.Functions.TriggerCallback('qb-banking:server:openATM', function(accounts, playerData, acceptablePins)
 		my_webui:CallEvent('openATM', accounts, acceptablePins, playerData)
@@ -8,16 +16,15 @@ local function OpenATM()
 	end)
 end
 
--- local function NearATM()
---     local playerCoords = GetEntityCoords(PlayerPedId())
---     for _, v in pairs(Config.atmModels) do
---         local hash = joaat(v)
---         local atm = IsObjectNearPoint(hash, playerCoords.x, playerCoords.y, playerCoords.z, 1.5)
---         if atm then
---             return true
---         end
---     end
--- end
+Package.Subscribe('Load', function()
+	if Client.GetValue('isLoggedIn', false) then
+		setupPeds()
+	end
+end)
+
+Events.SubscribeRemote('QBCore:Client:OnPlayerLoaded', function()
+	setupPeds()
+end)
 
 -- NUI Callback
 
@@ -97,14 +104,6 @@ Events.SubscribeRemote('qb-banking:client:openBank', function(accounts, statemen
 	my_webui:CallEvent('openBank', accounts, statements, playerData)
 	my_webui:BringToFront()
 	Input.SetMouseEnabled(true)
-end)
-
--- Create Peds
-
-QBCore.Functions.TriggerCallback('qb-banking:server:getPeds', function(peds)
-	for ped, data in pairs(peds) do
-		AddTargetEntity(ped, { options = data.options, distance = data.distance })
-	end
 end)
 
 -- Create ATM
