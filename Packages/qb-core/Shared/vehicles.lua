@@ -50,4 +50,65 @@ QBShared.Vehicles = {
 		collision_type = CollisionType.Normal,
 		gravity_enabled = true,
 	},
+	-- Dax Pack
+	bp_alton = {
+		asset_name = 'abcca-dax-veh::BP_AltonLane',
+		collision_type = CollisionType.Normal,
+		gravity_enabled = true,
+	},
+	bp_beloren = {
+		asset_name = 'abcca-dax-veh::BP_BeLoren',
+		collision_type = CollisionType.Normal,
+		gravity_enabled = true,
+	},
+	bp_deliverytruck = {
+		asset_name = 'abcca-dax-veh::BP_DeliveryTruck',
+		collision_type = CollisionType.Normal,
+		gravity_enabled = true,
+	},
+	bp_firetruck = {
+		asset_name = 'abcca-dax-veh::BP_FireTruck',
+		collision_type = CollisionType.Normal,
+		gravity_enabled = true,
+	},
+	bp_fortezza485 = {
+		asset_name = 'abcca-dax-veh::BP_Fortezza485',
+		collision_type = CollisionType.Normal,
+		gravity_enabled = true,
+	},
+	bp_plusclass = {
+		asset_name = 'abcca-dax-veh::BP_PlusClass',
+		collision_type = CollisionType.Normal,
+		gravity_enabled = true,
+	},
+	bp_pongasera = {
+		asset_name = 'abcca-dax-veh::BP_PongaseraGtVehicle',
+		collision_type = CollisionType.Normal,
+		gravity_enabled = true,
+	},
+	bp_swatvan = {
+		asset_name = 'abcca-dax-veh::BP_SwatVan',
+		collision_type = CollisionType.Normal,
+		gravity_enabled = true,
+	},
+	bp_serenity = {
+		asset_name = 'abcca-dax-veh::BP_SerenityVehicle',
+		collision_type = CollisionType.Normal,
+		gravity_enabled = true,
+	},
+	bp_rampart = {
+		asset_name = 'abcca-dax-veh::RampartVehicle',
+		collision_type = CollisionType.Normal,
+		gravity_enabled = true,
+	},
+	bp_volt = {
+		asset_name = 'abcca-dax-veh::BP_VoltVehicle',
+		collision_type = CollisionType.Normal,
+		gravity_enabled = true,
+	},
+	bp_siesta = {
+		asset_name = 'abcca-dax-veh::BP_SiestaVehicle',
+		collision_type = CollisionType.Normal,
+		gravity_enabled = true,
+	},
 }
