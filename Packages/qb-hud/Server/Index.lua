@@ -25,12 +25,27 @@ end)
 Events.SubscribeRemote('qb-hud:server:enterVehicle', function(source, vehicle)
     local ped = source:GetControlledCharacter()
     if not ped then return end
-    ped:EnterVehicle(vehicle, 0)
+    local seatIndex = -1
+    for i = 0, vehicle:NumOfAllowedPassanger() do
+        if not vehicle:GetValue('seat_taken_' .. i) then
+            seatIndex = i
+            break
+        end
+    end
+    ped:EnterVehicle(vehicle, seatIndex)
+    vehicle:SetValue('seat_taken_' .. seatIndex, true)
+    ped:SetValue('current_seat', seatIndex)
 end)
 
-Events.SubscribeRemote('qb-hud:server:leaveVehicle', function(source)
+Events.SubscribeRemote('qb-hud:server:leaveVehicle', function(source, vehicle)
     local ped = source:GetControlledCharacter()
     if not ped then return end
+    if not vehicle then return end
+    local seatIndex = ped:GetValue('current_seat')
+    if seatIndex then
+        vehicle:SetValue('seat_taken_' .. seatIndex, false)
+        ped:SetValue('current_seat', nil)
+    end
     ped:LeaveVehicle()
 end)
 

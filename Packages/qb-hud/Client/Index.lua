@@ -184,7 +184,9 @@ Input.Subscribe('KeyPress', function(key_name)
                 Events.CallRemote('qb-hud:server:enterVehicle', vehicle)
             end
         else
-            Events.CallRemote('qb-hud:server:leaveVehicle')
+            if current_vehicle and current_vehicle:IsValid() then
+                Events.CallRemote('qb-hud:server:leaveVehicle', current_vehicle)
+            end
         end
     end
 end)
