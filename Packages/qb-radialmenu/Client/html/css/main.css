@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 h1 {
     font-weight: normal;
@@ -70,21 +70,21 @@ svg.menu > g.sector > path {
 
 svg.menu > g.sector > text,
 svg.menu > g.sector > use {
-    font-family: "Poppins", sans-serif;
+    font-family: "Inter", sans-serif;
     margin-top: 5px;
     font-size: 2.8px;
     letter-spacing: 0.2px;
     text-transform: uppercase;
     cursor: pointer;
-    fill: white;
+    fill: #00fbdc;
 }
 
 svg.menu > g.sector:hover > path {
-    fill: #dc143c;
+    fill: rgb(0 251 220 / 40%);
 }
 
 svg.menu > g.center:hover > circle {
-    fill: #dc143c;
+    fill: #00fbdc;
 }
 
 svg.menu > g.center > circle {
