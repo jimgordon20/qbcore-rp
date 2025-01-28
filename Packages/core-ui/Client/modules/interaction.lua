@@ -1,13 +1,13 @@
 -- Interaction class definition
 Interaction = {}
 Interaction.__index = Interaction
-Interaction.currentInstance = nil -- Static reference to the current instance
+Interaction.currentInstance = nil  -- Static reference to the current instance
 
 -- Constructor for creating a new Interaction instance
 function Interaction.new()
     local self = setmetatable({}, Interaction)
     -- Creates a new WebUI instance for interaction
-    self.interactUI = WebUI('Interact UI', 'file:///UI/interaction/index.html')
+    self.interactUI = WebUI("Interact UI", "file:///UI/interaction/index.html")
     -- State variables
     self.insideZone = false
     self.pressingE = false
@@ -21,7 +21,7 @@ function Interaction.new()
 
     -- Bind input keys for interaction
     self:bindInputs()
-    Interaction.currentInstance = self -- Set the current instance
+    Interaction.currentInstance = self  -- Set the current instance
 
     return self
 end
@@ -34,7 +34,7 @@ function Interaction:show(id, text, callback)
     self.callback = callback
     self.insideZone = true
     -- Call the WebUI event to show the interaction
-    self.interactUI:CallEvent('interact:show', true, text)
+    self.interactUI:CallEvent("interact:show", true, text)
 end
 
 -- Completes the interaction and executes the callback
@@ -50,21 +50,21 @@ end
 -- Bind keyboard inputs for the interaction
 function Interaction:bindInputs()
     -- Register 'E' key for interaction
-    Input.Register('interact:pressed', 'E')
+    Input.Register("interact:pressed", "E")
 
     -- Bind 'E' key pressed event
-    Input.Bind('interact:pressed', InputEvent.Pressed, function()
+    Input.Bind("interact:pressed", InputEvent.Pressed, function()
         -- Trigger interaction if inside the interaction zone
         if self.insideZone then
-            self.interactUI:CallEvent('interact:pressed', true)
+            self.interactUI:CallEvent("interact:pressed", true)
             self.pressingE = true
         end
     end)
     -- Bind 'E' key released event
-    Input.Bind('interact:pressed', InputEvent.Released, function()
+    Input.Bind("interact:pressed", InputEvent.Released, function()
         -- Stop interaction if 'E' key is released
         if self.pressingE then
-            self.interactUI:CallEvent('interact:released', false)
+            self.interactUI:CallEvent("interact:released", false)
             self.pressingE = false
         end
     end)
@@ -74,20 +74,20 @@ end
 Events.SubscribeRemote('interact:show', function(state, triggerS)
     -- Use the current instance of Interaction to manage the event
     if Interaction.currentInstance then
-        Interaction.currentInstance.interactUI:CallEvent('interact:show', state, 'See Description')
+        Interaction.currentInstance.interactUI:CallEvent("interact:show", state, "See Description")
         Interaction.currentInstance.insideZone = state
         Interaction.currentInstance.triggerData = triggerS
     end
 end)
 
 -- Chat command handling for testing interaction
-Chat.Subscribe('PlayerSubmit', function(message, player)
+Chat.Subscribe("PlayerSubmit", function(message, player)
     -- Command 'int' to show interaction
-    if message == 'int' then
+    if message == "int" then
         local interaction = Interaction.new()
 
-        interaction:show('my-interaction', 'Your UI text here', function()
-            Chat.AddMessage('Interaction: my-interaction completed!!')
+        interaction:show("my-interaction", "Your UI text here", function()
+            Chat.AddMessage("Interaction: my-interaction completed!!")
         end)
     end
 end)

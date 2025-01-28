@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
 
 :root {
     --fontxsmall: clamp(10px, 0.39375vh, 20px);
@@ -29,7 +29,7 @@ body {
     opacity: 1;
     margin: 0;
     padding: 0;
-    font-family: "Outfit", sans-serif;
+    font-family: 'Outfit', sans-serif;
     user-select: none;
     /* background: rgba(0,0,0,0.5); */
 }
@@ -40,14 +40,14 @@ body {
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    font-family: "Outfit", sans-serif;
+    font-family: 'Outfit', sans-serif;
     box-sizing: border-box;
     color: white;
     font-style: normal;
-    letter-spacing: 0.1vh;
+    letter-spacing: .1vh;
 }
 
-body > .bg {
+body>.bg {
     position: absolute;
     width: 100vw;
     height: 100vh;
@@ -66,7 +66,7 @@ body > .bg {
     top: 50%;
     transform: translate(-50%, -50%) scale(var(--scale));
     width: 320px;
-    background-color: #161616e5;
+    background-color: #161616E5;
     border-radius: 16px;
     pointer-events: none;
     opacity: 0;
@@ -89,7 +89,7 @@ body.in-confirm-menu .confirm-menu {
     align-items: center;
     padding: 0 20px;
     gap: 12px;
-    border-bottom: 1px solid #ffffff24;
+    border-bottom: 1px solid #FFFFFF24;
     position: relative;
 }
 
@@ -122,28 +122,28 @@ body.in-confirm-menu .confirm-menu {
     height: 44px;
     border-radius: 8px;
     background-color: transparent;
-    border: 2px solid #2e2e2e;
-    color: #ededed;
+    border: 2px solid #2E2E2E;
+    color: #EDEDED;
     padding: 0 12px;
     font-size: 16px;
     outline: none;
-    transition: all 0.2s ease;
+    transition: all .2s ease;
 }
 
 .content input:hover {
-    background-color: #ffffff1a;
+    background-color: #FFFFFF1A;
     border-color: #505050;
 }
 
 .content input:focus {
-    border: 2px solid #ededed;
+    border: 2px solid #EDEDED;
     background-color: #343434;
 }
 
 .content .message {
     font-size: 16px;
     font-weight: 500;
-    color: #ffffff99;
+    color: #FFFFFF99;
     margin: 0;
     text-align: center;
 }
@@ -167,34 +167,35 @@ body.in-confirm-menu .confirm-menu {
 }
 
 .buttons button.cancel {
-    background-color: #ffffff12;
-    color: #ededed;
+    background-color: #FFFFFF12;
+    color: #EDEDED;
 }
 
 .buttons button.cancel:hover {
-    background-color: #ffffff24;
+    background-color: #FFFFFF24;
 }
 
 .buttons button.confirm {
-    background-color: #2dff9b24;
-    color: #57ffaf;
+    background-color: #2DFF9B24;
+    color: #57FFAF;
 }
 
 .buttons button.confirm:hover {
-    background-color: #2dff9b36;
+    background-color: #2DFF9B36;
 }
+
 
 ::-webkit-scrollbar {
     width: 0.5vh;
 }
 
 ::-webkit-scrollbar-track {
-    background: #28282a;
+    background: #28282A;
     border-radius: 23px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #00fbdd;
+    background: #00FBDD;
     border-radius: 23px;
 }
 

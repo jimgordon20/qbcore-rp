@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
     --fontxsmall: clamp(10px, 0.39375vh, 20px);
@@ -39,14 +39,14 @@ body {
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    font-family: "Outfit", sans-serif;
+    font-family: 'Outfit', sans-serif;
     box-sizing: border-box;
     /* transition: all 0.3s ease; */
     color: white;
     font-style: normal;
 }
 
-body > .bg {
+body>.bg {
     position: absolute;
     width: 100vw;
     height: 100vh;
@@ -78,7 +78,7 @@ body > .bg {
     justify-content: start;
     align-items: center;
     gap: 12px;
-    background-color: #00fbdd;
+    background-color: #00FBDD;
     padding: 0 16px;
 }
 
@@ -138,11 +138,11 @@ body > .bg {
     display: flex;
     justify-content: start;
     align-items: center;
-    background-color: #1b1b1d;
+    background-color: #1B1B1D;
     padding: 16px;
     gap: 10px;
     border-bottom: 1px solid #343437;
-    transition: all 0.3s ease;
+    transition: all .3s ease;
     overflow: hidden;
 }
 
@@ -160,7 +160,7 @@ body > .bg {
     letter-spacing: 0px;
     text-align: left;
     text-transform: capitalize;
-    color: #8c8c91;
+    color: #8C8C91;
 }
 
 .context-menu .thread p.actual {
@@ -184,7 +184,7 @@ body > .bg {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #1b1b1d;
+    background-color: #1B1B1D;
     padding: 16px;
     gap: 10px;
     border-bottom: 1px solid #343437;
@@ -201,7 +201,7 @@ body > .bg {
 }
 
 .context-menu .content .options-qty p.qty {
-    color: #00fbdd;
+    color: #00FBDD;
 }
 
 .context-menu .info {
@@ -212,7 +212,7 @@ body > .bg {
     width: 100%;
     height: fit-content;
     gap: 6px;
-    background-color: #1b1b1d;
+    background-color: #1B1B1D;
     border-top: 1px solid #343437;
     padding: 16px;
     padding-top: 18px;
@@ -246,7 +246,7 @@ body > .bg {
     letter-spacing: 0px;
     text-align: left;
 
-    color: #8c8c91;
+    color: #8C8C91;
 }
 
 .context-menu .content .options {
@@ -272,7 +272,7 @@ body > .bg {
     border-radius: 4px;
     padding: 8px;
     /* background-color: white; */
-    transition: all 0.3s ease;
+    transition: all .3s ease;
 }
 
 .context-menu .content .options .option:last-child {
@@ -289,7 +289,7 @@ body > .bg {
     text-transform: capitalize;
     /* color: #121212; */
     color: white;
-    transition: all 0.3s ease;
+    transition: all .3s ease;
 }
 
 .context-menu .content .options .option.selected {
@@ -316,12 +316,12 @@ body > .bg {
     height: 20px;
     width: 20px;
     border-radius: 4px;
-    transition: all 0.3s ease;
+    transition: all .3s ease;
     cursor: pointer;
 }
 
 .context-menu .content .options .option.checkbox:hover .check {
-    outline-color: #8c8c91;
+    outline-color: #8C8C91;
 }
 
 .context-menu .content .options .option.checkbox.selected .check {
@@ -353,7 +353,7 @@ body > .bg {
     line-height: 24px;
     letter-spacing: 0px;
     text-align: left;
-    color: #8c8c91;
+    color: #8C8C91;
 }
 
 .context-menu .content .options .option.server.selected .counter {
@@ -367,17 +367,17 @@ body > .bg {
     width: 100%;
 }
 
-.context-menu .content .options .dropdown .option > svg {
-    stroke: #8c8c91;
-    transition: all 0.3s ease;
+.context-menu .content .options .dropdown .option>svg {
+    stroke: #8C8C91;
+    transition: all .3s ease;
     cursor: pointer;
 }
 
-.context-menu .content .options .dropdown .option.selected > svg {
+.context-menu .content .options .dropdown .option.selected>svg {
     stroke: black;
 }
 
-.context-menu .content .options .dropdown .option.selected.active > svg {
+.context-menu .content .options .dropdown .option.selected.active>svg {
     stroke: black;
     transform: rotate(180deg);
 }
@@ -392,7 +392,7 @@ body > .bg {
 
     height: 0px;
     opacity: 0;
-    transition: all 0.3s ease;
+    transition: all .3s ease;
     pointer-events: none;
     margin: 0;
     overflow: hidden;
@@ -401,8 +401,10 @@ body > .bg {
     margin-left: 17px;
     border-left: 1px solid #343437;
     padding-left: 10px;
-    transition: height 0.3s ease, opacity 0.3s ease;
+    transition: height 0.3s ease,
+        opacity 0.3s ease;
 }
+
 
 .context-menu .content .options .dropdown .sub-list .option:last-child {
     margin-bottom: 0;
@@ -440,12 +442,12 @@ body > .bg {
     width: 20px;
     border-radius: 2px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all .3s ease;
 }
 
 .context-menu .content .options .option.quantity .controls button svg {
-    fill: #8c8c91;
-    transition: all 0.3s ease;
+    fill: #8C8C91;
+    transition: all .3s ease;
 }
 
 .context-menu .content .options .option.quantity .controls button:not(.unable):hover svg {
@@ -469,7 +471,7 @@ body > .bg {
 }
 
 .context-menu .content .options .option.navigate:hover svg {
-    fill: #8c8c91;
+    fill: #8C8C91;
 }
 
 .context-menu .content .options .option.navigate.selected svg {
@@ -484,8 +486,8 @@ body > .bg {
 }
 
 .context-menu .content .options .option.action:hover svg {
-    fill: #8c8c91;
-    stroke: #8c8c91;
+    fill: #8C8C91;
+    stroke: #8C8C91;
 }
 
 .context-menu .content .options .option.action.selected svg {
@@ -517,6 +519,7 @@ body > .bg {
     line-height: 14px;
     letter-spacing: 0px;
     text-align: left;
+
 }
 
 .context-menu .content .options .option.text-input .input input:focus {
@@ -524,7 +527,7 @@ body > .bg {
 }
 
 .context-menu .content .options .option.text-input .input input::placeholder {
-    color: #69696d;
+    color: #69696D;
 }
 
 .context-menu .content .options .option.list .controls {
@@ -548,12 +551,12 @@ body > .bg {
     width: 20px;
     border-radius: 2px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all .3s ease;
 }
 
 .context-menu .content .options .option.list .controls button svg {
-    fill: #8c8c91;
-    transition: all 0.3s ease;
+    fill: #8C8C91;
+    transition: all .3s ease;
 }
 
 .context-menu .content .options .option.list .controls button:not(.unable):hover svg {
@@ -576,7 +579,7 @@ body > .bg {
     justify-content: space-between;
     padding: 8px;
     border-radius: 4px;
-    transition: all 0.3s ease;
+    transition: all .3s ease;
 }
 
 .option.radio {
@@ -605,7 +608,7 @@ body > .bg {
     color: white;
     border: none;
     padding: 0 8px;
-    font-family: "Inter", sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 14px;
     font-weight: 500;
     line-height: 14px;
@@ -615,7 +618,7 @@ body > .bg {
 
 .option.password-input .input input[type="password"]::placeholder,
 .option.number-input .input input[type="number"]::placeholder {
-    color: #69696d;
+    color: #69696D;
 }
 
 .option.select-input .input select:hover {
@@ -644,7 +647,7 @@ body > .bg {
 }
 
 .option.radio .radio-item input[type="radio"] {
-    accent-color: #00fbdd;
+    accent-color: #00FBDD;
     cursor: pointer;
     margin: 0;
 }
@@ -675,7 +678,7 @@ body > .bg {
     appearance: none;
     width: 12px;
     height: 12px;
-    background: #00fbdd;
+    background: #00FBDD;
     border-radius: 50%;
     cursor: pointer;
 }
@@ -693,7 +696,7 @@ body > .bg {
 }
 
 .option.range-input .slider-container .number-value:focus {
-    outline: 1px solid #00fbdd;
+    outline: 1px solid #00FBDD;
 }
 
 .option .range-submit-btn,
@@ -707,12 +710,13 @@ body > .bg {
     min-width: 5px;
     border-radius: 2px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    color: #8c8c91;
+    transition: all .3s ease;
+    color: #8C8C91;
     font-family: Inter, sans-serif;
     font-size: 14px;
     padding: 0 6px;
 }
+
 
 .option.range-input .send-value,
 .option.number-input .send-value {
@@ -720,14 +724,14 @@ body > .bg {
     stroke: transparent;
     margin-right: 3px;
     cursor: pointer;
-    fill: #8c8c91;
-    stroke: #8c8c91;
+    fill: #8C8C91;
+    stroke: #8C8C91;
 }
 
 .option.range-input .send-value:hover,
 .option.number-input .send-value:hover {
-    fill: #8c8c91;
-    stroke: #8c8c91;
+    fill: #8C8C91;
+    stroke: #8C8C91;
 }
 
 .option.range-input .send-value.selected,
@@ -755,7 +759,7 @@ body > .bg {
     color: white;
     border: none;
     padding: 0 8px;
-    font-family: "Inter", sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 14px;
     font-weight: 500;
     line-height: 14px;
@@ -772,7 +776,7 @@ body > .bg {
     justify-content: space-between;
     padding: 8px;
     border-radius: 4px;
-    transition: all 0.3s ease;
+    transition: all .3s ease;
 }
 
 .option.list-picker .name {
@@ -804,12 +808,12 @@ body > .bg {
     width: 20px;
     border-radius: 2px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all .3s ease;
 }
 
 .option.list-picker .controls button svg {
     fill: #ffffff;
-    transition: all 0.3s ease;
+    transition: all .3s ease;
 }
 
 .option.list-picker .controls button:not(.unable):hover svg {
@@ -868,7 +872,7 @@ body > .bg {
     width: fit-content;
     padding: 0 8px;
     pointer-events: none;
-    color: #ffffff;
+    color: #FFFFFF;
 }
 
 .option:not(.text-display) {
@@ -896,8 +900,8 @@ body > .bg {
     padding-right: 48px;
     background-color: #121212;
     border-radius: 12px;
-    border-left: 3px solid #30e489;
-    transition: all 0.3s ease;
+    border-left: 3px solid #30E489;
+    transition: all .3s ease;
     margin-bottom: 18px;
 }
 
@@ -907,7 +911,7 @@ body > .bg {
     align-items: center;
     height: 36px;
     width: 36px;
-    background-color: #30e48933;
+    background-color: #30E48933;
     border-radius: 6px;
     flex-shrink: 0;
 }
@@ -921,7 +925,7 @@ body > .bg {
 }
 
 .notification .content h1 {
-    color: #fff;
+    color: #FFF;
     font-family: Inter;
     font-size: 16px;
     font-style: normal;
@@ -931,7 +935,7 @@ body > .bg {
 }
 
 .notification .content p {
-    color: #8c8c91;
+    color: #8C8C91;
     font-family: Inter;
     font-size: 16px;
     font-style: normal;
@@ -944,40 +948,41 @@ body > .bg {
     top: 0;
     right: 0;
     margin: 16px;
-    transition: all 0.2s ease;
+    transition: all .2s ease;
     cursor: pointer;
     width: 20px;
     height: 20px;
-    stroke: #8c8c91;
+    stroke: #8C8C91;
 }
 
 .notification .close:hover {
-    stroke: #ff6b61;
+    stroke: #FF6B61;
 }
 
 .notification.success {
-    border-left: 3px solid #30e489 !important;
+    border-left: 3px solid #30E489 !important;
 }
 
 .notification.warning {
-    border-left: 3px solid #ff6b61 !important;
+    border-left: 3px solid #FF6B61 !important;
 }
 
 .notification.info {
-    border-left: 3px solid #60ffed !important;
+    border-left: 3px solid #60FFED !important;
 }
 
 .notification.success .icon {
-    background-color: #30e48933;
+    background-color: #30E48933;
 }
 
 .notification.warning .icon {
-    background-color: #ff6b6133;
+    background-color: #FF6B6133;
 }
 
 .notification.info .icon {
-    background-color: #60ffed33;
+    background-color: #60FFED33;
 }
+
 
 .notification.entering {
     transform: translateX(100%);
@@ -994,18 +999,22 @@ body > .bg {
     opacity: 0;
 }
 
+
+
 ::-webkit-scrollbar {
     width: 0.5vh;
 }
 
 ::-webkit-scrollbar-track {
-    background: #28282a;
+    background: #28282A;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #00fbdd;
+    background: #00FBDD;
     border-radius: 23px;
 }
+
+
 
 @media screen and (max-height: 4000px) {
     body {

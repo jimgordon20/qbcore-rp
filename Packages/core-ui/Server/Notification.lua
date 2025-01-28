@@ -45,42 +45,42 @@ local function MarkNotificationAsRead(accountId, notificationId)
     return false
 end
 
-Events.SubscribeRemote('SaveNotification', function(player, type, title, text)
+Events.SubscribeRemote("SaveNotification", function(player, type, title, text)
     -- verify all args exists and are not nil
     if not type or not title or not text then
-        print('SaveNotification: Missing arguments')
+        print("SaveNotification: Missing arguments")
         return
     end
     NotificationServer.AddForPlayer(player, type, title, text)
 end)
 
 -- Player requests notification history
-Events.SubscribeRemote('Notification:GetHistory', function(player)
+Events.SubscribeRemote("Notification:GetHistory", function(player)
     local accountId = player:GetAccountID()
     local history = GetPlayerNotifications(accountId)
-    Events.CallRemote('Notification:UpdateHistory', player, history) -- Template event for recieveing history on client side
+    Events.CallRemote("Notification:UpdateHistory", player, history) -- Template event for recieveing history on client side
 end)
 
 -- Player marks a notification as read
-Events.SubscribeRemote('Notification:MarkAsRead', function(player, notificationId)
+Events.SubscribeRemote("Notification:MarkAsRead", function(player, notificationId)
     local accountId = player:GetAccountID()
     local success = MarkNotificationAsRead(accountId, notificationId)
     if success then
         local history = GetPlayerNotifications(accountId)
-        Events.CallRemote('Notification:UpdateHistory', player, history) -- Template event for recieveing history on client side
+        Events.CallRemote("Notification:UpdateHistory", player, history) -- Template event for recieveing history on client side
     else
-        print('Notification:MarkAsRead: Notification not found.')
+        print("Notification:MarkAsRead: Notification not found.")
     end
 end)
 
 -- Utility functions to get faction or player names could be placed here as well
 
 -- Export the NotificationServer
-Package.Export('NotificationServer', NotificationServer)
+Package.Export("NotificationServer", NotificationServer)
 
 -- debbug
-Chat.Subscribe('PlayerSubmit', function(message, player)
-    if message == 'get' then
+Chat.Subscribe("PlayerSubmit", function(message, player)
+    if message == "get" then
         local history = GetPlayerNotifications(player:GetAccountID())
         print(HELIXTable.Dump(history))
     end

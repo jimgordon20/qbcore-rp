@@ -1,13 +1,13 @@
 /* Import apple font */
-@import url("https://fonts.googleapis.com/css2?family=Hind&family=Montserrat:wght@600&display=swap");
-body {
+@import url('https://fonts.googleapis.com/css2?family=Hind&family=Montserrat:wght@600&display=swap');
+body{
     margin: 0;
     padding: 0;
-    font-family: "Montserrat", sans-serif;
+    font-family: 'Montserrat', sans-serif;
     user-select: none;
     z-index: -11;
 }
-.screen {
+.screen{
     width: 100vw;
     height: 100vh;
     /* background: url(./media/bg.jpg); */
@@ -16,7 +16,7 @@ body {
     transition: 1s;
     opacity: 0;
 }
-.circle {
+.circle{
     width: 30px;
     height: 30px;
     position: absolute;
@@ -24,7 +24,7 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
 }
-.back_circle {
+.back_circle{
     width: 30px;
     height: 30px;
     position: absolute;
@@ -32,7 +32,7 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
 }
-p {
+p{
     margin-left: 20px;
     font-size: 1rem;
     color: white;
@@ -44,9 +44,9 @@ p {
     transform: translate(-50%, -50%);
     text-align: center;
     height: 19.5px;
-    width: 11.5px;
+    width:11.5px;
 }
-h1 {
+h1{
     margin-left: 20px;
     font-size: 1rem;
     color: rgba(233, 233, 233, 0.7);
