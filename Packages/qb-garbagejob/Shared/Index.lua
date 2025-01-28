@@ -6,7 +6,7 @@ Config = {
             {
                 label = 'West Garbage Depot',
                 pedSpawn = { coords = Vector(-257770.4, 35765.8, 184.7), heading = -4.25 },
-                vehicleSpawn = { coords = Vector(0, 0, 0), heading = 0.0 },
+                vehicleSpawn = { coords = Vector(-257274.0, 35627.7, 154.7), heading = 5.48 },
             },
         },
 
