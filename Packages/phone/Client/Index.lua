@@ -20,10 +20,8 @@ local function handleKeyDown(key_name, delta)
 			ClosePhone()
 		end
 	elseif key_name == 'N' then
-		-- Additional action example (you can adjust as needed)
 		PhoneUI:CallEvent('DialPhoneCall', 90022, 1)
 		Events.CallRemote('pcrp-phone:ExecuteAnimation', 'ffcce-phone-anims::ply_taking_phone_call', true, false)
-
 		currentlyPlayingAnimation = 'ffcce-phone-anims::ply_taking_phone_call'
 		Timer.SetTimeout(function()
 			Events.CallRemote('pcrp-phone:ExecuteAnimation', 'ffcce-phone-anims::ply_call_idle', true, true)
@@ -33,10 +31,8 @@ local function handleKeyDown(key_name, delta)
 	end
 end
 
--- Key input subscription
 Input.Subscribe('KeyDown', handleKeyDown)
 
--- Handle stop call event from UI
 PhoneUI:Subscribe('StopCall', function()
 	if currentlyPlayingAnimation ~= '' then
 		Events.CallRemote('pcrp-phone:StopAnimation', currentlyPlayingAnimation)
@@ -67,7 +63,6 @@ function ClosePhone()
 	if currentlyPlayingAnimation ~= '' then
 		Events.CallRemote('pcrp-phone:StopAnimation', currentlyPlayingAnimation)
 		currentlyPlayingAnimation = ''
-		Chat.AddMessage(currentlyPlayingAnimation)
 	end
 	Events.CallRemote('pcrp-phone:ExecuteAnimation', 'ffcce-phone-anims::ply_putting_phone_away', true, false)
 	currentlyPlayingAnimation = 'ffcce-phone-anims::ply_putting_phone_away'
