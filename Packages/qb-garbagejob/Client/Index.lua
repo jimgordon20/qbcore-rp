@@ -2,6 +2,16 @@ local Lang = Package.Require('../Shared/locales/' .. QBConfig.Language .. '.lua'
 local isHoldingBag = false
 local dumpster = nil
 
+for k, depot in pairs(Config.Locations.Depots) do
+    Events.Call('Map:AddBlip', {
+        id = 'garbage_depot_' .. k,
+        name = depot.label,
+        coords = { x = v.pedSpawn.coords.X, y = v.pedSpawn.coords.Y, z = v.pedSpawn.coords.Z },
+        imgUrl = './media/map-icons/Marker.svg',
+        group = 'Garbage Job',
+    })
+end
+
 -- Functions
 
 local function setupPeds()
