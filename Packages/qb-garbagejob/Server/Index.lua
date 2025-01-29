@@ -70,9 +70,10 @@ Events.SubscribeRemote('qb-garbagejob:server:startJob', function(source, args)
     local depot = Config.Locations.Depots[args.depot]
     if not depot then return end
     
-    local vehicle = HSimpleVehicle(depot.vehicleSpawn.coords, Rotator(0, depot.vehicleSpawn.heading, 0), Config.Vehicle)
+    local vehicle = QBCore.Functions.CreateVehicle(source, Config.Vehicle, depot.vehicleSpawn.coords, Rotator(0, depot.vehicleSpawn.heading, 0))
     local nextStop = SetNextLocation(source)
     routes[source:GetID()].maxStops = math.random(Config.MinStops, #Config.Locations.Dumpsters)
+    Events.CallRemote('QBCore:Notify', source, 'Route started, you have ' .. routes[source:GetID()].maxStops .. ' stops', 'success') -- Locale
     
     Events.CallRemote('qb-garbagejob:client:addTargets', source, vehicle, nextStop)
 end)
