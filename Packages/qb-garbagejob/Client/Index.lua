@@ -51,6 +51,7 @@ Events.SubscribeRemote('qb-garbagejob:client:addTargets', function(vehicle, next
 
     if dumpster then
         dumpster:Destroy()
+        Events.Call('Map:RemoveBlip', 'garbage_dumpster')
     end
 
     local dumpsterData = Config.Locations.Dumpsters[nextStop]
@@ -65,5 +66,13 @@ Events.SubscribeRemote('qb-garbagejob:client:addTargets', function(vehicle, next
             },
         },
         distance = 400,
+    })
+
+    Events.Call('Map:AddBlip', {
+        id = 'garbage_dumpster',
+        name = 'Dumpster',
+        coords = { x = dumpsterData.coords.X, y = dumpsterData.coords.Y, z = dumpsterData.coords.Z},
+        imgUrl = './media/map-icons/Marker.svg',
+        group = 'Garbage Job',
     })
 end)
