@@ -3,6 +3,7 @@ local isHoldingBag = false
 local dumpster = nil
 
 for k, depot in pairs(Config.Locations.Depots) do
+    Events.Call('Map:RemoveBlip', 'garbage_depot_' .. k) -- Cleanup blips on startup
     Events.Call('Map:AddBlip', {
         id = 'garbage_depot_' .. k,
         name = depot.label,
