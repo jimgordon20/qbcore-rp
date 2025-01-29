@@ -40,7 +40,6 @@ HCharacter.Subscribe('ValueChange', function(self, key, value)
     if self ~= Client.GetLocalPlayer():GetControlledCharacter() then return end
 
     if key ~= 'holdingBag' then return end
-    print('isHoldingBag', value)
     isHoldingBag = value
 end)
 
@@ -71,7 +70,6 @@ Events.SubscribeRemote('qb-garbagejob:client:addTargets', function(vehicle, next
     if not nextStop then return end
 
     local dumpsterData = Config.Locations.Dumpsters[nextStop]
-    print('Spawning dumpster at ', dumpsterData.coords)
     dumpster = Prop(dumpsterData.coords, Rotator(0, dumpsterData.heading, 0), 'abcca-qbcore::SM_Dumpster',  CollisionType.Auto, true, GrabMode.Disabled, CCDMode.Disabled)
     AddTargetEntity(dumpster, {
         options = {
