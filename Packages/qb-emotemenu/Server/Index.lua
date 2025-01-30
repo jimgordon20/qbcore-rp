@@ -1,10 +1,10 @@
 local currently_playing = {}
 
-Events.SubscribeRemote('qb-emotemenu:server:playAnimation', function(source, animation)
+Events.SubscribeRemote('qb-emotemenu:server:playAnimation', function(source, category, animation)
     local ped = source:GetControlledCharacter()
     if not ped then return end
     local account_id = source:GetAccountID()
-    local available_emotes = Config.Emotes
+    local available_emotes = Config.Emotes[category]
     local emote = available_emotes[animation]
     if not emote then return end
     local currently_playing_animation = currently_playing[account_id]
