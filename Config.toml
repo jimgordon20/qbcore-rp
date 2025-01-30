@@ -25,6 +25,8 @@
     packages = [
         "map",
         "core-ui",
+        "helicam",
+        "phone",
         "qb-target",
         "qb-interior",
         "qb-apartments",
@@ -57,11 +59,13 @@
         "abcca-shells",
         "ecdbd-h",
         "abcca-qbcore-veh",
-        "qb-core-animations",
+        "abcca-dax-veh",
+        "rp-anims-k",
+        "helix-iyoshko-mobile-phone",
     ]
     # default startup map
     map =               "abcca-nyc-wip::NYC_Small"
     # banned HELIX account IDs
     banned_ids = [
-        
+
     ]
