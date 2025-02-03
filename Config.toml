@@ -51,6 +51,7 @@
         "qb-busjob",
         "qb-taxijob",
         "qb-emotemenu",
+        "qb-garbagejob",
     ]
     # asset packs list (this will additionally load the asset packs you define here)
     assets = [
