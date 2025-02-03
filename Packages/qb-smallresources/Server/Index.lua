@@ -203,3 +203,15 @@ Events.SubscribeRemote('qb-smallresources:server:mapTp', function(source, zIndex
 
     ped:SetLocation(Vector(pedCoords.X, pedCoords.Y, pedCoords.Z + zIndex + 1000))
 end)
+
+-- Vehicle Cleanup
+
+Player.Subscribe('Destroy', function()
+    if Player.GetCount() - 1 > 0 then return end
+
+    for _, vehicle in pairs(HSimpleVehicle.GetAll()) do
+        if vehicle:IsValid() then
+            vehicle:Destroy()
+        end
+    end
+end)
