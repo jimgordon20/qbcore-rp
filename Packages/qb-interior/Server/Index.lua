@@ -3,7 +3,7 @@
 local function TeleportToInterior(player, x, y, z, h)
 	local ped = player:GetControlledCharacter()
 	if not ped then return end
-	ped:SetLocation(Vector(x, y, z + 500))
+	ped:SetLocation(Vector(x, y, z))
 	ped:SetRotation(Rotator(0, h, 0))
 	player:StopCameraFade()
 end
