@@ -19,15 +19,12 @@
     compatibility_version = "1.25"
     # packages requirements
     packages_requirements = [
-                            
     ]
     # asset packs requirements
     assets_requirements = [
-        "abcca-qbcore-veh",
     ]
     # compatible maps - maps to be highlighted when starting a new game through main menu
     compatible_maps = [
-                            
     ]
 
 # game-mode custom settings configurations
