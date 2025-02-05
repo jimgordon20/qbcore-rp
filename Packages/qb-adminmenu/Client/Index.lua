@@ -91,6 +91,38 @@ local function openAdmin()
 		Events.CallRemote('QBCore:Console:CallCommand', selectedItem.command)
 	end)
 
+	-- Job Options
+	local jobs = QBShared.Jobs
+	local availableJobs = {}
+	for jobName in pairs(jobs) do
+		availableJobs[#availableJobs + 1] = {
+			id = jobName,
+			label = jobName
+		}
+	end
+
+	admin_menu:addListPicker('set-job', 'Set Job: ', availableJobs, function(id)
+		local playerId = Client.GetLocalPlayer():GetID()
+		local args = string.format('%d,%s,%d', playerId, id, 1)
+		Events.CallRemote('QBCore:Console:CallCommand', 'setjob', args)
+	end)
+
+	-- Gang Options
+	local gangs = QBShared.Gangs
+	local availableGangs = {}
+	for gangName in pairs(gangs) do
+		availableGangs[#availableGangs + 1] = {
+			id = gangName,
+			label = gangName
+		}
+	end
+
+	admin_menu:addListPicker('set-gang', 'Set Gang: ', availableGangs, function(id)
+		local playerId = Client.GetLocalPlayer():GetID()
+		local args = string.format('%d,%s,%d', playerId, id, 1)
+		Events.CallRemote('QBCore:Console:CallCommand', 'setgang', args)
+	end)
+
 	-- Time Options
 
 	local timeOptions = {}
