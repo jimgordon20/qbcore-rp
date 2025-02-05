@@ -61,6 +61,7 @@ Events.SubscribeRemote('qb-hud:server:enterVehicle', function(source, vehicle)
     local ped = source:GetControlledCharacter()
     if not ped then return end
     local seat_index = closestSeat(ped, vehicle)
+    print('seat index', seat_index)
     if not seat_index then return end
     if vehicle:GetValue('seat_taken_' .. seat_index, false) then return end
     ped:EnterVehicle(vehicle, seat_index)

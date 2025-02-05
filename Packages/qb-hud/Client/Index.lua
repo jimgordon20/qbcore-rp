@@ -176,20 +176,20 @@ Events.SubscribeRemote('qb-hud:client:fixVehicle', function()
     end
 end)
 
--- Input.Subscribe('KeyPress', function(key_name)
---     if key_name == 'E' then
---         if not in_vehicle then
---             local vehicle, distance = QBCore.Functions.GetClosestHVehicle()
---             if vehicle and distance < 300 then
---                 local current_passengers = vehicle:NumOfCurrentPassanger()
---                 local allowed_passengers = vehicle:NumOfAllowedPassanger()
---                 if current_passengers >= allowed_passengers then return end
---                 Events.CallRemote('qb-hud:server:enterVehicle', vehicle)
---             end
---         else
---             if current_vehicle and current_vehicle:IsValid() then
---                 Events.CallRemote('qb-hud:server:leaveVehicle', current_vehicle)
---             end
---         end
---     end
--- end)
+Input.Subscribe('KeyPress', function(key_name)
+    if key_name == 'E' then
+        if not in_vehicle then
+            local vehicle, distance = QBCore.Functions.GetClosestHVehicle()
+            if vehicle and distance < 300 then
+                local current_passengers = vehicle:NumOfCurrentPassanger()
+                local allowed_passengers = vehicle:NumOfAllowedPassanger()
+                if current_passengers >= allowed_passengers then return end
+                Events.CallRemote('qb-hud:server:enterVehicle', vehicle)
+            end
+        else
+            if current_vehicle and current_vehicle:IsValid() then
+                Events.CallRemote('qb-hud:server:leaveVehicle', current_vehicle)
+            end
+        end
+    end
+end)
