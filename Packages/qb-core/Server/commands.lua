@@ -24,10 +24,10 @@ Events.Subscribe('QBCore:Console:CallCommand', function(source, name, argsString
 	end
 	local permission = command.permission
 
-	if not QBCore.Functions.HasPermission(source, permission) then
-		print(source:GetAccountName() .. ' tried to execute command ' .. name .. ' without permission.')
-		return
-	end
+-- 	if not QBCore.Functions.HasPermission(source, permission) then
+-- 		print(source:GetAccountName() .. ' tried to execute command ' .. name .. ' without permission.')
+-- 		return
+-- 	end
 
 	local args = {}
 	local argsrequired = command.argsrequired
@@ -63,10 +63,10 @@ Events.SubscribeRemote('QBCore:Console:CallCommand', function(source, name, args
 	end
 	local permission = command.permission
 
-	if not QBCore.Functions.HasPermission(source, permission) then
-		print(source:GetAccountName() .. ' tried to execute command ' .. name .. ' without permission.')
-		return
-	end
+-- 	if not QBCore.Functions.HasPermission(source, permission) then
+-- 		print(source:GetAccountName() .. ' tried to execute command ' .. name .. ' without permission.')
+-- 		return
+-- 	end
 
 	local args = {}
 	local argsrequired = command.argsrequired
