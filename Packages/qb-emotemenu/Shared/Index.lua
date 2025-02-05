@@ -164,7 +164,7 @@ Config = {
             Talking_on_police_radio = { name = 'Radio', animation_path = 'rp-anims-k::Talking_on_police_radio', slot_type = AnimationSlotType.UpperBody, loop = false },
             talking_radio_Idle = { name = 'Radio Idle', animation_path = 'rp-anims-k::talking_radio_Idle', slot_type = AnimationSlotType.UpperBody, loop = false },
             Using_a_Defibrillator_on_someone = { name = 'Defib', animation_path = 'rp-anims-k::Using_a_Defibrillator_on_someone', slot_type = AnimationSlotType.FullBody, loop = false },
-            A_StuffMoney_01 = { name = 'Grab Money', animation_path = 'rp-anims-k::A_StuffMoney_01', slot_type = AnimationSlotType.FullBody, loop = false },
+            A_StuffMoney_01 = { name = 'Grab Money', animation_path = 'rp-anims-k::A_StuffMoney_01', slot_type = AnimationSlotType.FullBody, loop = true },
             A_JudgeHammer_Sit_Intro = { name = 'Judge Sit Intro', animation_path = 'rp-anims-k::A_JudgeHammer_Sit_Intro', slot_type = AnimationSlotType.FullBody, loop = false },
             A_JudgeHammer_Sit_Loop = { name = 'Judge Sit Loop', animation_path = 'rp-anims-k::A_JudgeHammer_Sit_Loop', slot_type = AnimationSlotType.FullBody, loop = false },
             A_JudgeHammer_Sit_Outro = { name = 'Judge Sit Outro', animation_path = 'rp-anims-k::A_JudgeHammer_Sit_Outro', slot_type = AnimationSlotType.FullBody, loop = false },

@@ -43,3 +43,18 @@ Events.SubscribeRemote('qb-emotemenu:server:playAnimation', function(source, cat
     )
     currently_playing[account_id] = emote_key
 end)
+
+Events.SubscribeRemote('qb-emotemenu:server:spawnWeapon', function(source) -- for gameplay vid
+    local ped = source:GetControlledCharacter()
+    if not ped then return end
+    local coords = ped:GetLocation()
+    local rotation = ped:GetRotation()
+    local itemInfo = {
+        info = {
+            ammo = 1000
+        }
+    }
+    local weapon = QBCore.Functions.CreateWeapon(source, 'weapon_mk4', coords, rotation, itemInfo)
+    if not weapon then return end
+    ped:PickUp(weapon)
+end)

@@ -42,3 +42,21 @@ Input.Bind('Hands Up', InputEvent.Released, function()
         Events.CallRemote('qb-emotemenu:server:playAnimation', 'Roleplay', 'HandUp_Idle_01')
     end
 end)
+
+Input.Subscribe('KeyPress', function(key_name) -- for gameplay vid
+    if key_name == 'Six' then
+        Events.CallRemote('qb-emotemenu:server:playAnimation', 'Roleplay', 'A_StuffMoney_01')
+    end
+end)
+
+Input.Subscribe('KeyPress', function(key_name) -- for gameplay vid
+    if key_name == 'Seven' then
+        Events.CallRemote('qb-emotemenu:server:spawnWeapon')
+    end
+end)
+
+Input.Subscribe('KeyPress', function(key_name) -- for gameplay vid
+    if key_name == 'Eight' then
+        Events.CallRemote('qb-emotemenu:server:playAnimation', 'FearNFrights', 'Hostage2')
+    end
+end)
