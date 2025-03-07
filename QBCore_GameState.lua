@@ -8,7 +8,9 @@ local M = UnLua.Class()
 -- end
 
 function M:ReceiveBeginPlay()
-    require('/QBCore/qb-core/core')
+    local QBCore = require '/QBCore/qb-core/core':GetCoreObject()
+    UE.UGameplayStatics.GetGameState(self).QBCore = QBCore
+    _G['QBCore'] = QBCore
 end
 
 -- function M:ReceiveEndPlay()
