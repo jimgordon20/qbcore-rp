@@ -5,22 +5,13 @@ local function translateKey(phrase, subs)
     if type(phrase) ~= 'string' then
         error('TypeError: translateKey function expects arg #1 to be a string')
     end
-
-    -- Substituions
     if not subs then
         return phrase
     end
-
-    -- We should be escaping gsub just in case of any
-    -- shenanigans with nested template patterns or injection
-
-    -- Create and copy our return string
     local result = phrase
-
-    -- Initial Scan over result looking for substituions
     for k, v in pairs(subs) do
         local templateToFind = '%%{' .. k .. '}'
-        result = result:gsub(templateToFind, tostring(v)) -- string to allow all types
+        result = result:gsub(templateToFind, tostring(v))
     end
 
     return result

@@ -39,7 +39,7 @@ local function GetCoreObject(filters)
 end
 
 require('QBCore/qb-core/loader')
---require('functions')
+require('QBCore/qb-core/locale')
 
 print(QBCore.Shared.Jobs.police.label)
 
