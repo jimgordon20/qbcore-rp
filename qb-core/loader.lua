@@ -8,7 +8,6 @@ if not configData then
     return
 end
 QBCore.Config = configData
-print('[QBCore] Loaded Config.json')
 
 -- Load Jobs
 local Jobs = rapidjson.load(directory .. '/Script/QBCore/qb-core/shared/jobs.json')
@@ -16,7 +15,6 @@ if not Jobs then
     print('[QBCore] Failed to Load Jobs JSON File')
     return
 end
-print('[QBCore] Loaded Jobs.json')
 QBCore.Shared.Jobs = Jobs
 
 -- Load Gangs
@@ -25,7 +23,6 @@ if not Gangs then
     print('[QBCore] Failed to Load Gangs JSON File')
     return
 end
-print('[QBCore] Loaded Gangs.json')
 QBCore.Shared.Gangs = Gangs
 
 -- Load Items
@@ -34,7 +31,6 @@ if not Items then
     print('[QBCore] Failed to Load Items JSON File')
     return
 end
-print('[QBCore] Loaded Items.json')
 QBCore.Shared.Items = Items
 
 -- Load Vehicles
@@ -59,7 +55,6 @@ for i = 1, #Vehicles do
     }
     QBCore.Shared.VehicleHashes[hash] = QBCore.Shared.Vehicles[Vehicles[i].model]
 end
-print('[QBCore] Loaded Vehicles.json')
 
 -- Load Weapons
 local Weapons = rapidjson.load(directory .. '/Script/QBCore/qb-core/shared/weapons.json')
@@ -77,6 +72,5 @@ for i = 1, #Weapons do
         damagereason = Weapons[i].damagereason
     }
 end
-print('[QBCore] Loaded Weapons.json')
 
 return {success = true}
