@@ -78,3 +78,5 @@ for i = 1, #Weapons do
     }
 end
 print('[QBCore] Loaded Weapons.json')
+
+return {success = true}
