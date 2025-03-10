@@ -263,17 +263,21 @@ function QBCore.Player.SaveOffline(PlayerData)
     end
 end
 
-local function GetPlayerTables()
-    local result = MySQL.query.await([[
-        SELECT TABLE_NAME
-        FROM INFORMATION_SCHEMA.COLUMNS
-        WHERE COLUMN_NAME = 'citizenid'
-        AND TABLE_SCHEMA = DATABASE()
-    ]]) -- Database solution is changing
+local function GetPlayerTables(source)
+    local DatabaseSubsystem = UE.USubsystemBlueprintLibrary.GetGameInstanceSubsystem(source, UE.UClass.Load("/QBCore/B_DatabaseSubsystem.B_DatabaseSubsystem_C"))
+    local DB = DatabaseSubsystem:GetQBDatabase() -- Database solution will be changing
 
     local tables = {}
-    for _, row in ipairs(result) do
-        tables[#tables + 1] = row.TABLE_NAME
+
+    local MasterTableResults = DB:Select('SELECT name FROM sqlite_master WHERE type = "table"')
+    for _, row in ipairs(MasterTableResults) do
+        local TableInformation = DB:Select('PRAGMA table_info(?)', { row.name })
+        for _, ColumnResult in pairs(TableInformation) do
+            if ColumnResult.name == 'citizenid' then
+                tables[#tables + 1] = row.name
+                break
+            end
+        end
     end
 
     return tables
@@ -283,7 +287,7 @@ function QBCore.Player.DeleteCharacter(source, citizenid)
     local license = QBCore.Functions.GetIdentifier(source, 'license') -- Needs changing to Helix ID
     local result = MySQL.scalar.await('SELECT license FROM players WHERE citizenid = ?', { citizenid }) -- Database solution is changing
     if license == result then
-        local tables = GetPlayerTables()
+        local tables = GetPlayerTables(source)
         local queries = {}
 
         for _, tableName in ipairs(tables) do
@@ -304,7 +308,7 @@ end
 function QBCore.Player.ForceDeleteCharacter(citizenid)
     local result = MySQL.scalar.await('SELECT license FROM players WHERE citizenid = ?', { citizenid }) -- Database solution is changing
     if result then
-        local tables = GetPlayerTables()
+        local tables = GetPlayerTables(source)
         local queries = {}
         local Player = QBCore.Functions.GetPlayerByCitizenId(citizenid)
 
