@@ -2,25 +2,14 @@ local rapidjson = require('rapidjson')
 local json = { encode = rapidjson.encode, decode = rapidjson.decode }
 local resourceName = 'qb-core'
 
-local function CreatePlayer(source, PlayerData)
+local function CreatePlayer(PlayerController, PlayerData)
     local self = {}
     self.Functions = {}
     self.PlayerData = PlayerData or {}
 
-    self.PlayerData.source = source
-    self.PlayerData.license = self.PlayerData.license or QBCore.Functions.GetIdentifier(self.PlayerData.source, 'license') -- Needs changing to Helix ID
+    self.PlayerData.source = PlayerController
+    self.PlayerData.license = 'HELIX2' --self.PlayerData.license or QBCore.Functions.GetIdentifier(self.PlayerData.source, 'license') -- Needs changing to Helix ID
     self.PlayerData.name = self.PlayerData.name or GetPlayerName(self.PlayerData.source) -- Can get PlayerState:GetPlayerName() currently
-
-    if GetResourceState('qb-inventory') ~= 'missing' then
-        self.PlayerData.items = exports['qb-inventory']:LoadInventory(self.PlayerData.source, self.PlayerData.citizenid) -- Custom inventory handler
-    else
-        self.PlayerData.items = {}
-    end
-
-    function self.Functions.UpdatePlayerData()
-        TriggerEvent('QBCore:Player:SetPlayerData', self.PlayerData) -- Events don't exist in this way
-        TriggerClientEvent('QBCore:Player:SetPlayerData', self.PlayerData.source, self.PlayerData)
-    end
 
     function self.Functions.SetJob(job, grade)
         job = job:lower()
@@ -44,9 +33,6 @@ local function CreatePlayer(source, PlayerData)
             }
         }
 
-        self.Functions.UpdatePlayerData()
-        TriggerEvent('QBCore:Server:OnJobUpdate', self.PlayerData.source, self.PlayerData.job) -- Events don't exist in this way
-        TriggerClientEvent('QBCore:Client:OnJobUpdate', self.PlayerData.source, self.PlayerData.job)
         return true
     end
 
@@ -69,9 +55,6 @@ local function CreatePlayer(source, PlayerData)
             }
         }
 
-        self.Functions.UpdatePlayerData()
-        TriggerEvent('QBCore:Server:OnGangUpdate', self.PlayerData.source, self.PlayerData.gang) -- Events don't exist in this way
-        TriggerClientEvent('QBCore:Client:OnGangUpdate', self.PlayerData.source, self.PlayerData.gang)
         return true
     end
 
@@ -82,10 +65,7 @@ local function CreatePlayer(source, PlayerData)
         if amount < 0 or not self.PlayerData.money[moneytype] then return false end
         local difference = amount - self.PlayerData.money[moneytype]
         self.PlayerData.money[moneytype] = amount
-        self.Functions.UpdatePlayerData()
-        TriggerClientEvent('hud:client:OnMoneyChange', self.PlayerData.source, moneytype, math.abs(difference), difference < 0)  -- Events don't exist in this way
-        TriggerClientEvent('QBCore:Client:OnMoneyChange', self.PlayerData.source, moneytype, amount, 'set', reason)
-        TriggerEvent('QBCore:Server:OnMoneyChange', self.PlayerData.source, moneytype, amount, 'set', reason)
+
         return true
     end
 
@@ -95,10 +75,7 @@ local function CreatePlayer(source, PlayerData)
         amount = tonumber(amount)
         if amount < 0 or not self.PlayerData.money[moneytype] then return false end
         self.PlayerData.money[moneytype] = self.PlayerData.money[moneytype] + amount
-        self.Functions.UpdatePlayerData()
-        TriggerClientEvent('hud:client:OnMoneyChange', self.PlayerData.source, moneytype, amount, false)  -- Events don't exist in this way
-        TriggerClientEvent('QBCore:Client:OnMoneyChange', self.PlayerData.source, moneytype, amount, 'add', reason)
-        TriggerEvent('QBCore:Server:OnMoneyChange', self.PlayerData.source, moneytype, amount, 'add', reason)
+
         return true
     end
 
@@ -108,13 +85,11 @@ local function CreatePlayer(source, PlayerData)
             val = math.min(val, 100)
         end
         self.PlayerData.metadata[meta] = val
-        self.Functions.UpdatePlayerData()
     end
 
     function self.Functions.SetPlayerData(key, val)
         if not key or type(key) ~= 'string' then return end
         self.PlayerData[key] = val
-        self.Functions.UpdatePlayerData()
     end
 
     function self.Functions.GetMetaData(meta)
@@ -123,14 +98,6 @@ local function CreatePlayer(source, PlayerData)
 
     function self.Functions.GetMoney(moneytype)
         return self.PlayerData.money[moneytype]
-    end
-
-    function self.Functions.AddMethod(methodName, handler)
-        self.Functions[methodName] = handler
-    end
-
-    function self.Functions.AddField(fieldName, data)
-        self[fieldName] = data
     end
 
     function self.Functions.Logout()
@@ -143,8 +110,6 @@ local function CreatePlayer(source, PlayerData)
 
     QBCore.Players[self.PlayerData.source] = self
     QBCore.Player.Save(self.PlayerData.source)
-    TriggerEvent('QBCore:Server:PlayerLoaded', self)  -- Events don't exist in this way
-    self.Functions.UpdatePlayerData()
 
     return self
 end
@@ -239,8 +204,7 @@ function QBCore.Player.Login(source, citizenid, newData)
             PlayerData = RestorePlayerDefaults(PlayerData)
             return CreatePlayer(source, PlayerData)
         else
-            DropPlayer(source, Lang:t('info.exploit_dropped')) -- Will need to be changed for UnLua kicking
-            TriggerEvent('qb-log:server:CreateLog', 'anticheat', 'Anti-Cheat', 'white', GetPlayerName(source) .. ' Has Been Dropped For Character Joining Exploit', false) -- Events don't exist in this way
+            -- Kick PlayerController
         end
     else
         newData = RestorePlayerDefaults(newData)
@@ -250,30 +214,28 @@ function QBCore.Player.Login(source, citizenid, newData)
 end
 
 function QBCore.Player.Logout(source)
-    TriggerClientEvent('QBCore:Client:OnPlayerUnload', source)  -- Events don't exist in this way
-    TriggerEvent('QBCore:Server:OnPlayerUnload', source)
-    TriggerClientEvent('QBCore:Player:UpdatePlayerData', source)
-    Wait(200)
     QBCore.Players[source] = nil
 end
 
 function QBCore.Player.Save(source)
-    local ped = GetPlayerPed(source)
-    local pcoords = GetEntityCoords(ped) -- Will be changed for something like K2_GetPawn():GetActorLocation()
+    local ped = source:K2_GetPawn()
     local PlayerData = QBCore.Players[source].PlayerData
+    local OutPos = UE.FVector(0, 0, 0) -- Unsure if this works, just how it's documented
+    local pcoords = (ped and ped:GetActorLocation()) or source:GetPlayerViewpoint(OutPos)
     if PlayerData then
-        MySQL.update('UPDATE players SET money = ?, charinfo = ?, job = ?, gang = ?, position = ?, metadata = ? WHERE citizenid = ?', { -- Database solution is changing
+        local DatabaseSubsystem = UE.USubsystemBlueprintLibrary.GetGameInstanceSubsystem(source, UE.UClass.Load("/QBCore/B_DatabaseSubsystem.B_DatabaseSubsystem_C"))
+        local DB = DatabaseSubsystem:GetQBDatabase() -- Database solution will be changing
+
+        DB:Execute(string.format('UPDATE players SET money = %s, charinfo = %s, job = %s, gang = %s, position = %s, metadata = %s WHERE citizenid = %s', { -- Needs changing to prepared statements
             json.encode(PlayerData.money),
             json.encode(PlayerData.charinfo),
             json.encode(PlayerData.job),
             json.encode(PlayerData.gang),
-            json.encode(pcoords),
+            json.encode({x = pcoords.X, y = pcoords.Y, z = pcoords.Z}),
             json.encode(PlayerData.metadata),
             PlayerData.citizenid
-        })
-        if GetResourceState('qb-inventory') ~= 'missing' then
-            exports['qb-inventory']:SaveInventory(source)
-        end
+        }))
+
         QBCore.Shared.ShowSuccess(resourceName, PlayerData.name .. ' PLAYER SAVED!')
     else
         QBCore.Shared.ShowError(resourceName, 'ERROR QBCORE.PLAYER.SAVE - PLAYERDATA IS EMPTY!')
@@ -282,7 +244,10 @@ end
 
 function QBCore.Player.SaveOffline(PlayerData)
     if PlayerData then
-        MySQL.update('UPDATE players SET money = ?, charinfo = ?, job = ?, gang = ?, position = ?, metadata = ? WHERE citizenid = ?', { -- Database solution is changing
+        local DatabaseSubsystem = UE.USubsystemBlueprintLibrary.GetGameInstanceSubsystem(source, UE.UClass.Load("/QBCore/B_DatabaseSubsystem.B_DatabaseSubsystem_C"))
+        local DB = DatabaseSubsystem:GetQBDatabase() -- Database solution will be changing
+
+        DB:Execute(string.format('UPDATE players SET money = %s, charinfo = %s, job = %s, gang = %s, position = %s, metadata = %s WHERE citizenid = %s', { -- Needs changing to prepared statements
             json.encode(PlayerData.money),
             json.encode(PlayerData.charinfo),
             json.encode(PlayerData.job),
@@ -290,10 +255,8 @@ function QBCore.Player.SaveOffline(PlayerData)
             json.encode(PlayerData.position),
             json.encode(PlayerData.metadata),
             PlayerData.citizenid
-        })
-        if GetResourceState('qb-inventory') ~= 'missing' then -- Cant check if a module has loaded, maybe a Lua alternative, or a table of loaded modules
-            exports['qb-inventory']:SaveInventory(PlayerData, true)
-        end
+        }))
+
         QBCore.Shared.ShowSuccess(resourceName, PlayerData.name .. ' OFFLINE PLAYER SAVED!')
     else
         QBCore.Shared.ShowError(resourceName, 'ERROR QBCORE.PLAYER.SAVEOFFLINE - PLAYERDATA IS EMPTY!')
