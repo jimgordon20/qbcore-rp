@@ -40,8 +40,7 @@ end
 
 require('QBCore/qb-core/loader')
 require('QBCore/qb-core/locale')
-
-print(QBCore.Shared.Jobs.police.label)
+require('QBCore/qb-core/functions')
 
 return {
     GetCoreObject = GetCoreObject
