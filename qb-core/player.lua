@@ -2,7 +2,7 @@ local rapidjson = require('rapidjson')
 local json = { encode = rapidjson.encode, decode = rapidjson.decode }
 local resourceName = 'qb-core'
 
-local function CreatePlayer(source, existingData)
+local function CreatePlayer(source, existingData, newData)
     local self = {}
     self.Functions = {}
     local playerState = source.PlayerState
@@ -19,6 +19,8 @@ local function CreatePlayer(source, existingData)
         playerState.metadata = json.decode(existingData.metadata)
         playerState.charinfo = json.decode(existingData.charinfo)
     else
+        playerState.cid = newData.CID
+        playerState.charinfo = newData.CharInfo
         playerState.citizenid = QBCore.Functions.CreateCitizenId()
         playerState.charinfo.phone = QBCore.Functions.CreatePhoneNumber()
         playerState.charinfo.account = QBCore.Functions.CreateAccountNumber()
@@ -36,26 +38,26 @@ local function CreatePlayer(source, existingData)
     end
 
     QBCore.Players[playerState.source] = self
-    QBCore.Player.Save(playerState.source)
+    QBCore.Player.Save(playerState.source, newData and true or false)
 
     return self
 end
 
-function QBCore.Player.Login(source, citizenid)
+function QBCore.Player.Login(source, citizenid, newData)
     if not source or source == '' then
-        QBCore.ShowError(resourceName, 'ERROR QBCORE.PLAYER.LOGIN - NO SOURCE GIVEN!')
+        error('[QBCore] ERROR QBCORE.PLAYER.LOGIN - NO SOURCE GIVEN!')
+        --QBCore.ShowError(resourceName, 'ERROR QBCORE.PLAYER.LOGIN - NO SOURCE GIVEN!')
         return false
     end
 
     if citizenid then
-        local World = self:GetWorld()
-        local DatabaseSubsystem = UE.USubsystemBlueprintLibrary.GetGameInstanceSubsystem(World, UE.UClass.Load('/QBCore/B_DatabaseSubsystem.B_DatabaseSubsystem_C'))
-        local DB = DatabaseSubsystem:GetQBDatabase() -- Database solution will be changing
-        if not DB:Open(UE.UKismetSystemLibrary.GetProjectContentDirectory() .. 'Script/Database/qbcore.db') then return error('[QBCore] Couldn\'t load PlayerData for ' .. citizenid) end
+        local DatabaseSubsystem = UE.USubsystemBlueprintLibrary.GetGameInstanceSubsystem(source, UE.UClass.Load('/QBCore/B_DatabaseSubsystem.B_DatabaseSubsystem_C'))
+        local DB = DatabaseSubsystem:GetDatabase()
         local result = DB:Select('SELECT * FROM players WHERE citizenid = ?', { citizenid })
+        if not result then return error('[QBCore] Couldn\'t load PlayerData for ' .. citizenid) end
         CreatePlayer(source, result) -- existing player
     else
-        CreatePlayer(source) -- new player
+        CreatePlayer(source, false, newData) -- new player
     end
     return true
 end
@@ -64,29 +66,45 @@ function QBCore.Player.Logout(source)
     QBCore.Players[source] = nil
 end
 
-function QBCore.Player.Save(source)
+function QBCore.Player.Save(source, new)
     local ped = source:K2_GetPawn()
     if not QBCore.Players[source] then return end
     local playerState = source.PlayerState
     local OutPos = UE.FVector(0, 0, 0) -- Unsure if this works, just how it's documented
-    local pcoords = (ped and ped:GetActorLocation()) or source:GetPlayerViewpoint(OutPos)
-    if PlayerData then
+    local pcoords = (ped and ped:K2_GetActorLocation()) or source:GetPlayerViewpoint(OutPos)
+    if playerState then
         local DatabaseSubsystem = UE.USubsystemBlueprintLibrary.GetGameInstanceSubsystem(source, UE.UClass.Load('/QBCore/B_DatabaseSubsystem.B_DatabaseSubsystem_C'))
-        local DB = DatabaseSubsystem:GetQBDatabase()                                                                                                       -- Database solution will be changing
-
-        DB:Execute(string.format('UPDATE players SET money = %s, charinfo = %s, job = %s, gang = %s, position = %s, metadata = %s WHERE citizenid = %s', { -- Needs changing to prepared statements
-            json.encode(playerState:GetPlayerData('money')),
-            json.encode(playerState:GetPlayerData('charinfo')),
-            json.encode(playerState:GetPlayerData('job')),
-            json.encode(playerState:GetPlayerData('gang')),
-            json.encode({ x = pcoords.X, y = pcoords.Y, z = pcoords.Z }),
-            json.encode(playerState:GetPlayerData('metadata')),
-            PlayerData.citizenid
-        }))
-
-        QBCore.Shared.ShowSuccess(resourceName, PlayerData.name .. ' PLAYER SAVED!')
+        local DB = DatabaseSubsystem:GetDatabase()
+        if new then
+            local Success = DB:Execute(string.format('INSERT INTO players (citizenid, cid, license, name, money, charinfo, job, gang, position, metadata) VALUES (\'%s\', \'%d\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\')',
+                playerState.citizenid,
+                playerState.cid,
+                playerState.license,
+                playerState.name,
+                json.encode(playerState:GetPlayerData('money')),
+                json.encode(playerState:GetPlayerData('charinfo')),
+                json.encode(playerState:GetPlayerData('job')),
+                json.encode(playerState:GetPlayerData('gang')),
+                json.encode({ x = pcoords.X, y = pcoords.Y, z = pcoords.Z }),
+                json.encode(playerState:GetPlayerData('metadata'))
+            ), {})
+            if not Success then error('[QBCore] ERROR QBCORE.PLAYER.SAVE - FAILED TO INSERT NEW PLAYER!') end
+        else
+            DB:Execute(string.format('UPDATE players SET money = \'%s\', charinfo = \'%s\', job = \'%s\', gang = \'%s\', position = \'%s\', metadata = \'%s\' WHERE citizenid = \'%s\'',
+                json.encode(playerState:GetPlayerData('money')),
+                json.encode(playerState:GetPlayerData('charinfo')),
+                json.encode(playerState:GetPlayerData('job')),
+                json.encode(playerState:GetPlayerData('gang')),
+                json.encode({ x = pcoords.X, y = pcoords.Y, z = pcoords.Z }),
+                json.encode(playerState:GetPlayerData('metadata')),
+                playerState.citizenid), -- Needs changing to prepared statements
+            {})
+        end
+        print('[QBCore] ' .. playerState.citizenid .. ' PLAYER SAVED!')
+        --QBCore.Shared.ShowSuccess(resourceName, playerState.name .. ' PLAYER SAVED!')
     else
-        QBCore.Shared.ShowError(resourceName, 'ERROR QBCORE.PLAYER.SAVE - PLAYERDATA IS EMPTY!')
+        error('[QBCore] ERROR QBCORE.PLAYER.SAVE - PLAYERDATA IS EMPTY!')
+        --QBCore.Shared.ShowError(resourceName, 'ERROR QBCORE.PLAYER.SAVE - PLAYERDATA IS EMPTY!')
     end
 end
 
