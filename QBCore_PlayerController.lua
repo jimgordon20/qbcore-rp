@@ -5,16 +5,21 @@ function M:ReceiveBeginPlay()
     if self:HasAuthority() then
         local DatabaseSubsystem = UE.USubsystemBlueprintLibrary.GetGameInstanceSubsystem(self, UE.UClass.Load('/QBCore/B_DatabaseSubsystem.B_DatabaseSubsystem_C'))
         local DB = DatabaseSubsystem:GetDatabase()
-        local result = DB:Select('SELECT * FROM players WHERE license = "license:qwerty" ORDER BY cid')
+        local result = DB:Select('SELECT * FROM players WHERE license = "license:qwerty" ORDER BY cid', {})
         if not result then return error('[QBCore] Couldn\'t load PlayerData for ' .. citizenid) end
-        self:ShowMulticharacter(result)
+        self:ShowMulticharacter_Client(result)
     end
 end
 
-function M:ShowMulticharacter(playerData)
-    local WidgetClass = UE.UClass.Load('/QBCore/Multicharacter/multicharacter.multicharacter_C')
-    local Widget = UE.UWidgetBlueprintLibrary.Create(self, WidgetClass, self)
-    Widget:AddToViewport(0)
+function M:ShowMulticharacter_Client_RPC(playerData)
+    print('ShowMulticharacter')
+    -- if self:HasAuthority() then print('server') end
+    -- if not self:HasAuthority() then
+    --     print('client')
+    --     local WidgetClass = UE.UClass.Load('/QBCore/Multicharacter/multicharacter.multicharacter_C')
+    --     local Widget = UE.UWidgetBlueprintLibrary.Create(self, WidgetClass, self)
+    --     Widget:AddToViewport(0)
+    -- end
 end
 
 function M:Login_Server_RPC(CitizenID)
