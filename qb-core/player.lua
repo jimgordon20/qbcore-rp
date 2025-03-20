@@ -6,7 +6,7 @@ local function CreatePlayer(source, existingData, newData)
     local playerState = source.PlayerState
 
     playerState.source = source
-    playerState.license = UE.UKismetGuidLibrary:NewGuid():ToString()
+    playerState.license = 'license:qwerty'--UE.UKismetGuidLibrary:NewGuid():ToString()
     playerState.name = playerState:GetPlayerName()
 
     if existingData then
@@ -38,6 +38,13 @@ local function CreatePlayer(source, existingData, newData)
     QBCore.Players[playerState.source] = self
     QBCore.Player.Save(playerState.source, newData and true or false)
 
+    local PawnClass = UE.UClass.Load('/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.BP_ThirdPersonCharacter_C')
+    local Transform = UE.FTransform()
+    Transform.Rotation = UE.FQuat(0, 0, 0, 80)
+    Transform.Translation = UE.FVector(0, 0, 100)
+    local Pawn = source:GetWorld():SpawnActor(PawnClass, Transform, UE.ESpawnActorCollisionHandlingMethod.AlwaysSpawn)
+    source:Possess(Pawn)
+
     return self
 end
 
@@ -53,7 +60,7 @@ function QBCore.Player.Login(source, citizenid, newData)
         local DB = DatabaseSubsystem:GetDatabase()
         local result = DB:Select('SELECT * FROM players WHERE citizenid = ?', { citizenid })
         if not result then return error('[QBCore] Couldn\'t load PlayerData for ' .. citizenid) end
-        CreatePlayer(source, result)         -- existing player
+        CreatePlayer(source, rapidjson.decode(result)[1])         -- existing player
     else
         CreatePlayer(source, false, newData) -- new player
     end
@@ -79,24 +86,24 @@ function QBCore.Player.Save(source, new)
                 playerState.cid,
                 playerState.license,
                 playerState.name,
-                rapidjson.encode(playerState:GetPlayerData('money')),
-                rapidjson.encode(playerState:GetPlayerData('charinfo')),
-                rapidjson.encode(playerState:GetPlayerData('job')),
-                rapidjson.encode(playerState:GetPlayerData('gang')),
+                playerState:GetPlayerData('money'),
+                playerState:GetPlayerData('charinfo'),
+                playerState:GetPlayerData('job'),
+                playerState:GetPlayerData('gang'),
                 rapidjson.encode({ x = pcoords.X, y = pcoords.Y, z = pcoords.Z }),
-                rapidjson.encode(playerState:GetPlayerData('metadata'))
+                playerState:GetPlayerData('metadata')
             ), {})
             if not Success then error('[QBCore] ERROR QBCORE.PLAYER.SAVE - FAILED TO INSERT NEW PLAYER!') end
         else
             DB:Execute(string.format('UPDATE players SET money = \'%s\', charinfo = \'%s\', job = \'%s\', gang = \'%s\', position = \'%s\', metadata = \'%s\' WHERE citizenid = \'%s\'',
-                    rapidjson.encode(playerState:GetPlayerData('money')),
-                    rapidjson.encode(playerState:GetPlayerData('charinfo')),
-                    rapidjson.encode(playerState:GetPlayerData('job')),
-                    rapidjson.encode(playerState:GetPlayerData('gang')),
-                    rapidjson.encode({ x = pcoords.X, y = pcoords.Y, z = pcoords.Z }),
-                    rapidjson.encode(playerState:GetPlayerData('metadata')),
-                    playerState.citizenid), -- Needs changing to prepared statements
-                {})
+                playerState:GetPlayerData('money'),
+                playerState:GetPlayerData('charinfo'),
+                playerState:GetPlayerData('job'),
+                playerState:GetPlayerData('gang'),
+                rapidjson.encode({ x = pcoords.X, y = pcoords.Y, z = pcoords.Z }),
+                playerState:GetPlayerData('metadata'),
+                playerState.citizenid), -- Needs changing to prepared statements
+            {})
         end
         print('[QBCore] ' .. playerState.citizenid .. ' PLAYER SAVED!')
     else
@@ -104,44 +111,42 @@ function QBCore.Player.Save(source, new)
     end
 end
 
--- local function GetPlayerTables(source)
---     local DatabaseSubsystem = UE.USubsystemBlueprintLibrary.GetGameInstanceSubsystem(source, UE.UClass.Load('/QBCore/B_DatabaseSubsystem.B_DatabaseSubsystem_C'))
---     local DB = DatabaseSubsystem:GetQBDatabase() -- Database solution will be changing
+local function GetPlayerTables(source)
+    local DatabaseSubsystem = UE.USubsystemBlueprintLibrary.GetGameInstanceSubsystem(source, UE.UClass.Load('/QBCore/B_DatabaseSubsystem.B_DatabaseSubsystem_C'))
+    local DB = DatabaseSubsystem:GetDatabase()
 
---     local tables = {}
+    local tables = {}
 
---     local MasterTableResults = DB:Select('SELECT name FROM sqlite_master WHERE type = "table"')
---     for _, row in ipairs(MasterTableResults) do
---         local TableInformation = DB:Select('PRAGMA table_info(?)', { row.name })
---         for _, ColumnResult in pairs(TableInformation) do
---             if ColumnResult.name == 'citizenid' then
---                 tables[#tables + 1] = row.name
---                 break
---             end
---         end
---     end
+    local MasterTableResults = DB:Select('SELECT name FROM sqlite_master WHERE type = "table"', {})
+    for _, row in ipairs(rapidjson.decode(MasterTableResults)) do
+        local TableInformation = DB:Select(string.format('PRAGMA table_info("%s")', row.name ), {})
+        for _, ColumnResult in pairs(rapidjson.decode(TableInformation)) do
+            if ColumnResult.name == 'citizenid' then
+                tables[#tables + 1] = row.name
+                break
+            end
+        end
+    end
 
---     return tables
--- end
+    return tables
+end
 
--- function QBCore.Player.DeleteCharacter(source, citizenid)
---     local license = QBCore.Functions.GetIdentifier(source, 'license')                                   -- Needs changing to Helix ID
---     local result = MySQL.scalar.await('SELECT license FROM players WHERE citizenid = ?', { citizenid }) -- Database solution is changing
---     if license == result then
---         local tables = GetPlayerTables(source)
---         local queries = {}
+function QBCore.Player.DeleteCharacter(source, citizenid)
+    local DatabaseSubsystem = UE.USubsystemBlueprintLibrary.GetGameInstanceSubsystem(source, UE.UClass.Load('/QBCore/B_DatabaseSubsystem.B_DatabaseSubsystem_C'))
+    local DB = DatabaseSubsystem:GetDatabase() -- Database solution will be changing
 
---         for _, tableName in ipairs(tables) do
---             table.insert(queries, { query = ('DELETE FROM `%s` WHERE citizenid = ?'):format(tableName), values = { citizenid } })
---         end
+    local license = source.playerState.license or 'license:qwerty'                             -- Needs changing to Helix ID
+    local result = DB:Select('SELECT license FROM players WHERE citizenid = ?', { citizenid }) -- Database solution is changing
+    if license == rapidjson.decode(result)[1].license then
+        local tables = GetPlayerTables(source)
 
---         MySQL.transaction(queries, function(success)
---             if success then
---                 TriggerEvent('qb-log:server:CreateLog', 'joinleave', 'Character Deleted', 'red', '**' .. GetPlayerName(source) .. '** ' .. license .. ' deleted **' .. citizenid .. '**.')
---             end
---         end)
---     else
---         DropPlayer(source, Lang:t('info.exploit_dropped')) -- Will need to change to an UnLua kick method
---         TriggerEvent('qb-log:server:CreateLog', 'anticheat', 'Anti-Cheat', 'white', GetPlayerName(source) .. ' Has Been Dropped For Character Deletion Exploit', true)
---     end
--- end
+        -- Transactions aren't supported currently
+        for _, tableName in ipairs(tables) do
+            --table.insert(queries, { query = ('DELETE FROM `%s` WHERE citizenid = ?'):format(tableName), values = { citizenid } })
+            DB:Execute(string.format('DELETE FROM `%s` WHERE citizenid = "%s"', tableName, citizenid), {})
+        end
+    else
+        -- DropPlayer(source, Lang:t('info.exploit_dropped')) -- Will need to change to an UnLua kick method
+        -- TriggerEvent('qb-log:server:CreateLog', 'anticheat', 'Anti-Cheat', 'white', GetPlayerName(source) .. ' Has Been Dropped For Character Deletion Exploit', true)
+    end
+end
