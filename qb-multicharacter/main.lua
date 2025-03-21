@@ -4,20 +4,15 @@ local M = UnLua.Class()
 -- end
 
 function M:HandlePlay(CitizenID)
-    self:GetOwningPlayer():Login_Server(CitizenID)
+    TriggerServerEvent('qb-multicharacter:server:Login', CitizenID)
 end
 
 function M:HandleNewChar(CharInfoStruct, CID)
-    self:GetOwningPlayer():NewCharacter_Server(CharInfoStruct, CID)
+    TriggerServerEvent('qb-multicharacter:server:NewCharacter', CharInfoStruct, CID)
 end
 
 function M:HandleDeleteChar(CitizenID)
-    self:GetOwningPlayer():DeleteCharacter_Server(CitizenID)
-    self:RefreshChars()
-end
-
-function M:RefreshChars()
-    self:GetOwningPlayer():ShowMulticharacter_Server()
+    TriggerServerEvent('qb-multicharacter:server:DeleteCharacter', CitizenID)
 end
 
 return M
