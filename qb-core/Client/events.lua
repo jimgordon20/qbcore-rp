@@ -4,14 +4,6 @@ RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
     Client.SetValue('isLoggedIn', true)
 end)
 
-RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
-    Client.SetValue('isLoggedIn', true)
-end)
-
-RegisterClientEvent('QBCore:Client:OnPlayerUnload', function()
-    Client.SetValue('isLoggedIn', false)
-end)
-
 RegisterClientEvent('QBCore:Client:OnPlayerUnload', function()
     Client.SetValue('isLoggedIn', false)
 end)
@@ -30,17 +22,13 @@ RegisterClientEvent('QBCore:Notify', function(text, type, length, icon)
     QBCore.Functions.Notify(text, type, length, icon)
 end)
 
-RegisterClientEvent('QBCore:Notify', function(text, type, length, icon)
-    QBCore.Functions.Notify(text, type, length, icon)
-end)
-
 local isVisible = true
-Input.Register('Toggle Chat', 'L')
-Input.Bind('Toggle Chat', InputEvent.Pressed, function()
-    if Input.IsMouseEnabled() then return end
-    isVisible = not isVisible
-    Chat.SetVisibility(isVisible)
-end)
+-- Input.Register('Toggle Chat', 'L')
+-- Input.Bind('Toggle Chat', InputEvent.Pressed, function()
+--     if Input.IsMouseEnabled() then return end
+--     isVisible = not isVisible
+--     Chat.SetVisibility(isVisible)
+-- end)
 
 RegisterClientEvent('QBCore:Client:ClearChat', function()
     Chat.Clear()
