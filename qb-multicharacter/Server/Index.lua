@@ -1,11 +1,11 @@
-local Lang = Package.Require('../Shared/locales/' .. QBConfig.Language .. '.lua')
+local Lang = require('../Shared/locales/' .. QBConfig.Language .. '.lua')
 local hasDonePreloading = {}
 
 -- Handling Player Load
 
-Package.Subscribe('Load', function()
-	Events.BroadcastRemote('qb-multicharacter:client:chooseChar')
-end)
+-- Package.Subscribe('Load', function()
+-- 	Events.BroadcastRemote('qb-multicharacter:client:chooseChar')
+-- end)
 
 Player.Subscribe('Spawn', function(source)
 	TriggerClientEvent('qb-multicharacter:client:chooseChar', source)

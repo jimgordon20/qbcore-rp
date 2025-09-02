@@ -25,12 +25,12 @@ else
     Console.Log('Failed to connect to database')
 end
 
-Package.Subscribe('Unload', function()
-    if PSQL then
-        Console.Log('Closing database connection')
-        PSQL:Close()
-    end
-end)
+-- Package.Subscribe('Unload', function()
+--     if PSQL then
+--         Console.Log('Closing database connection')
+--         PSQL:Close()
+--     end
+-- end)
 
 MySQL = {
     query = {},
@@ -275,8 +275,8 @@ function MySQL.transaction.await(queries, sharedValues)
     return true
 end
 
-Package.Export('MySQL', MySQL)
-Package.Export('PSQL', PSQL)
+-- Package.Export('MySQL', MySQL)
+-- Package.Export('PSQL', PSQL)
 
 local rows, error = PSQL:Execute([[
     CREATE TABLE IF NOT EXISTS apartments (

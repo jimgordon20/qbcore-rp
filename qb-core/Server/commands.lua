@@ -1,4 +1,4 @@
-local Lang = Package.Require('../Shared/locales/' .. QBConfig.Language .. '.lua')
+local Lang = require('../Shared/locales/' .. QBConfig.Language .. '.lua')
 QBCore.Commands = {}
 QBCore.Commands.List = {}
 
