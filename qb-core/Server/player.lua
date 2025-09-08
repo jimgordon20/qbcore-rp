@@ -1,6 +1,15 @@
 QBCore.Players = {}
 QBCore.Player = {}
 
+-- Login
+
+RegisterServerEvent('PlayerJoined', function(newPlayer)
+    print('Player Joined: ', newPlayer)
+    print('Player State: ', newPlayer:GetLyraPlayerState())
+    local playerState = newPlayer:GetLyraPlayerState()
+    print('Player ID: ', playerState:GetPlayerId())
+end)
+
 -- Logout
 
 -- Player.Subscribe('Destroy', function(source)
