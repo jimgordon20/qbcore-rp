@@ -1,4 +1,4 @@
-local Lang = require('../Shared/locales/' .. QBConfig.Language .. '.lua')
+--local Lang = require('../Shared/locales/' .. QBConfig.Language .. '.lua')
 local my_webui = WebUI('Multicharacter', 'qb-multicharacter/Client/html/index.html')
 
 -- Functions
