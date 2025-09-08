@@ -7,7 +7,7 @@
 
 Database.Initialize('qbcore.db')
 
-local error = Database.Execute([[
+local success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS players (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         citizenid VARCHAR(11) NOT NULL UNIQUE,
@@ -25,13 +25,7 @@ local error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create players table')
-else
-    print('Players table created')
-end
-
-if not error then
+if success then
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_players_last_updated ON players(last_updated)]])
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_players_license ON players(license)]])
 
@@ -45,7 +39,7 @@ if not error then
     ]])
 end
 
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS apartments (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name VARCHAR(255) DEFAULT NULL,
@@ -54,17 +48,12 @@ error = Database.Execute([[
         citizenid VARCHAR(11) DEFAULT NULL
     )
 ]])
-
-if error then
-    print('Failed to create apartments table')
-end
-
-if not error then
+if success then
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_apartments_citizenid ON apartments(citizenid)]])
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_apartments_name ON apartments(name)]])
 end
 
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS bank_accounts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         citizenid VARCHAR(11) DEFAULT NULL,
@@ -76,13 +65,7 @@ error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create bank_accounts table')
-else
-    print('Bank accounts table created')
-end
-
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS bank_statements (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         citizenid VARCHAR(11) DEFAULT NULL,
@@ -94,13 +77,7 @@ error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create bank_statements table')
-else
-    print('Bank statements table created')
-end
-
-if not error then
+if success then
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_bank_statements_citizenid ON bank_statements(citizenid)]])
 
     Database.Execute([[
@@ -113,7 +90,7 @@ if not error then
     ]])
 end
 
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS bans (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name VARCHAR(50) DEFAULT NULL,
@@ -126,19 +103,13 @@ error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create bans table')
-else
-    print('Bans table created')
-end
-
-if not error then
+if success then
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_bans_license ON bans(license)]])
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_bans_discord ON bans(discord)]])
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_bans_ip ON bans(ip)]])
 end
 
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS crypto (
         crypto VARCHAR(50) NOT NULL DEFAULT 'qbit',
         worth INTEGER NOT NULL DEFAULT 0,
@@ -147,13 +118,7 @@ error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create crypto table')
-else
-    print('Crypto table created')
-end
-
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS crypto_transactions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         citizenid VARCHAR(11) DEFAULT NULL,
@@ -163,17 +128,11 @@ error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create crypto_transactions table')
-else
-    print('Crypto transactions table created')
-end
-
-if not error then
+if success then
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_crypto_transactions_citizenid ON crypto_transactions(citizenid)]])
 end
 
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS dealers (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name VARCHAR(50) NOT NULL DEFAULT '0',
@@ -183,13 +142,7 @@ error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create dealers table')
-else
-    print('Dealers table created')
-end
-
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS houselocations (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name VARCHAR(255) DEFAULT NULL,
@@ -202,17 +155,11 @@ error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create houselocations table')
-else
-    print('Houselocations table created')
-end
-
-if not error then
+if success then
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_houselocations_name ON houselocations(name)]])
 end
 
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS player_houses (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         house VARCHAR(50) NOT NULL,
@@ -226,19 +173,13 @@ error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create player_houses table')
-else
-    print('Player houses table created')
-end
-
-if not error then
+if success then
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_player_houses_house ON player_houses(house)]])
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_player_houses_citizenid ON player_houses(citizenid)]])
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_player_houses_identifier ON player_houses(identifier)]])
 end
 
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS house_plants (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         building VARCHAR(50) DEFAULT NULL,
@@ -253,18 +194,12 @@ error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create house_plants table')
-else
-    print('House plants table created')
-end
-
-if not error then
+if success then
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_house_plants_building ON house_plants(building)]])
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_house_plants_plantid ON house_plants(plantid)]])
 end
 
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS lapraces (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name VARCHAR(50) DEFAULT NULL,
@@ -276,17 +211,11 @@ error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create lapraces table')
-else
-    print('Lapraces table created')
-end
-
-if not error then
+if success then
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_lapraces_raceid ON lapraces(raceid)]])
 end
 
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS occasion_vehicles (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         seller VARCHAR(50) DEFAULT NULL,
@@ -299,17 +228,11 @@ error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create occasion_vehicles table')
-else
-    print('Occasion vehicles table created')
-end
-
-if not error then
+if success then
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_occasion_vehicles_occasionid ON occasion_vehicles(occasionid)]])
 end
 
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS phone_invoices (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         citizenid VARCHAR(11) DEFAULT NULL,
@@ -320,17 +243,11 @@ error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create phone_invoices table')
-else
-    print('Phone invoices table created')
-end
-
-if not error then
+if success then
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_phone_invoices_citizenid ON phone_invoices(citizenid)]])
 end
 
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS phone_gallery (
         citizenid VARCHAR(11) NOT NULL,
         image VARCHAR(255) NOT NULL,
@@ -338,13 +255,7 @@ error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create phone_gallery table')
-else
-    print('Phone gallery table created')
-end
-
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS player_mails (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         citizenid VARCHAR(11) DEFAULT NULL,
@@ -358,17 +269,11 @@ error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create player_mails table')
-else
-    print('Player mails table created')
-end
-
-if not error then
+if success then
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_player_mails_citizenid ON player_mails(citizenid)]])
 end
 
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS phone_messages (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         citizenid VARCHAR(11) DEFAULT NULL,
@@ -377,18 +282,12 @@ error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create phone_messages table')
-else
-    print('Phone messages table created')
-end
-
-if not error then
+if success then
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_phone_messages_citizenid ON phone_messages(citizenid)]])
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_phone_messages_number ON phone_messages(number)]])
 end
 
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS phone_tweets (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         citizenid VARCHAR(11) DEFAULT NULL,
@@ -402,17 +301,11 @@ error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create phone_tweets table')
-else
-    print('Phone tweets table created')
-end
-
-if not error then
+if success then
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_phone_tweets_citizenid ON phone_tweets(citizenid)]])
 end
 
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS player_contacts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         citizenid VARCHAR(11) DEFAULT NULL,
@@ -422,17 +315,11 @@ error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create player_contacts table')
-else
-    print('Player contacts table created')
-end
-
-if not error then
+if success then
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_player_contacts_citizenid ON player_contacts(citizenid)]])
 end
 
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS playerskins (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         citizenid VARCHAR(11) NOT NULL,
@@ -442,18 +329,12 @@ error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create playerskins table')
-else
-    print('Player skins table created')
-end
-
-if not error then
+if success then
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_playerskins_citizenid ON playerskins(citizenid)]])
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_playerskins_active ON playerskins(active)]])
 end
 
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS player_outfits (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         citizenid VARCHAR(11) DEFAULT NULL,
@@ -464,18 +345,12 @@ error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create player_outfits table')
-else
-    print('Player outfits table created')
-end
-
-if not error then
+if success then
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_player_outfits_citizenid ON player_outfits(citizenid)]])
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_player_outfits_outfitId ON player_outfits(outfitId)]])
 end
 
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS player_vehicles (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         license VARCHAR(50) DEFAULT NULL,
@@ -500,19 +375,13 @@ error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create player_vehicles table')
-else
-    print('Player vehicles table created')
-end
-
-if not error then
+if success then
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_player_vehicles_plate ON player_vehicles(plate)]])
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_player_vehicles_citizenid ON player_vehicles(citizenid)]])
     Database.Execute([[CREATE INDEX IF NOT EXISTS idx_player_vehicles_license ON player_vehicles(license)]])
 end
 
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS player_warns (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         senderIdentifier VARCHAR(50) DEFAULT NULL,
@@ -522,22 +391,10 @@ error = Database.Execute([[
     )
 ]])
 
-if error then
-    print('Failed to create player_warns table')
-else
-    print('Player warns table created')
-end
-
-error = Database.Execute([[
+success = Database.Execute([[
     CREATE TABLE IF NOT EXISTS inventories (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         identifier VARCHAR(50) NOT NULL UNIQUE,
         items TEXT DEFAULT '[]'
     )
 ]])
-
-if error then
-    print('Failed to create inventories table')
-else
-    print('Inventories table created')
-end
