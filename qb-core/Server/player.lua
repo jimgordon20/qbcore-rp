@@ -8,6 +8,7 @@ RegisterServerEvent('PlayerJoined', function(newPlayer)
     print('Player State: ', newPlayer:GetLyraPlayerState())
     local playerState = newPlayer:GetLyraPlayerState()
     print('Player ID: ', playerState:GetPlayerId())
+    print('Player Name: ', playerState:GetPlayerName()) -- returns same as ID
 end)
 
 -- Logout
