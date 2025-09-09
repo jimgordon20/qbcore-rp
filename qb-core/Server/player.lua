@@ -80,6 +80,7 @@ function QBCore.Player.Login(source, citizenid, newData)
     end
     return true
 end
+exports('qb-core', 'Login', QBCore.Player.Login)
 
 function QBCore.Player.GetPlayerByLicense(license)
     if license then
@@ -109,9 +110,10 @@ function QBCore.Player.CheckPlayerData(source, PlayerData)
     local Offline = not source
     if source then
         PlayerData.source = source
-        PlayerData.netId = source:GetID()
-        PlayerData.license = source:GetAccountID()
-        PlayerData.name = source:GetAccountName()
+        --PlayerData.netId = source:GetID()
+        local PlayerState = source:GetLyraPlayerState()
+        PlayerData.license = PlayerState:GetPlayerId()
+        PlayerData.name = PlayerState:GetPlayerName()
     end
     applyDefaults(PlayerData, QBConfig.Player.PlayerDefaults)
     return QBCore.Player.CreatePlayer(PlayerData, Offline)
