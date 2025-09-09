@@ -1,4 +1,4 @@
---local Lang = require('../Shared/locales/' .. QBConfig.Language .. '.lua')
+local Lang = require('Shared/locales/en')
 local hasDonePreloading = {}
 
 -- Handling Player Load
@@ -50,6 +50,11 @@ end
 
 -- Events
 
+RegisterServerEvent('PlayerJoined', function(source)
+    print('[QBCore] Player Joined:', source)
+    TriggerClientEvent(source, 'qb-multicharacter:client:chooseChar')
+end)
+
 RegisterServerEvent('QBCore:Server:PlayerLoaded', function(Player)
     hasDonePreloading[Player.PlayerData.source] = true
 end)
@@ -96,7 +101,7 @@ RegisterServerEvent('qb-multicharacter:server:createCharacter', function(source,
     local newData = {}
     newData.cid = data.cid
     newData.charinfo = data
-    if QBCore.Player.Login(source, false, newData) then
+    if exports['qb-core']:Login(source, false, newData) then
         CheckInterval = Timer.SetInterval(function()
             if hasDonePreloading[source] then
                 if Apartments.Starting then
