@@ -1,7 +1,7 @@
 QBShared = QBShared or {}
 
 QBShared.Weapons = {
-    weapon_acm = {
+    --[[ weapon_acm = {
         ammo_type = 'rifle_ammo',
         asset_name = 'helix::SK_ACM',
         damage = 30,
@@ -1520,5 +1520,5 @@ QBShared.Weapons = {
             mag = { asset_name = 'helix::SM_Vulcan_Mag', relative_location = Vector(17, 0, -7), relative_rotation = Rotator(0, 0, 0) },
             stock = { asset_name = 'helix::SM_Vulcan_Stock', relative_location = Vector(0, 0, 0), relative_rotation = Rotator(0, 0, 0) },
         }
-    }
+    } ]]
 }
