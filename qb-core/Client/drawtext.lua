@@ -1,4 +1,4 @@
-local my_webui = WebUI('DrawText', 'file://html/index.html')
+local my_webui = WebUI('DrawText', 'qb-core/Client/html/index.html')
 
 local function hideText()
     my_webui:CallEvent('HIDE_TEXT')
