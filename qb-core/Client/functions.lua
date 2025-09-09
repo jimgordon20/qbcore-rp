@@ -242,3 +242,9 @@ function QBCore.Functions.GetClosestProp(coords)
     end
     return closest_prop, closest_distance
 end
+
+for functionName, func in pairs(QBCore.Functions) do
+    if type(func) == 'function' then
+        exports('qb-core', functionName, func)
+    end
+end

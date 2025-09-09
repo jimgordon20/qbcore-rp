@@ -9,6 +9,7 @@ RegisterServerEvent('PlayerJoined', function(newPlayer)
     local playerState = newPlayer:GetLyraPlayerState()
     print('Player ID: ', playerState:GetPlayerId())
     print('Player Name: ', playerState:GetPlayerName()) -- returns same as ID
+    --print('Helix User ID: ', playerState:GetHelixUserId())
 end)
 
 -- Logout

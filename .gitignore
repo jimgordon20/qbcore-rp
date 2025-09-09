@@ -55,3 +55,4 @@ API/Trigger.lua
 API/Variables.lua
 API/WebUI.lua
 API/Widget.lua
+API/Exports.lua

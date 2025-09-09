@@ -811,3 +811,9 @@ function QBCore.Functions.AddPlayerField(ids, fieldName, data)
 		end
 	end
 end
+
+for functionName, func in pairs(QBCore.Functions) do
+	if type(func) == 'function' then
+		exports('qb-core', functionName, func)
+	end
+end
