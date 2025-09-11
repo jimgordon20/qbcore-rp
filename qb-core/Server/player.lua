@@ -108,11 +108,16 @@ end
 function QBCore.Player.CheckPlayerData(source, PlayerData)
     PlayerData = PlayerData or {}
     local Offline = not source
-    if source then
-        PlayerData.source = source
-        --PlayerData.netId = source:GetID()
-        local PlayerState = source:GetLyraPlayerState()
-        PlayerData.license = PlayerState:GetPlayerId()
+    local ObjectPath = UE.UKismetSystemLibrary.MakeSoftObjectPath(source)
+    local SoftRef = UE.UKismetSystemLibrary.Conv_SoftObjPathToSoftObjRef(ObjectPath)
+    local Player = UE.UKismetSystemLibrary.Conv_SoftObjectReferenceToObject(SoftRef)
+
+    if source and Player then
+        PlayerData.source = Player
+
+        local PlayerState = Player:GetLyraPlayerState()
+        PlayerData.netId = PlayerState:GetPlayerId()
+        PlayerData.license = PlayerState:GetHelixUserId()
         PlayerData.name = PlayerState:GetPlayerName()
     end
     applyDefaults(PlayerData, QBConfig.Player.PlayerDefaults)
@@ -128,7 +133,7 @@ function QBCore.Player.CreatePlayer(PlayerData, Offline)
     function self.Functions.UpdatePlayerData()
         if self.Offline then return end
         Events.Call('QBCore:Player:SetPlayerData', self.PlayerData)
-        TriggerClientEvent('QBCore:Player:SetPlayerData', self.PlayerData.source, self.PlayerData)
+        TriggerClientEvent(self.PlayerData.source, 'QBCore:Player:SetPlayerData', self.PlayerData)
     end
 
     function self.Functions.SetJob(job, grade)
@@ -363,7 +368,7 @@ function QBCore.Player.CreatePlayer(PlayerData, Offline)
     else
         QBCore.Players[self.PlayerData.netId] = self
         QBCore.Player.Save(self.PlayerData.source)
-        Events.Call('QBCore:Server:PlayerLoaded', self)
+        Events.Call('QBCore:Server:PlayerLoaded', self) -- Server->Server needed
         self.Functions.UpdatePlayerData()
     end
 end
