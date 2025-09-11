@@ -101,7 +101,9 @@ RegisterServerEvent('qb-multicharacter:server:createCharacter', function(source,
     local newData = {}
     newData.cid = data.cid
     newData.charinfo = data
-    if exports['qb-core']:Login(source, false, newData) then
+    local ObjectRef = UE.FSoftObjectPtr(source)
+    ObjectRef:Set(source)
+    if exports['qb-core']:Login(tostring(ObjectRef), false, newData) then
         CheckInterval = Timer.SetInterval(function()
             if hasDonePreloading[source] then
                 if Apartments.Starting then
