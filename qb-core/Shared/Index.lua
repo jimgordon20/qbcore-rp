@@ -94,4 +94,4 @@ function Locale:delete(phraseTarget, prefix)
     end
 end
 
---Package.Export('Locale', Locale)
+return Locale

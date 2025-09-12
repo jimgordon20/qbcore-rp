@@ -14,7 +14,6 @@
         <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet" />
     </head>
     <body>
-        <p style='font-family: Roboto; color: red;'>qb-multicharacter UI</p>
         <v-app data-app>
             <div id="app">
                 <div class="container">
@@ -328,7 +327,7 @@
                             }, 2000);
                         }, 2000);
                     }
-                };
+                }
 
                 function setupCharacters(characters) {
                     var newChars = [];
@@ -336,11 +335,11 @@
                         newChars[characters[i].cid] = characters[i];
                     }
                     viewmodel.characters = newChars;
-                };
+                }
 
                 function setupCharInfo(chardata) {
                     viewmodel.chardata = chardata;
-                };
+                }
 
                 window.openUI = openUI;
                 window.setupCharacters = setupCharacters;

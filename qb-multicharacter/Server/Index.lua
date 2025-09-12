@@ -3,13 +3,10 @@ local hasDonePreloading = {}
 
 -- Handling Player Load
 
--- Package.Subscribe('Load', function()
--- 	Events.BroadcastRemote('qb-multicharacter:client:chooseChar')
--- end)
-
--- Player.Subscribe('Spawn', function(source)
--- 	TriggerClientEvent('qb-multicharacter:client:chooseChar', source)
--- end)
+RegisterServerEvent('PlayerJoined', function(source)
+    print('[QBCore] Player Joined:', source)
+    TriggerClientEvent(source, 'qb-multicharacter:client:chooseChar')
+end)
 
 -- Functions
 
@@ -50,11 +47,6 @@ end
 
 -- Events
 
-RegisterServerEvent('PlayerJoined', function(source)
-    print('[QBCore] Player Joined:', source)
-    TriggerClientEvent(source, 'qb-multicharacter:client:chooseChar')
-end)
-
 RegisterServerEvent('QBCore:Server:PlayerLoaded', function(Player)
     hasDonePreloading[Player.PlayerData.source] = true
 end)
@@ -80,14 +72,14 @@ RegisterServerEvent('qb-multicharacter:server:loadUserData', function(source, cD
                     local source_dimension = source:GetDimension()
                     new_char:SetDimension(source_dimension)
                     source:Possess(new_char)
-                    TriggerClientEvent('QBCore:Client:OnPlayerLoaded', source)
-                    TriggerClientEvent('qb-multicharacter:client:spawnLastLocation', source, coords, cData)
+                    TriggerClientEvent(source, 'QBCore:Client:OnPlayerLoaded')
+                    TriggerClientEvent(source, 'qb-multicharacter:client:spawnLastLocation', coords, cData)
                 else
                     if Apartments.Starting then
-                        TriggerClientEvent('qb-apartments:client:setupSpawnUI', source, cData)
+                        TriggerClientEvent(source, 'qb-apartments:client:setupSpawnUI', cData)
                     else
-                        TriggerClientEvent('qb-spawn:client:setupSpawns', source, cData, false, nil)
-                        TriggerClientEvent('qb-spawn:client:openUI', source, true)
+                        TriggerClientEvent(source, 'qb-spawn:client:setupSpawns', cData, false, nil)
+                        TriggerClientEvent(source, 'qb-spawn:client:openUI', true)
                     end
                 end
                 --Events.Call('qb-log:server:CreateLog', 'joinleave', 'Loaded', 'green', '**' .. source:GetAccountName() .. '** (<@' .. (exports['qb-core']:GetIdentifier(source, 'discord'):gsub('discord:', '') or 'unknown') .. '> |  ||' .. (exports['qb-core']:GetIdentifier(source, 'ip') or 'undefined') .. '|| | ' .. (exports['qb-core']:GetIdentifier(source, 'license') or 'undefined') .. ' | ' .. cData.citizenid .. ' | ' .. source .. ') loaded..')
@@ -112,8 +104,8 @@ RegisterServerEvent('qb-multicharacter:server:createCharacter', function(source,
                     print('^2[qb-core]^7 ' .. source:GetAccountName() .. ' has successfully loaded!')
                     QBCore.Commands.Refresh(source)
                     --loadHouseData(source)
-                    TriggerClientEvent('qb-multicharacter:client:closeNUI', source)
-                    TriggerClientEvent('qb-apartments:client:setupSpawnUI', source, newData)
+                    TriggerClientEvent(source, 'qb-multicharacter:client:closeNUI')
+                    TriggerClientEvent(source, 'qb-apartments:client:setupSpawnUI', newData)
                     GiveStarterItems(source)
                     Timer.ClearInterval(CheckInterval)
                 else
@@ -124,8 +116,8 @@ RegisterServerEvent('qb-multicharacter:server:createCharacter', function(source,
                     local source_dimension = source:GetDimension()
                     new_char:SetDimension(source_dimension)
                     source:Possess(new_char)
-                    TriggerClientEvent('QBCore:Client:OnPlayerLoaded', source)
-                    TriggerClientEvent('qb-multicharacter:client:closeNUIdefault', source)
+                    TriggerClientEvent(source, 'QBCore:Client:OnPlayerLoaded')
+                    TriggerClientEvent(source, 'qb-multicharacter:client:closeNUIdefault')
                     GiveStarterItems(source)
                     Timer.ClearInterval(CheckInterval)
                 end
@@ -136,14 +128,16 @@ end)
 
 RegisterServerEvent('qb-multicharacter:server:deleteCharacter', function(source, citizenid)
     QBCore.Player.DeleteCharacter(source, citizenid)
-    TriggerClientEvent('QBCore:Notify', source, Lang:t('notifications.char_deleted'), 'success')
-    TriggerClientEvent('qb-multicharacter:client:chooseChar', source)
+    TriggerClientEvent(source, 'QBCore:Notify', Lang:t('notifications.char_deleted'), 'success')
+    TriggerClientEvent(source, 'qb-multicharacter:client:chooseChar')
 end)
 
 -- Callbacks
 
-exports['qb-core']:CreateCallback('qb-multicharacter:server:GetNumberOfCharacters', function(source, cb)
-    local license = source:GetAccountID()
+RegisterServerEvent('qb-multicharacter:server:GetNumberOfCharacters', function(source)
+    local playerState = source:GetLyraPlayerState()
+    local license = playerState:GetHelixUserId()
+
     local numOfChars = 0
     if next(Config.PlayersNumberOfCharacters) then
         for _, v in pairs(Config.PlayersNumberOfCharacters) do
@@ -157,19 +151,28 @@ exports['qb-core']:CreateCallback('qb-multicharacter:server:GetNumberOfCharacter
     else
         numOfChars = Config.DefaultNumberOfCharacters
     end
-    cb(numOfChars)
+    TriggerClientEvent(source, 'qb-multicharacter:client:ReceiveNumberOfCharacters', numOfChars)
 end)
 
-exports['qb-core']:CreateCallback('qb-multicharacter:server:setupCharacters', function(source, cb)
-    local license = source:GetAccountID()
+RegisterServerEvent('qb-multicharacter:server:setupCharacters', function(source)
+    local playerState = source:GetLyraPlayerState()
+    local license = playerState:GetHelixUserId()
+
     local plyChars = {}
-    MySQL.query('SELECT * FROM players WHERE license = ?', { license }, function(result)
+    Database.SelectAsync('SELECT * FROM players WHERE license = ?', { license }, function(result)
+        print('Result:', result)
         for i = 1, #result, 1 do
-            result[i].charinfo = JSON.parse(result[i].charinfo)
-            result[i].money = JSON.parse(result[i].money)
-            result[i].job = JSON.parse(result[i].job)
-            plyChars[#plyChars + 1] = result[i]
+            local row = {}
+            for j = 1, #result[i].Columns do
+                local column = result[i].Columns[j]
+                row[column.Name] = column.Value
+            end
+            -- Parse JSON fields
+            row.charinfo = JSON.parse(row.charinfo)
+            row.money = JSON.parse(row.money)
+            row.job = JSON.parse(row.job)
+            plyChars[#plyChars + 1] = row
         end
-        cb(plyChars)
+        TriggerClientEvent('qb-multicharacter:client:ReceiveCharacters', source, plyChars)
     end)
 end)

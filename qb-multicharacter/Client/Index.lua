@@ -3,26 +3,43 @@ local my_webui = WebUI('Multicharacter', 'qb-multicharacter/Client/html/index.ht
 
 -- Functions
 
-local function openCharMenu(bool)
-    local player = HPlayer
-    --player:SetCameraLocation(Config.CamCoords)
-    --player:SetCameraRotation(Config.CamRotation)
-    --QBCore.Functions.TriggerCallback('qb-multicharacter:server:GetNumberOfCharacters', function(result)
-        local translations = {}
-        for k in pairs(Lang.fallback and Lang.fallback.phrases or Lang.phrases) do
-            if k:sub(0, ('ui.'):len()) then
-                translations[k:sub(('ui.'):len() + 1)] = Lang:t(k)
-            end
+-- local function openCharMenu(bool)
+--player:SetCameraLocation(Config.CamCoords)
+--player:SetCameraRotation(Config.CamRotation)
+--QBCore.Functions.TriggerCallback('qb-multicharacter:server:GetNumberOfCharacters', function(result)
+-- local translations = {}
+-- for k in pairs(Lang.fallback and Lang.fallback.phrases or Lang.phrases) do
+--     if k:sub(0, ('ui.'):len()) then
+--         translations[k:sub(('ui.'):len() + 1)] = Lang:t(k)
+--     end
+-- end
+--my_webui:BringToFront() -- Unused
+--Input.SetMouseEnabled(bool)
+--Input.SetInputEnabled(false)
+--my_webui:CallFunction('openUI', Config.customNationality, bool, result, Config.EnableDeleteButton, translations)
+-- my_webui:CallFunction('openUI', Config.customNationality, true, 5, Config.EnableDeleteButton, translations)
+--end)
+-- end
+
+local function setupCharMenuUI(numOfChars)
+    local translations = {}
+    for k in pairs(Lang.fallback and Lang.fallback.phrases or Lang.phrases) do
+        if k:sub(0, ('ui.'):len()) then
+            translations[k:sub(('ui.'):len() + 1)] = Lang:t(k)
         end
-        --my_webui:BringToFront() -- Unused
-        --Input.SetMouseEnabled(bool)
-        --Input.SetInputEnabled(false)
-        --my_webui:CallFunction('openUI', Config.customNationality, bool, result, Config.EnableDeleteButton, translations)
-        my_webui:CallFunction('openUI', Config.customNationality, true, 5, Config.EnableDeleteButton, translations)
-    --end)
+    end
+    my_webui:CallFunction('openUI', Config.customNationality, true, numOfChars, Config.EnableDeleteButton, translations)
 end
 
 -- Events
+
+RegisterClientEvent('qb-multicharacter:client:ReceiveNumberOfCharacters', function(numOfChars)
+    setupCharMenuUI(numOfChars)
+end)
+
+RegisterClientEvent('qb-multicharacter:client:ReceiveCharacters', function(characters)
+    my_webui:CallFunction('setupCharacters', characters)
+end)
 
 RegisterClientEvent('qb-multicharacter:client:closeNUI', function()
     Input.SetMouseEnabled(false)
@@ -30,7 +47,8 @@ end)
 
 RegisterClientEvent('qb-multicharacter:client:chooseChar', function()
     Timer.SetTimeout(function()
-        openCharMenu(true)
+        --openCharMenu(true)
+        TriggerServerEvent('qb-multicharacter:server:GetNumberOfCharacters')
     end, 4000)
 end)
 
@@ -46,15 +64,15 @@ end)
 RegisterClientEvent('qb-multicharacter:client:spawnLastLocation', function(coords, cData)
     exports['qb-core']:TriggerCallback('qb-apartments:GetOwnedApartment', function(result)
         if result then
-            --Events.Call('qb-apartments:client:SetHomeBlip', result.type)
+            --TriggerClientEvent('qb-apartments:client:SetHomeBlip', result.type)
             local PlayerData = exports['qb-core']:GetPlayerData()
             local insideMeta = PlayerData.metadata['inside']
             if insideMeta.house then
-                Events.Call('qb-houses:client:LastLocationHouse', insideMeta.house)
+                TriggerClientEvent('qb-houses:client:LastLocationHouse', insideMeta.house)
             elseif insideMeta.apartment.apartmentType and insideMeta.apartment.apartmentId then
-                Events.Call('qb-apartments:client:LastLocationHouse', insideMeta.apartment.apartmentType, insideMeta.apartment.apartmentId)
+                TriggerClientEvent('qb-apartments:client:LastLocationHouse', insideMeta.apartment.apartmentType, insideMeta.apartment.apartmentId)
             end
-            Events.Call('QBCore:Client:OnPlayerLoaded')
+            TriggerClientEvent('QBCore:Client:OnPlayerLoaded')
         end
     end, cData.citizenid)
 end)
@@ -68,9 +86,7 @@ my_webui:RegisterEventHandler('selectCharacter', function(data)
 end)
 
 my_webui:RegisterEventHandler('setupCharacters', function()
-    exports['qb-core']:TriggerCallback('qb-multicharacter:server:setupCharacters', function(result)
-        my_webui:CallFunction('setupCharacters', result)
-    end)
+    TriggerServerEvent('qb-multicharacter:server:setupCharacters')
 end)
 
 my_webui:RegisterEventHandler('RemoveBlur', function()
