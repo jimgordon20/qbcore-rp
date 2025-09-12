@@ -400,7 +400,20 @@ function QBCore.Player.Save(source)
         end
     end
 
-    MySQL.insert('INSERT INTO players (citizenid, cid, license, name, money, charinfo, job, gang, position, metadata, inventory) VALUES (?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE cid = ?, name = ?, money = ?, charinfo = ?, job = ?, gang = ?, position = ?, metadata = ?, inventory = ?', {
+    local result = Database.Execute([[INSERT INTO players (citizenid, cid, license, name, money, charinfo, job, gang, position, metadata, inventory)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?)
+        ON CONFLICT(citizenid) DO UPDATE SET
+            cid = excluded.cid,
+            name = excluded.name,
+            money = excluded.money,
+            charinfo = excluded.charinfo,
+            job = excluded.job,
+            gang = excluded.gang,
+            position = excluded.position,
+            metadata = excluded.metadata,
+            inventory = excluded.inventory;
+        ]], 
+    {
         PlayerData.citizenid,
         tonumber(PlayerData.cid),
         PlayerData.license,
@@ -409,19 +422,9 @@ function QBCore.Player.Save(source)
         JSON.stringify(PlayerData.charinfo),
         JSON.stringify(PlayerData.job),
         JSON.stringify(PlayerData.gang),
-        JSON.stringify(pcoords),
+        JSON.stringify({x = pcoords.X, y = pcoords.Y, z = pcoords.Z}),
         JSON.stringify(PlayerData.metadata),
         JSON.stringify(ItemsJson),
-        -- UPDATE
-        tonumber(PlayerData.cid),
-        PlayerData.name,
-        JSON.stringify(PlayerData.money),
-        JSON.stringify(PlayerData.charinfo),
-        JSON.stringify(PlayerData.job),
-        JSON.stringify(PlayerData.gang),
-        JSON.stringify(pcoords),
-        JSON.stringify(PlayerData.metadata),
-        JSON.stringify(ItemsJson)
     })
 end
 
