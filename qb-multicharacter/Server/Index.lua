@@ -157,22 +157,20 @@ end)
 RegisterServerEvent('qb-multicharacter:server:setupCharacters', function(source)
     local playerState = source:GetLyraPlayerState()
     local license = playerState:GetHelixUserId()
-
     local plyChars = {}
-    Database.SelectAsync('SELECT * FROM players WHERE license = ?', { license }, function(result)
-        print('Result:', result)
-        for i = 1, #result, 1 do
-            local row = {}
-            for j = 1, #result[i].Columns do
-                local column = result[i].Columns[j]
-                row[column.Name] = column.Value
-            end
-            -- Parse JSON fields
-            row.charinfo = JSON.parse(row.charinfo)
-            row.money = JSON.parse(row.money)
-            row.job = JSON.parse(row.job)
-            plyChars[#plyChars + 1] = row
+    local result = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM players WHERE license = ?', { license })
+    if not result then return end
+
+    for i = 1, #result, 1 do
+        local row = {}
+        for CName, CValue in pairs(result[i]) do
+            row[CName] = CValue
         end
-        TriggerClientEvent('qb-multicharacter:client:ReceiveCharacters', source, plyChars)
-    end)
+        -- Parse JSON fields
+        row.charinfo = JSON.parse(row.charinfo)
+        row.money = JSON.parse(row.money)
+        row.job = JSON.parse(row.job)
+        plyChars[#plyChars + 1] = row
+    end
+    TriggerClientEvent(source, 'qb-multicharacter:client:ReceiveCharacters', plyChars)
 end)
