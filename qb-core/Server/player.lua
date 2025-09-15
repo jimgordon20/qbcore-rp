@@ -64,11 +64,14 @@ end
 
 function QBCore.Player.Login(source, citizenid, newData)
     if not source then return false end
+    local ObjectPath = UE.UKismetSystemLibrary.MakeSoftObjectPath(source)
+    local SoftRef = UE.UKismetSystemLibrary.Conv_SoftObjPathToSoftObjRef(ObjectPath)
+    local Player = UE.UKismetSystemLibrary.Conv_SoftObjectReferenceToObject(SoftRef)
     if citizenid then
-        local PlayerState = source:GetLyraPlayerState()
+        local PlayerState = Player:GetLyraPlayerState()
         local license = PlayerState:GetHelixUserId()
-        local result = MySQL.query.await('SELECT * FROM players where citizenid = ?', { citizenid })
-        local PlayerData = result[1]
+        local result = Database.Select('SELECT * FROM players where citizenid = ?', { citizenid })
+        local PlayerData = result[1] and result[1].Columns:ToTable()
         if PlayerData and license == PlayerData.license then
             PlayerData.money = JSON.parse(PlayerData.money)
             PlayerData.job = JSON.parse(PlayerData.job)
@@ -77,10 +80,10 @@ function QBCore.Player.Login(source, citizenid, newData)
             PlayerData.metadata = JSON.parse(PlayerData.metadata)
             PlayerData.charinfo = JSON.parse(PlayerData.charinfo)
             PlayerData.items = formatItems(JSON.parse(PlayerData.inventory))
-            QBCore.Player.CheckPlayerData(source, PlayerData)
+            QBCore.Player.CheckPlayerData(Player, PlayerData)
         end
     else
-        QBCore.Player.CheckPlayerData(source, newData)
+        QBCore.Player.CheckPlayerData(Player, newData)
     end
     return true
 end
@@ -113,14 +116,9 @@ end
 function QBCore.Player.CheckPlayerData(source, PlayerData)
     PlayerData = PlayerData or {}
     local Offline = not source
-    local ObjectPath = UE.UKismetSystemLibrary.MakeSoftObjectPath(source)
-    local SoftRef = UE.UKismetSystemLibrary.Conv_SoftObjPathToSoftObjRef(ObjectPath)
-    local Player = UE.UKismetSystemLibrary.Conv_SoftObjectReferenceToObject(SoftRef)
-
-    if source and Player then
-        PlayerData.source = Player
-
-        local PlayerState = Player:GetLyraPlayerState()
+    if source then
+        PlayerData.source = source
+        local PlayerState = source:GetLyraPlayerState()
         PlayerData.netId = PlayerState:GetPlayerId()
         PlayerData.license = PlayerState:GetHelixUserId()
         PlayerData.name = PlayerState:GetPlayerName()
