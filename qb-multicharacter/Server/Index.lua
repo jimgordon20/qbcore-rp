@@ -65,8 +65,8 @@ RegisterServerEvent('qb-multicharacter:server:loadUserData', function(source, cD
     if exports['qb-core']:Login(tostring(ObjectRef), cData.citizenid) then
         CheckUserInterval = Timer.SetInterval(function()
             if hasDonePreloading[source] then
-                local PlayerState = source:GetLyraPlayerState()
-                print('[qb-core] ' .. PlayerState:GetPlayerName() .. ' (Citizen ID: ' .. cData.citizenid .. ') has successfully loaded!')
+                --local PlayerState = source:GetLyraPlayerState()
+                --print('[qb-core] ' .. PlayerState:GetPlayerName() .. ' (Citizen ID: ' .. cData.citizenid .. ') has successfully loaded!')
                 --QBCore.Commands.Refresh(source)
                 --loadHouseData(source)
                 if Config.SkipSelection then

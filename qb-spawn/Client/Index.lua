@@ -59,7 +59,7 @@ end)
 
 -- NUI Events
 
-my_webui:Subscribe('qb-spawn:setCam', function(data)
+my_webui:RegisterEventHandler('qb-spawn:setCam', function(data)
 	local location = tostring(data.posname)
 	local type = tostring(data.type)
 	if type == 'current' then
