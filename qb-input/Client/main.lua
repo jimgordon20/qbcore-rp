@@ -1,5 +1,20 @@
 local properties = nil
-local my_webui = WebUI('Input', 'qb-input/Client/html/index.html')
+Timer.SetTimeout(function()
+    my_webui = WebUI('Input', 'qb-input/Client/html/index.html')
+    my_webui:RegisterEventHandler('buttonSubmit', function()
+        --SetNuiFocus(false)
+        properties:resolve(data.data)
+        properties = nil
+        --cb('ok')
+    end)
+
+    my_webui:RegisterEventHandler('closeMenu', function()
+        --SetNuiFocus(false)
+        properties:resolve(nil)
+        properties = nil
+        --cb('ok')
+    end)
+end, 2000)
 
 AddEventHandler('onResourceStart', function(resourceName)
     if GetCurrentResourceName() ~= resourceName then
@@ -11,20 +26,6 @@ end)
 
 RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
     my_webui:CallFunction('SetStyle', Config.Style)
-end)
-
-my_webui:RegisterEventHandler('buttonSubmit', function()
-    --SetNuiFocus(false)
-    properties:resolve(data.data)
-    properties = nil
-    --cb('ok')
-end)
-
-my_webui:RegisterEventHandler('closeMenu', function()
-    --SetNuiFocus(false)
-    properties:resolve(nil)
-    properties = nil
-    --cb('ok')
 end)
 
 local function ShowInput(data)

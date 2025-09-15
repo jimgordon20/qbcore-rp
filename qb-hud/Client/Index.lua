@@ -1,4 +1,6 @@
-local my_webui = WebUI('HUD', 'qb-inventory/Client/html/index.html')
+Timer.SetTimeout(function()
+    my_webui = WebUI('HUD', 'qb-inventory/Client/html/index.html')
+end, 2000)
 local player_data = exports['qb-core']:GetPlayerData()
 local in_vehicle, current_vehicle = false, nil
 local has_weapon, current_weapon = false, nil

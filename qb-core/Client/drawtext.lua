@@ -1,4 +1,6 @@
-local my_webui = WebUI('DrawText', 'qb-core/Client/html/index.html')
+Timer.SetTimeout(function() 
+    local my_webui = WebUI('DrawText', 'qb-core/Client/html/index.html')
+end, 2000)
 
 local function hideText()
     my_webui:CallEvent('HIDE_TEXT')
