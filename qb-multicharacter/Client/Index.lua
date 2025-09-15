@@ -1,6 +1,35 @@
 local Lang = require('Shared/locales/en')
-local my_webui = WebUI('Multicharacter', 'qb-multicharacter/Client/html/index.html')
+Timer.SetTimeout(function()
+    my_webui = WebUI('Multicharacter', 'qb-multicharacter/Client/html/index.html')
+    -- NUI Events
+    my_webui:RegisterEventHandler('selectCharacter', function(data)
+        local cData = data.cData
+        TriggerServerEvent('qb-multicharacter:server:loadUserData', cData)
+        my_webui:CallFunction('openUI', nil, false)
+    end)
 
+    my_webui:RegisterEventHandler('setupCharacters', function()
+        TriggerServerEvent('qb-multicharacter:server:setupCharacters')
+    end)
+
+    my_webui:RegisterEventHandler('RemoveBlur', function()
+        SetTimecycleModifier('default')
+    end)
+
+    my_webui:RegisterEventHandler('createNewCharacter', function(data)
+        local cData = data
+        if cData.gender == Lang:t('ui.male') then
+            cData.gender = 0
+        elseif cData.gender == Lang:t('ui.female') then
+            cData.gender = 1
+        end
+        TriggerServerEvent('qb-multicharacter:server:createCharacter', cData)
+    end)
+
+    my_webui:RegisterEventHandler('removeCharacter', function(data)
+        TriggerServerEvent('qb-multicharacter:server:deleteCharacter', data.citizenid)
+    end)
+end, 2000)
 -- Functions
 
 -- local function openCharMenu(bool)
@@ -72,37 +101,7 @@ RegisterClientEvent('qb-multicharacter:client:spawnLastLocation', function(coord
             elseif insideMeta.apartment.apartmentType and insideMeta.apartment.apartmentId then
                 TriggerClientEvent('qb-apartments:client:LastLocationHouse', insideMeta.apartment.apartmentType, insideMeta.apartment.apartmentId)
             end
-            TriggerClientEvent('QBCore:Client:OnPlayerLoaded')
+            --TriggerClientEvent('QBCore:Client:OnPlayerLoaded') Client->Client
         end
     end, cData.citizenid)
-end)
-
--- NUI Events
-
-my_webui:RegisterEventHandler('selectCharacter', function(data)
-    local cData = data.cData
-    TriggerServerEvent('qb-multicharacter:server:loadUserData', cData)
-    openCharMenu(false)
-end)
-
-my_webui:RegisterEventHandler('setupCharacters', function()
-    TriggerServerEvent('qb-multicharacter:server:setupCharacters')
-end)
-
-my_webui:RegisterEventHandler('RemoveBlur', function()
-    SetTimecycleModifier('default')
-end)
-
-my_webui:RegisterEventHandler('createNewCharacter', function(data)
-    local cData = data
-    if cData.gender == Lang:t('ui.male') then
-        cData.gender = 0
-    elseif cData.gender == Lang:t('ui.female') then
-        cData.gender = 1
-    end
-    TriggerServerEvent('qb-multicharacter:server:createCharacter', cData)
-end)
-
-my_webui:RegisterEventHandler('removeCharacter', function(data)
-    TriggerServerEvent('qb-multicharacter:server:deleteCharacter', data.citizenid)
 end)
