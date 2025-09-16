@@ -1,6 +1,20 @@
 local Lang = require('Shared/locales/en')
 local Houses = {}
-Timer.SetTimeout(function()
+
+-- Functions
+
+local function SetDisplay(bool)
+	local translations = {}
+	for k in pairs(Lang.fallback and Lang.fallback.phrases or Lang.phrases) do
+		if k:sub(0, #'ui.') then
+			translations[k:sub(#'ui.' + 1)] = Lang:t(k)
+		end
+	end
+	-- if not Input.IsMouseEnabled() then
+	-- 	Input.SetMouseEnabled(true)
+	-- end
+	-- my_webui:BringToFront()
+
 	my_webui = WebUI('Spawn', 'qb-spawn/Client/html/index.html')
 	-- NUI Events
 	my_webui:RegisterEventHandler('qb-spawn:setCam', function(data)
@@ -57,21 +71,10 @@ Timer.SetTimeout(function()
 			TriggerServerEvent('qb-spawn:server:spawnPlayer', coords)
 		end
 	end)
-end, 2000)
--- Functions
-
-local function SetDisplay(bool)
-	local translations = {}
-	for k in pairs(Lang.fallback and Lang.fallback.phrases or Lang.phrases) do
-		if k:sub(0, #'ui.') then
-			translations[k:sub(#'ui.' + 1)] = Lang:t(k)
-		end
-	end
-	-- if not Input.IsMouseEnabled() then
-	-- 	Input.SetMouseEnabled(true)
-	-- end
-	-- my_webui:BringToFront()
-	my_webui:CallFunction('showUi', bool, translations)
+	
+	my_webui.Browser.OnLoadCompleted:Add(my_webui.Host, function()
+		my_webui:CallFunction('showUi', bool, translations)
+	end)
 end
 
 local function PreSpawnPlayer(value)
