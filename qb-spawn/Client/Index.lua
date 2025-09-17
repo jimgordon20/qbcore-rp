@@ -72,25 +72,24 @@ local function SetDisplay(bool, cData, new, apps)
 		end
 	end)
 
-	if not new then
-		exports['qb-core']:TriggerCallback('qb-houses:server:getOwnedHouses', function(houses)
-			local myHouses = {}
-			if houses then
-				for i = 1, #houses do
-					myHouses[#myHouses + 1] = {
-						house = houses[i].house,
-						label = houses[i].address,
-					}
-				end
-			end
-			my_webui:CallFunction('setupLocations', Config.Spawns, myHouses, new)
-		end, cData.citizenid)
-	elseif new then
-		my_webui:CallFunction('setupApartments', apps, new)
-	end
-	
 	my_webui.Browser.OnLoadCompleted:Add(my_webui.Host, function()
 		my_webui:CallFunction('showUi', bool, translations)
+		if not new then
+			--exports['qb-core']:TriggerCallback('qb-houses:server:getOwnedHouses', function(houses)
+			local myHouses = {}
+			-- if houses then
+			-- 	for i = 1, #houses do
+			-- 		myHouses[#myHouses + 1] = {
+			-- 			house = houses[i].house,
+			-- 			label = houses[i].address,
+			-- 		}
+			-- 	end
+			-- end
+			my_webui:CallFunction('setupLocations', Config.Spawns, myHouses, new)
+			--end, cData.citizenid)
+		elseif new then
+			my_webui:CallFunction('setupApartments', apps, new)
+		end
 	end)
 end
 
