@@ -31,8 +31,6 @@ function QBCore.Player.Logout(source)
     QBCore.Players[playerId] = nil
 end
 
-exports('qb-core', 'Logout', QBCore.Player.Logout)
-
 -- Functions
 
 local function formatItems(inventory)
@@ -87,8 +85,6 @@ function QBCore.Player.Login(source, citizenid, newData)
     end
     return true
 end
-
-exports('qb-core', 'Login', QBCore.Player.Login)
 
 function QBCore.Player.GetPlayerByLicense(license)
     if license then
@@ -448,27 +444,41 @@ local playertables = {
 }
 
 function QBCore.Player.DeleteCharacter(source, citizenid)
-    local license = source:GetAccountID()
-    local result = MySQL.scalar.await('SELECT license FROM players WHERE citizenid = ?', { citizenid })
-    if license == result then
-        local query = 'DELETE FROM %s WHERE citizenid = $1'
+    -- Make Controller from SoftObjectPtr
+    local ObjectPath, SoftRef = nil
+    if type(source) == 'string' then
+        ObjectPath = UE.UKismetSystemLibrary.MakeSoftObjectPath(source)
+        SoftRef = UE.UKismetSystemLibrary.Conv_SoftObjPathToSoftObjRef(ObjectPath)
+        source = UE.UKismetSystemLibrary.Conv_SoftObjectReferenceToObject(SoftRef)
+    end
+
+    local PlayerState = source:GetLyraPlayerState()
+    local license = PlayerState:GetHelixUserId()
+    local result = Database.Select('SELECT license FROM players WHERE citizenid = ? LIMIT 1', { citizenid })
+    if license == result[1].Columns:ToTable().license then
+        local transactionStarted = Database.Execute('BEGIN TRANSACTION')
+        if not transactionStarted then print('[Error] qb-core couldn\'t start a transaction when deleting a character.') return end
+        local query = 'DELETE FROM %s WHERE citizenid = ?'
         local tableCount = #playertables
         local queries = {}
 
+        local Success = true
         for i = 1, tableCount do
             local v = playertables[i]
-            queries[i] = { query = query:format(v.table), values = { citizenid } }
+            local QuerySuccess = Database.Execute(query:format(v.table), { citizenid })
+            if not QuerySuccess then Success = false break end
         end
 
-        MySQL.transaction(queries, function(success)
-            if success then
-                --Events.Call('qb-log:server:CreateLog', 'joinleave', 'Character Deleted', 'red', '**' .. GetPlayerName(source) .. '** ' .. license .. ' deleted **' .. citizenid .. '**..')
-            else
-                print('Transaction failed.')
-            end
-        end)
+        if not Success then Database.Execute('ROLLBACK') else Database.Execute('COMMIT') return true end
     else
         source:Kick(Lang:t('info.exploit_dropped'))
         --Events.Call('qb-log:server:CreateLog', 'anticheat', 'Anti-Cheat', 'white', GetPlayerName(source) .. ' Has Been Dropped For Character Deletion Exploit', true)
     end
+    return false
+end
+
+for functionName, func in pairs(QBCore.Player) do
+	if type(func) == 'function' then
+		exports('qb-core', functionName, func)
+	end
 end
