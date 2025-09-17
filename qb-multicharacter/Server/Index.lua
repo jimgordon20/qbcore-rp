@@ -140,7 +140,10 @@ RegisterServerEvent('qb-multicharacter:server:createCharacter', function(source,
 end)
 
 RegisterServerEvent('qb-multicharacter:server:deleteCharacter', function(source, citizenid)
-    QBCore.Player.DeleteCharacter(source, citizenid)
+    local ObjectRef = UE.FSoftObjectPtr(source)
+    ObjectRef:Set(source)
+    local Success = exports['qb-core']:DeleteCharacter(ObjectRef, citizenid)
+    if not Success then return end
     TriggerClientEvent(source, 'QBCore:Notify', Lang:t('notifications.char_deleted'), 'success')
     TriggerClientEvent(source, 'qb-multicharacter:client:chooseChar')
 end)
