@@ -27,7 +27,8 @@ end
 -- Getter Functions
 
 function QBCore.Functions.GetIdentifier(source)
-	return source:GetAccountID()
+	local PlayerState = source:GetLyraPlayerState()
+	return PlayerState:GetHelixUserId()
 end
 
 function QBCore.Functions.GetSource(identifier)
@@ -40,7 +41,8 @@ function QBCore.Functions.GetSource(identifier)
 end
 
 function QBCore.Functions.AddPermission(source, permission)
-	local accountId = source:GetAccountID()
+	local PlayerState = source:GetLyraPlayerState()
+	local accountId = PlayerState:GetPlayerId()
 	local allPermissions = QBConfig.Server.Permissions
 	local level_check = allPermissions[permission]
 	if not level_check then return end
@@ -51,7 +53,8 @@ function QBCore.Functions.AddPermission(source, permission)
 end
 
 function QBCore.Functions.RemovePermission(source, permission)
-	local accountId = source:GetAccountID()
+	local PlayerState = source:GetLyraPlayerState()
+	local accountId = PlayerState:GetPlayerId()
 	local allPermissions = QBConfig.Server.Permissions
 	local level_check = allPermissions[permission]
 	if not level_check then return end
@@ -71,7 +74,8 @@ function QBCore.Functions.RemovePermission(source, permission)
 end
 
 function QBCore.Functions.HasPermission(source, permissionLevel)
-	local accountId = source:GetAccountID()
+	local PlayerState = source:GetLyraPlayerState()
+	local accountId = PlayerState:GetPlayerId()
 	local allPermissions = QBConfig.Server.Permissions
 	if permissionLevel == 'user' then
 		return true
@@ -94,19 +98,15 @@ function QBCore.Functions.HasPermission(source, permissionLevel)
 end
 
 function QBCore.Functions.GetPlayer(source)
-	if not source then
-		return
-	end
-	if type(source) == 'number' then
-		return QBCore.Players[source]
-	else
-		local playerId = source:GetID()
-		return QBCore.Players[playerId]
-	end
+	if not source then return end
+	local PlayerState = source:GetLyraPlayerState()
+	local netId = PlayerState:GetPlayerId()
+	return QBCore.Players[netId]
 end
 
 function QBCore.Functions.GetPlayerName(source)
-	return source:GetAccountName()
+	local PlayerState = source:GetLyraPlayerState()
+	return PlayerState:GetPlayerName()
 end
 
 function QBCore.Functions.GetPlayerByCitizenId(citizenid)
@@ -247,7 +247,7 @@ end
 -- World Getters
 
 function QBCore.Functions.GetClosestPlayer(source, coords)
-	local player_ped = source:GetControlledCharacter()
+	local player_ped = source:K2_GetPawn()
 	if not player_ped then return end
 	local player_coords = coords or player_ped:GetLocation()
 	local players = HCharacter.GetAll()
@@ -269,7 +269,7 @@ function QBCore.Functions.GetClosestPlayer(source, coords)
 end
 
 function QBCore.Functions.GetClosestHCharacter(source, coords)
-	local player_ped = source:GetControlledCharacter()
+	local player_ped = source:K2_GetPawn()
 	if not player_ped then return end
 	local player_coords = coords or player_ped:GetLocation()
 	local players = HCharacter.GetAll()
@@ -289,7 +289,7 @@ function QBCore.Functions.GetClosestHCharacter(source, coords)
 end
 
 function QBCore.Functions.GetClosestVehicle(source, coords)
-	local player_ped = source:GetControlledCharacter()
+	local player_ped = source:K2_GetPawn()
 	if not player_ped then return end
 	local player_coords = coords or player_ped:GetLocation()
 	local vehicles = Vehicle.GetAll()
@@ -307,7 +307,7 @@ function QBCore.Functions.GetClosestVehicle(source, coords)
 end
 
 function QBCore.Functions.GetClosestHVehicle(source, coords)
-	local player_ped = source:GetControlledCharacter()
+	local player_ped = source:K2_GetPawn()
 	if not player_ped then return end
 	local player_coords = coords or player_ped:GetLocation()
 	local vehicles = HSimpleVehicle.GetAll()
@@ -325,7 +325,7 @@ function QBCore.Functions.GetClosestHVehicle(source, coords)
 end
 
 function QBCore.Functions.GetClosestWeapon(source, coords)
-	local player_ped = source:GetControlledCharacter()
+	local player_ped = source:K2_GetPawn()
 	if not player_ped then return end
 	local player_coords = coords or player_ped:GetLocation()
 	local weapons = Weapon.GetAll()
@@ -343,7 +343,7 @@ function QBCore.Functions.GetClosestWeapon(source, coords)
 end
 
 function QBCore.Functions.GetClosestCharacter(source, coords)
-	local player_ped = source:GetControlledCharacter()
+	local player_ped = source:K2_GetPawn()
 	if not player_ped then return end
 	local player_coords = coords or player_ped:GetLocation()
 	local characters = Character.GetAll()
@@ -361,7 +361,7 @@ function QBCore.Functions.GetClosestCharacter(source, coords)
 end
 
 function QBCore.Functions.GetClosestSCharacter(source, coords)
-	local player_ped = source:GetControlledCharacter()
+	local player_ped = source:K2_GetPawn()
 	if not player_ped then return end
 	local player_coords = coords or player_ped:GetLocation()
 	local characters = CharacterSimple.GetAll()
@@ -379,7 +379,7 @@ function QBCore.Functions.GetClosestSCharacter(source, coords)
 end
 
 function QBCore.Functions.GetClosestPawn(source, coords)
-	local player_ped = source:GetControlledCharacter()
+	local player_ped = source:K2_GetPawn()
 	if not player_ped then return end
 	local player_coords = coords or player_ped:GetLocation()
 	local characters = HPawn.GetAll()
@@ -397,7 +397,7 @@ function QBCore.Functions.GetClosestPawn(source, coords)
 end
 
 function QBCore.Functions.GetClosestProp(source, coords)
-	local player_ped = source:GetControlledCharacter()
+	local player_ped = source:K2_GetPawn()
 	if not player_ped then
 		return
 	end
@@ -442,7 +442,7 @@ end
 function QBCore.Functions.CreateWeapon(source, weapon_name, coords, rotation, itemInfo)
 	local weapon_info = QBShared.Weapons[weapon_name]
 	if not weapon_info then return false end
-	local ped = source:GetControlledCharacter()
+	local ped = source:K2_GetPawn()
 	if not ped then return false end
 	local location = ped:GetLocation()
 	local player_rotation = ped:GetRotation()
@@ -521,7 +521,7 @@ end
 function QBCore.Functions.CreateVehicle(source, vehicle_name, coords, rotation, plate, fuel)
 	local vehicle_data = QBShared.Vehicles[vehicle_name]
 	if not vehicle_data then return false end
-	local ped = source:GetControlledCharacter()
+	local ped = source:K2_GetPawn()
 	if not ped then return false end
 	local location = ped:GetLocation()
 	local control_rotation = ped:GetRotation()
