@@ -221,7 +221,9 @@ RegisterServerEvent('qb-apartments:server:GetOwnedApartment', function(source, c
 
 		return TriggerClientEvent(source, 'qb-apartments:client:GetOwnedApartment', nil)
 	else
-		local Player = exports['qb-core']:GetPlayer(source)
+		local ObjectRef = UE.FSoftObjectPtr(source)
+		ObjectRef:Set(source)
+		local Player = exports['qb-core']:GetPlayer(ObjectRef)
 		if not Player then return end
 		local result =
 			exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM apartments WHERE citizenid = ?', { Player.PlayerData.citizenid })
