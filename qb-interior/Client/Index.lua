@@ -13,14 +13,14 @@ local function CreateShell(spawn, exitXYZH, model)
 	local objects = {}
 	local POIOffsets = {}
 	POIOffsets.exit = exitXYZH
-	local Player = Client.GetLocalPlayer()
-	local dimension = Player:GetDimension()
-	Player:StartCameraFade(0, 1, 0.1, Color(0.0, 0.0, 0.0, 1), true, true)
+	--local Player = Client.GetLocalPlayer()
+	--local dimension = Player:GetDimension()
+	HPlayer:StartCameraFade(0, 1, 0.1, Color(0.0, 0.0, 0.0, 1), true, true)
 	local house = Prop(Vector(spawn.X, spawn.Y, spawn.Z), Rotator(), model, CollisionType.Normal, false, GrabMode.Disabled)
-	house:SetDimension(dimension)
+	--house:SetDimension(dimension)
 	objects[#objects + 1] = house
 	Timer.SetTimeout(function()
-		Events.CallRemote(
+		TriggerServerEvent(
 			'qb-interior:server:teleportPlayer',
 			spawn.X - POIOffsets.exit.x,
 			spawn.Y - POIOffsets.exit.y,

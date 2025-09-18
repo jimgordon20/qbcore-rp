@@ -3,8 +3,7 @@
 local function TeleportToInterior(player, x, y, z, h)
 	local ped = player:K2_GetPawn()
 	if not ped then return end
-	ped:SetLocation(Vector(x, y, z))
-	ped:SetRotation(Rotator(0, h, 0))
+	ped:K2_SetActorLocationAndRotation(Vector(x, y, z), Rotator(0, h, 0))
 	player:StopCameraFade()
 end
 
@@ -24,10 +23,10 @@ local function CreateShell(player, spawn, exitXYZH, model)
 	local objects = {}
 	local POIOffsets = {}
 	POIOffsets.exit = exitXYZH
-	player:StartCameraFade(0, 1, 0.1, Color(0.0, 0.0, 0.0, 1), true, true)
+	--player:StartCameraFade(0, 1, 0.1, Color(0.0, 0.0, 0.0, 1), true, true)
 	local house = Prop(Vector(spawn.X, spawn.Y, spawn.Z - 1000), Rotator(), model)
-	house:SetGravityEnabled(false)
-	local house_location = house:GetLocation()
+	--house:SetGravityEnabled(false)
+	local house_location = house:K2_GetActorLocation()
 	objects[#objects + 1] = house
 	TeleportToInterior(
 		player,
@@ -50,12 +49,12 @@ exports('qb-interior', 'CreateApartmentFurnished', function(player, spawn)
 		obj[2].stash = JSON.parse('{"x": -7.305, "y": -3.922, "z": 0.5, "h":2.263}')
 		obj[2].logout = JSON.parse('{"x": -0.8, "y": 1.0, "z": 1.0, "h":2.263}')
 	end
-	if IsNew then
-		SetTimeout(750, function()
-			TriggerEvent('qb-clothes:client:CreateFirstCharacter')
-			IsNew = false
-		end)
-	end
+	-- if IsNew then
+	-- 	Timer.SetTimeout(function()
+	-- 		TriggerClientEvent(player, 'qb-clothes:client:CreateFirstCharacter')
+	-- 		IsNew = false
+	-- 	end, 1000)
+	-- end
 	return { obj[1], obj[2] }
 end)
 
