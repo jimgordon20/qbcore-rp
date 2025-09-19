@@ -26,7 +26,7 @@ local function setupCharMenuUI(numOfChars)
             translations[k:sub(('ui.'):len() + 1)] = Lang:t(k)
         end
     end
-    my_webui = WebUI('Multicharacter', 'qb-multicharacter/Client/html/index.html')
+    my_webui = WebUI('Multicharacter', 'qb-multicharacter/Client/html/index.html', true)
     -- NUI Events
     my_webui:RegisterEventHandler('selectCharacter', function(data)
         local cData = data.cData

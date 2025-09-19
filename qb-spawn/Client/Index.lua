@@ -15,7 +15,7 @@ local function SetDisplay(bool, cData, new, apps)
 	-- end
 	-- my_webui:BringToFront()
 
-	my_webui = WebUI('Spawn', 'qb-spawn/Client/html/index.html')
+	my_webui = WebUI('Spawn', 'qb-spawn/Client/html/index.html', true)
 	-- NUI Events
 	my_webui:RegisterEventHandler('qb-spawn:setCam', function(data)
 		local location = tostring(data.posname)
