@@ -1,5 +1,5 @@
 Config = {
-	OpenKey = 'LeftControl',          -- enable target
+	OpenKey = 'F',                    -- enable target
 	MenuControlKey = 'RightMouseButton', -- enable mouse control
 	MaxDistance = 1000,               -- max distance for raycast
 	Debug = false,                    -- prints trace results

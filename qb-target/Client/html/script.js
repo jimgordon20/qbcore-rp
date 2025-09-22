@@ -110,11 +110,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    openTarget = openTarget;
-    closeTarget = closeTarget;
-    foundTarget = foundTarget;
-    validTarget = validTarget;
-    leftTarget = leftTarget;
+    window.openTarget = openTarget;
+    window.closeTarget = closeTarget;
+    window.foundTarget = foundTarget;
+    window.validTarget = validTarget;
+    window.leftTarget = leftTarget;
 
     window.addEventListener("mousedown", handleMouseDown);
     window.addEventListener("keydown", handleKeyDown);
