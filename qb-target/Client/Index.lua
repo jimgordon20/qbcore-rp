@@ -74,6 +74,43 @@ local function SetOptions(tbl, distance, options)
 	end
 end
 
+local function setupHandlers()
+	my_webui:RegisterEventHandler('selectTarget', function(option)
+		option = tonumber(option) or option
+		target_active = false
+		if not next(send_data) then return end
+		local data = send_data[option]
+		if not data then return end
+		send_data = {}
+		if data.action then
+			data.action(data.entity)
+		elseif data.event then
+			if data.type == 'client' then
+				TriggerLocalClientEvent(data.event, data)
+			elseif data.type == 'server' then
+				if data.canInteract then data.canInteract = nil end
+				if data.action then data.action = nil end
+				local networked_entity = data.entity.bReplicates
+				if not networked_entity then data.entity = nil end
+				TriggerServerEvent(data.event, data)
+			elseif data.type == 'command' then
+				TriggerServerEvent('QBCore:CallCommand', data.event, data)
+			else
+				TriggerLocalClientEvent(data.event, data)
+			end
+		end
+		my_webui:CallFunction('closeTarget')
+	end)
+
+	my_webui:RegisterEventHandler('leftTarget', function()
+		target_entity = nil
+	end)
+
+	my_webui:RegisterEventHandler('closeTarget', function()
+		disableTarget()
+	end)
+end
+
 -- Exports
 
 local function AddTargetEntity(entity, parameters)
@@ -228,11 +265,12 @@ local function handleRaycast()
 	return trace_result
 end
 
-local function enableTarget()
+function enableTarget()
 	if target_active then return end
 	target_active = true
 	my_webui = WebUI('Target', 'qb-target/Client/html/index.html', false)
 	my_webui.Browser.OnLoadCompleted:Add(my_webui.Host, function()
+		setupHandlers()
 		my_webui:CallFunction('openTarget')
 		raycast_timer = Timer.SetInterval(function()
 			local trace_result = handleRaycast()
@@ -241,7 +279,7 @@ local function enableTarget()
 	end)
 end
 
-local function disableTarget()
+function disableTarget()
 	if not target_active then return end
 	target_active, target_entity = false, nil
 	nui_data, send_data = {}, {}
@@ -284,3 +322,25 @@ end)
 -- configureType('WorldStaticMesh', Config.GlobalWorldStaticMeshOptions)
 -- configureType('ALS_WorldCharacterBP_C', Config.ALS_WorldCharacterBP_C)
 -- configureType('WorldVehicleDoorComponent', Config.GlobalWorldVehicleDoorOptions)
+
+Timer.SetTimeout(function()
+	-- Test Box Zone 1 - Simple interaction
+	AddBoxZone('test_box_1', {
+		X = -249.54, -- Adjust these coordinates to where your player spawns
+		Y = 1358.93, -- or a location you can easily reach
+		Z = 91.697
+	}, 5.0, 5.0, {
+		heading = 0,
+		minZ = -2.0,
+		maxZ = 3.0,
+		debug = true -- This will show the box visually
+	}, {
+		{
+			icon = 'fas fa-hand',
+			label = 'Test Interaction',
+			action = function()
+				print('Test zone 1 clicked!')
+			end
+		}
+	})
+end, 2000)
