@@ -99,15 +99,7 @@ end
 
 function QBCore.Functions.GetPlayer(source)
     if not source then return end
-    local ObjectPath, SoftRef = nil
-    if type(source) == 'string' then
-        ObjectPath = UE.UKismetSystemLibrary.MakeSoftObjectPath(source)
-        SoftRef = UE.UKismetSystemLibrary.Conv_SoftObjPathToSoftObjRef(ObjectPath)
-        source = UE.UKismetSystemLibrary.Conv_SoftObjectReferenceToObject(SoftRef)
-    end
-    local PlayerState = source:GetLyraPlayerState()
-    local netId = PlayerState:GetPlayerId()
-    return QBCore.Players[netId]
+    return QBCore.Players[source]
 end
 
 function QBCore.Functions.GetPlayerName(source)
