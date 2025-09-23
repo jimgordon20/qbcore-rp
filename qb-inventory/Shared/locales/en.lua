@@ -1,3 +1,18 @@
+-- Get the directory of the current script
+local function getScriptDir()
+    local str = debug.getinfo(2, 'S').source:sub(2)
+    return str:match('(.*/)')
+end
+
+-- Get current script's directory and build path to qb-core
+local currentDir = getScriptDir() -- Should be: .../scripts/qb-multicharacter/Shared/locales/
+local qbCorePath = currentDir .. '../../../qb-core/Shared/Index.lua'
+
+-- Normalize the path
+qbCorePath = qbCorePath:gsub('\\', '/') -- Convert backslashes to forward slashes
+
+local Locale = dofile(qbCorePath)
+
 local Translations = {
     progress = {
         ['snowballs'] = 'Collecting snowballs..',

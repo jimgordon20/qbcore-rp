@@ -1,4 +1,4 @@
-local Lang = Package.Require("../Shared/locales/" .. QBConfig.Language .. ".lua")
+local Lang = require("Shared/locales/en")
 local holdingDrop = false
 local bagObject = nil
 local heldDrop = nil
@@ -62,7 +62,7 @@ end)
 
 -- KeyPress
 
-Input.Subscribe("KeyPress", function(key_name)
+--[[ Input.Subscribe("KeyPress", function(key_name)
 	if key_name == "G" and holdingDrop then
 		HideText()
 		TriggerServerEvent("qb-inventory:server:updateDrop", bagObject, heldDrop)
@@ -71,3 +71,4 @@ Input.Subscribe("KeyPress", function(key_name)
 		heldDrop = nil
 	end
 end)
+ ]]
