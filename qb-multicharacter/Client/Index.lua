@@ -99,11 +99,11 @@ RegisterClientEvent('qb-multicharacter:client:spawnLastLocation', function(coord
             local PlayerData = exports['qb-core']:GetPlayerData()
             local insideMeta = PlayerData.metadata['inside']
             if insideMeta.house then
-                TriggerClientEvent('qb-houses:client:LastLocationHouse', insideMeta.house)
+                TriggerLocalClientEvent('qb-houses:client:LastLocationHouse', insideMeta.house)
             elseif insideMeta.apartment.apartmentType and insideMeta.apartment.apartmentId then
-                TriggerClientEvent('qb-apartments:client:LastLocationHouse', insideMeta.apartment.apartmentType, insideMeta.apartment.apartmentId)
+                TriggerLocalClientEvent('qb-apartments:client:LastLocationHouse', insideMeta.apartment.apartmentType, insideMeta.apartment.apartmentId)
             end
-            --TriggerClientEvent('QBCore:Client:OnPlayerLoaded') Client->Client
+            TriggerLocalClientEvent('QBCore:Client:OnPlayerLoaded')
         end
     end, cData.citizenid)
 end)
