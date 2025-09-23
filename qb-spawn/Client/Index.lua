@@ -49,25 +49,25 @@ local function SetDisplay(bool, cData, new, apps)
 			PreSpawnPlayer(false)
 			if insideMeta.house ~= nil then
 				local houseId = insideMeta.house
-				TriggerClientEvent('qb-houses:client:LastLocationHouse', houseId)
+				TriggerLocalClientEvent('qb-houses:client:LastLocationHouse', houseId)
 			elseif insideMeta.apartment.apartmentType ~= nil or insideMeta.apartment.apartmentId ~= nil then
 				local apartmentType = insideMeta.apartment.apartmentType
 				local apartmentId = insideMeta.apartment.apartmentId
 				TriggerClientEvent('qb-apartments:client:LastLocationHouse', apartmentType, apartmentId)
 			end
-			TriggerClientEvent('QBCore:Client:OnPlayerLoaded')
+			TriggerLocalClientEvent('QBCore:Client:OnPlayerLoaded')
 			TriggerServerEvent('qb-spawn:server:spawnPlayer')
 		elseif type == 'house' then
 			PreSpawnPlayer(false)
-			TriggerClientEvent('qb-houses:client:enterOwnedHouse', location)
-			TriggerClientEvent('QBCore:Client:OnPlayerLoaded')
+			TriggerLocalClientEvent('qb-houses:client:enterOwnedHouse', location)
+			TriggerLocalClientEvent('QBCore:Client:OnPlayerLoaded')
 			TriggerServerEvent('qb-houses:server:SetInsideMeta', 0, false)
 			TriggerServerEvent('qb-apartments:server:SetInsideMeta', 0, 0, false)
 		elseif type == 'normal' then
 			local pos = Config.Spawns[location].coords
 			local coords = Vector(pos[1], pos[2], pos[3])
 			PreSpawnPlayer(false)
-			TriggerClientEvent('QBCore:Client:OnPlayerLoaded')
+			TriggerLocalClientEvent('QBCore:Client:OnPlayerLoaded')
 			TriggerServerEvent('qb-houses:server:SetInsideMeta', 0, false)
 			TriggerServerEvent('qb-apartments:server:SetInsideMeta', 0, 0, false)
 			TriggerServerEvent('qb-spawn:server:spawnPlayer', coords)
