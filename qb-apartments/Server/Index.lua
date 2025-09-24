@@ -35,21 +35,20 @@ RegisterServerEvent('qb-apartments:server:SetInsideMeta', function(source, house
 	if not Player then return end
 	local insideMeta = Player.PlayerData.metadata['inside']
 	if bool then
-		local routeId = insideId:gsub('[^%-%d]', '')
+		--local routeId = insideId:gsub('[^%-%d]', '')
 		if not isVisiting then
 			insideMeta.apartment.apartmentType = house
 			insideMeta.apartment.apartmentId = insideId
 			insideMeta.house = nil
 			Player.Functions.SetMetaData('inside', insideMeta)
 		end
-		exports['qb-core']:SetPlayerBucket(source, tonumber(routeId))
+		--exports['qb-core']:SetPlayerBucket(source, tonumber(routeId))
 	else
 		insideMeta.apartment.apartmentType = nil
 		insideMeta.apartment.apartmentId = nil
 		insideMeta.house = nil
-
 		Player.Functions.SetMetaData('inside', insideMeta)
-		exports['qb-core']:SetPlayerBucket(source, 1)
+		--exports['qb-core']:SetPlayerBucket(source, 1)
 	end
 end)
 
@@ -65,39 +64,23 @@ RegisterServerEvent('qb-apartments:server:LogoutLocation', function(source)
 end)
 
 RegisterServerEvent('qb-apartments:server:openStash', function(source, CurrentApartment)
-	OpenInventory(source, CurrentApartment)
+	exports['qb-inventory']:OpenInventory(source, CurrentApartment)
 end)
 
-RegisterServerEvent('qb-apartments:server:CreateApartment', function(source, type, firstSpawn)
+RegisterServerEvent('qb-apartments:server:CreateApartment', function(source, type)
 	local Player = exports['qb-core']:GetPlayer(source)
 	if not Player then return end
 	local num = CreateApartmentId(type)
 	local apartmentId = tostring(type .. num)
 	local label = tostring(Apartments.Locations[type].label .. ' ' .. num)
-
-	print('Apartment ID: ', apartmentId)
-	print('Apartment Label: ', label)
-
-	-- exports['qb-core']:DatabaseAction('Insert', 'INSERT INTO apartments (name, type, label, citizenid) VALUES (?, ?, ?, ?)', {
-	-- 	apartmentId,
-	-- 	type,
-	-- 	label,
-	-- 	Player.PlayerData.citizenid,
-	-- })
-	--TriggerClientEvent(source, 'QBCore:Notify', Lang:t('success.receive_apart') .. ' (' .. label .. ')')
-	if firstSpawn then
-		-- local coords = Vector(
-		-- 	Apartments.Locations[type].coords[1],
-		-- 	Apartments.Locations[type].coords[2],
-		-- 	Apartments.Locations[type].coords[3]
-		-- )
-		-- print('Coords: ', coords)
-		-- local new_char = HCharacter(coords, Rotator(0, 0, 0), source)
-		-- local source_dimension = source:GetDimension()
-		-- new_char:SetDimension(source_dimension)
-		-- source:Possess(new_char)
-		TriggerClientEvent(source, 'qb-apartments:client:SpawnInApartment', apartmentId, type)
-	end
+	exports['qb-core']:DatabaseAction('Insert', 'INSERT INTO apartments (name, type, label, citizenid) VALUES (?, ?, ?, ?)', {
+		apartmentId,
+		type,
+		label,
+		Player.PlayerData.citizenid,
+	})
+	TriggerClientEvent(source, 'QBCore:Notify', Lang:t('success.receive_apart') .. ' (' .. label .. ')')
+	TriggerClientEvent(source, 'qb-apartments:client:SpawnInApartment', apartmentId, type)
 	--TriggerClientEvent(source, 'qb-apartments:client:SetHomeBlip', type)
 end)
 
@@ -106,7 +89,7 @@ RegisterServerEvent('qb-apartments:server:UpdateApartment', function(source, typ
 	if not Player then return end
 	exports['qb-core']:DatabaseAction('Update', 'UPDATE apartments SET type = ?, label = ? WHERE citizenid = ?', { type, label, Player.PlayerData.citizenid })
 	TriggerClientEvent(source, 'QBCore:Notify', Lang:t('success.changed_apart'))
-	TriggerClientEvent(source, 'qb-apartments:client:SetHomeBlip', type)
+	--TriggerClientEvent(source, 'qb-apartments:client:SetHomeBlip', type)
 end)
 
 RegisterServerEvent('qb-apartments:server:RingDoor', function(source, apartmentId, apartment)
@@ -126,11 +109,7 @@ end)
 RegisterServerEvent('qb-apartments:server:AddObject', function(source, apartmentId, apartment, offset)
 	local Player = exports['qb-core']:GetPlayer(source)
 	if not Player then return end
-	if
-		ApartmentObjects[apartment] ~= nil
-		and ApartmentObjects[apartment].apartments ~= nil
-		and ApartmentObjects[apartment].apartments[apartmentId] ~= nil
-	then
+	if ApartmentObjects[apartment] ~= nil and ApartmentObjects[apartment].apartments ~= nil and ApartmentObjects[apartment].apartments[apartmentId] ~= nil then
 		ApartmentObjects[apartment].apartments[apartmentId].players[source] = Player.PlayerData.citizenid
 	else
 		if ApartmentObjects[apartment] ~= nil and ApartmentObjects[apartment].apartments ~= nil then
@@ -191,10 +170,9 @@ end)
 RegisterServerEvent('qb-apartments:server:GetApartmentOffset', function(source, apartmentId)
 	local retval = 0
 	if ApartmentObjects ~= nil then
-		for k, _ in pairs(ApartmentObjects) do
+		for k in pairs(ApartmentObjects) do
 			if
-				ApartmentObjects[k].apartments[apartmentId] ~= nil
-				and tonumber(ApartmentObjects[k].apartments[apartmentId].offset) ~= 0
+				ApartmentObjects[k].apartments[apartmentId] ~= nil and tonumber(ApartmentObjects[k].apartments[apartmentId].offset) ~= 0
 			then
 				retval = tonumber(ApartmentObjects[k].apartments[apartmentId].offset)
 			end
@@ -205,11 +183,7 @@ end)
 
 RegisterServerEvent('qb-apartments:server:GetApartmentOffsetNewOffset', function(source, apartment)
 	local retval = Apartments.SpawnOffset
-	if
-		ApartmentObjects ~= nil
-		and ApartmentObjects[apartment] ~= nil
-		and ApartmentObjects[apartment].apartments ~= nil
-	then
+	if ApartmentObjects ~= nil and ApartmentObjects[apartment] ~= nil and ApartmentObjects[apartment].apartments ~= nil then
 		for k, _ in pairs(ApartmentObjects[apartment].apartments) do
 			if ApartmentObjects[apartment].apartments[k] ~= nil then
 				retval = ApartmentObjects[apartment].apartments[k].offset + Apartments.SpawnOffset
@@ -219,24 +193,25 @@ RegisterServerEvent('qb-apartments:server:GetApartmentOffsetNewOffset', function
 	TriggerClientEvent(source, 'qb-apartments:client:GetApartmentOffsetNewOffset', retval)
 end)
 
-RegisterServerEvent('qb-apartments:server:GetOwnedApartment', function(source, cid)
-	if cid then
-		local result = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM apartments WHERE citizenid = ?', { cid })
-		if result and result[1] then
-			return TriggerClientEvent(source, 'qb-apartments:client:GetOwnedApartment', result[1])
-		end
+-- RegisterServerEvent('qb-apartments:server:GetOwnedApartment', function(source, cid)
+-- 	print('------------------')
+-- 	print('qb-apartments:server:GetOwnedApartment')
+-- 	print('------------------')
 
-		return TriggerClientEvent(source, 'qb-apartments:client:GetOwnedApartment', nil)
-	else
-		local Player = exports['qb-core']:GetPlayer(source)
-		if not Player then return end
-		local result = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM apartments WHERE citizenid = ?', { Player.PlayerData.citizenid })
-		if result[1] then
-			return TriggerClientEvent(source, 'qb-apartments:client:GetOwnedApartment', result[1])
-		end
-		return TriggerClientEvent(source, 'qb-apartments:client:GetOwnedApartment', nil)
-	end
-end)
+-- 	-- New Player
+-- 	if not cid then
+-- 		TriggerClientEvent(source, 'qb-apartments:client:GetOwnedApartment')
+-- 		return
+-- 	end
+
+-- 	-- Existing Player
+-- 	local result = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM apartments WHERE citizenid = ?', { cid })
+-- 	if result and result[1] then
+-- 		TriggerClientEvent(source, 'qb-apartments:client:GetOwnedApartment', result[1])
+-- 		return
+-- 	end
+-- 	TriggerClientEvent(source, 'qb-apartments:client:GetOwnedApartment')
+-- end)
 
 RegisterServerEvent('qb-apartments:server:IsOwner', function(source, apartment)
 	local Player = exports['qb-core']:GetPlayer(source)
