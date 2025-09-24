@@ -156,7 +156,7 @@ local function AddBoxZone(name, center, length, width, zoneOptions, targetoption
 	xform.Rotation    = UE.FQuat(0, 0, math.sin(math.rad(yaw_degrees) * 0.5), math.cos(math.rad(yaw_degrees) * 0.5))
 	local actor       = HWorld:SpawnActor(UE.AActor, xform, UE.ESpawnActorCollisionHandlingMethod.AlwaysSpawn)
 	if not actor then return nil end
-	local box = actor:AddComponentByClass(UE.UBoxComponent, false, UE.FTransform(), false)
+	local box = actor:AddComponentByClass(UE.UBoxComponent, false, xform, false)
 	if not box then return nil end
 	local full = UE.FVector(length, width, height)
 	local half = UE.FVector(full.X * 0.5, full.Y * 0.5, full.Z * 0.5)
@@ -323,24 +323,24 @@ end)
 -- configureType('ALS_WorldCharacterBP_C', Config.ALS_WorldCharacterBP_C)
 -- configureType('WorldVehicleDoorComponent', Config.GlobalWorldVehicleDoorOptions)
 
-Timer.SetTimeout(function()
-	-- Test Box Zone 1 - Simple interaction
-	AddBoxZone('test_box_1', {
-		X = -249.54, -- Adjust these coordinates to where your player spawns
-		Y = 1358.93, -- or a location you can easily reach
-		Z = 91.697
-	}, 5.0, 5.0, {
-		heading = 0,
-		minZ = -2.0,
-		maxZ = 3.0,
-		debug = true -- This will show the box visually
-	}, {
-		{
-			icon = 'fas fa-hand',
-			label = 'Test Interaction',
-			action = function()
-				print('Test zone 1 clicked!')
-			end
-		}
-	})
-end, 2000)
+-- Timer.SetTimeout(function()
+-- 	-- Test Box Zone 1 - Simple interaction
+-- 	AddBoxZone('test_box_1', {
+-- 		X = -249.54, -- Adjust these coordinates to where your player spawns
+-- 		Y = 1358.93, -- or a location you can easily reach
+-- 		Z = 91.697
+-- 	}, 5.0, 5.0, {
+-- 		heading = 0,
+-- 		minZ = -2.0,
+-- 		maxZ = 3.0,
+-- 		debug = true -- This will show the box visually
+-- 	}, {
+-- 		{
+-- 			icon = 'fas fa-hand',
+-- 			label = 'Test Interaction',
+-- 			action = function()
+-- 				print('Test zone 1 clicked!')
+-- 			end
+-- 		}
+-- 	})
+-- end, 2000)
