@@ -95,7 +95,7 @@ RegisterClientEvent('qb-inventory:client:useItem', function(bool, itemData)
 end)
 
 RegisterClientEvent('qb-inventory:client:openInventory', function(items, other)
-	my_webui = WebUI('Inventory', 'qb-inventory/Client/html/index.html')
+	my_webui = WebUI('Inventory', 'qb-inventory/Client/html/index.html', true)
 	-- NUI Events
 	my_webui:RegisterEventHandler('SetInventoryData', function(data)
 		TriggerServerEvent(
@@ -110,8 +110,9 @@ RegisterClientEvent('qb-inventory:client:openInventory', function(items, other)
 	end)
 
 	my_webui:RegisterEventHandler('CloseInventory', function(name)
-		Input.SetMouseEnabled(false)
-		Input.SetInputEnabled(true)
+--[[ 		Input.SetMouseEnabled(false)
+		Input.SetInputEnabled(true) ]]
+		my_webui:Destroy()
 		if name then
 			TriggerServerEvent('qb-inventory:server:closeInventory', name)
 		elseif CurrentDrop then
