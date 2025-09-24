@@ -49,3 +49,15 @@ function QBShared.Round(value, numDecimalPlaces)
     local power = 10 ^ numDecimalPlaces
     return math.floor((value * power) + 0.5) / (power)
 end
+
+for k, v in pairs(QBShared) do
+    if type(v) == 'function' then
+        exports('qb-core', 'Shared', function(functionName, ...)
+            return QBShared[functionName](...)
+        end)
+    end
+end
+
+exports('qb-core', 'GetShared', function(Type)
+    return QBCore.Shared[Type] or QBCore.Shared
+end)
