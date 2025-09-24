@@ -1,11 +1,11 @@
 -- Handlers
 
 RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
-    Client.SetValue('isLoggedIn', true)
+    --Client.SetValue('isLoggedIn', true)
 end)
 
 RegisterClientEvent('QBCore:Client:OnPlayerUnload', function()
-    Client.SetValue('isLoggedIn', false)
+    --Client.SetValue('isLoggedIn', false)
 end)
 
 -- Events
