@@ -34,12 +34,13 @@ function QBCore.Functions.Debug(tbl)
 end
 
 function QBCore.Functions.Notify(text, texttype, length, icon)
-    local noti_type = texttype or 'info'
-    if type(text) == 'table' then
-        Notification.Send(noti_type, text.text, text.caption)
-    else
-        Notification.Send(noti_type, text)
-    end
+    print('Notify:', text, texttype, length, icon)
+    -- local noti_type = texttype or 'info'
+    -- if type(text) == 'table' then
+    --     Notification.Send(noti_type, text.text, text.caption)
+    -- else
+    --     Notification.Send(noti_type, text)
+    -- end
 end
 
 -- World Getters

@@ -98,8 +98,8 @@ function QBCore.Functions.HasPermission(source, permissionLevel)
 end
 
 function QBCore.Functions.GetPlayer(source)
-    if not source then return end
-    return QBCore.Players[source]
+	if not source then return end
+	return QBCore.Players[source]
 end
 
 function QBCore.Functions.GetPlayerName(source)
@@ -199,7 +199,7 @@ function QBCore.Functions.CanUseItem(item)
 end
 
 function QBCore.Functions.Debug(tbl)
-	Console.Log(HELIXTable.Dump(tbl))
+	print(HELIXTable.Dump(tbl))
 end
 
 function QBCore.Functions.Notify(source, message, type, length, icon)
