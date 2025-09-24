@@ -1,13 +1,13 @@
 Inventories = {}
 Drops = {}
 RegisteredShops = {}
-Package.Require('locales/en.lua')
-Package.Require('functions.lua')
-Package.Require('commands.lua')
+require('Shared/locales/en')
+require('Server/functions')
+--require('Server/commands')
 
 -- Handlers
 
-Events.Subscribe('QBCore:Server:PlayerLoaded', function(Player)
+RegisterServerEvent('QBCore:Server:PlayerLoaded', function(Player)
     exports['qb-core']:AddPlayerMethod(Player.PlayerData.source, 'AddItem', function(item, amount, slot, info)
         return AddItem(Player.PlayerData.source, item, amount, slot, info)
     end)
@@ -42,14 +42,16 @@ end)
 RegisterServerEvent('qb-inventory:server:openInventory', function(source)
     local Player = exports['qb-core']:GetPlayer(source)
     if not Player or Player.PlayerData.metadata['isdead'] or Player.PlayerData.metadata['inlaststand'] or Player.PlayerData.metadata['ishandcuffed'] then return end
-    local player_ped = source:GetControlledCharacter()
+    local player_ped = source:K2_GetPawn()
     if not player_ped then return end
-    local in_vehicle = player_ped:GetVehicle()
+    AddItem(source, 'nitrous', 1, nil, nil, 'Testing')
+    AddItem(source, 'repairkit', 1, nil, nil, 'Testing')
+--[[     local in_vehicle = player_ped:GetVehicle()
     if in_vehicle then
         local plate = in_vehicle:GetValue('plate')
         OpenInventory(source, 'glovebox-' .. plate)
         return
-    end
+    end ]]
     OpenInventory(source)
     -- exports['qb-core']:TriggerClientCallback('qb-inventory:client:vehicleCheck', source, function(netId, class)
     --     if netId then
@@ -92,9 +94,9 @@ end)
 RegisterServerEvent('qb-inventory:server:closeInventory', function(source, inventory)
     local QBPlayer = exports['qb-core']:GetPlayer(source)
     if not QBPlayer then return end
-    local player_ped = source:GetControlledCharacter()
-    player_ped:SetInputEnabled(true)
-    source:SetValue('inv_busy', false, true)
+    local player_ped = source:K2_GetPawn()
+--[[     player_ped:SetInputEnabled(true)
+    source:SetValue('inv_busy', false, true) ]]
     if not inventory then return end
     if inventory:find('shop-') then return end
     if inventory:find('otherplayer-') then
@@ -104,14 +106,14 @@ RegisterServerEvent('qb-inventory:server:closeInventory', function(source, inven
     end
     if Drops[inventory] then
         if #Drops[inventory].items == 0 then
-            Drops[inventory].entity:Destroy()
+            Drops[inventory].entity:K2_Destroy()
         end
         Drops[inventory].isOpen = false
         return
     end
     if not Inventories[inventory] then return end
     Inventories[inventory].isOpen = false
-    MySQL.prepare('INSERT INTO inventories (identifier, items) VALUES (?, ?) ON DUPLICATE KEY UPDATE items = ?', { inventory, JSON.stringify(Inventories[inventory].items), JSON.stringify(Inventories[inventory].items) })
+    exports['qb-core']:DatabaseAction('INSERT INTO inventories (identifier, items) VALUES (?, ?) ON DUPLICATE KEY UPDATE items = ?', { inventory, JSON.stringify(Inventories[inventory].items), JSON.stringify(Inventories[inventory].items) })
 end)
 
 RegisterServerEvent('qb-inventory:server:useItem', function(source, item)
