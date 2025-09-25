@@ -160,16 +160,19 @@ RegisterServerEvent('qb-multicharacter:server:setupCharacters', function(source)
     local result = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM players WHERE license = ?', { license })
     if not result then return end
 
-    for i = 1, #result, 1 do
-        local row = {}
-        for CName, CValue in pairs(result[i]) do
-            row[CName] = CValue
+    for i = 1, #result do
+        local rowData = result[i]
+        if type(rowData) == 'table' then
+            local row = {}
+            for CName, CValue in pairs(rowData) do
+                row[CName] = CValue
+            end
+            row.charinfo            = JSON.parse(row.charinfo)
+            row.money               = JSON.parse(row.money)
+            row.job                 = JSON.parse(row.job)
+            plyChars[#plyChars + 1] = row
         end
-        -- Parse JSON fields
-        row.charinfo = JSON.parse(row.charinfo)
-        row.money = JSON.parse(row.money)
-        row.job = JSON.parse(row.job)
-        plyChars[#plyChars + 1] = row
     end
+
     TriggerClientEvent(source, 'qb-multicharacter:client:ReceiveCharacters', plyChars)
 end)
