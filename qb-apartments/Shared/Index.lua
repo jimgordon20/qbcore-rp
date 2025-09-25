@@ -1,6 +1,7 @@
 Apartments = {}
-Apartments.Starting = true
-Apartments.SpawnOffset = -20000
+Apartments.Starting = false
+Apartments.SpawnOffset = 21000
+Apartments.MaxOffset = 23000
 Apartments.Locations = {
 	apartment1 = {
 		name = 'apartment1',

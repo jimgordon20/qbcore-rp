@@ -183,8 +183,8 @@ local function EnterApartment(house, apartmentId, new)
 	TriggerCallback('qb-apartments:GetApartmentOffset', function(offset)
 		if offset == nil or offset == 0 then
 			TriggerCallback('qb-apartments:GetApartmentOffsetNewOffset', function(newoffset)
-				if newoffset > 230 then
-					newoffset = 210
+				if newoffset > Apartments.MaxOffset then
+					newoffset = Apartments.SpawnOffset
 				end
 				CurrentOffset = newoffset
 				TriggerServerEvent('qb-apartments:server:AddObject', apartmentId, house, CurrentOffset)
@@ -204,8 +204,8 @@ local function EnterApartment(house, apartmentId, new)
 				TriggerServerEvent('qb-apartments:server:setCurrentApartment', CurrentApartment)
 			end, house)
 		else
-			if offset > 230 then
-				offset = 210
+			if offset > Apartments.MaxOffset then
+				offset = Apartments.SpawnOffset
 			end
 			CurrentOffset = offset
 			TriggerServerEvent('qb-apartments:server:AddObject', apartmentId, house, CurrentOffset)
