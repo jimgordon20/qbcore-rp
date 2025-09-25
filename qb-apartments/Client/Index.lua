@@ -11,6 +11,23 @@ local POIOffsets = nil
 local RangDoorbell = nil
 local InApartmentTargets = {}
 
+-- Local Callback System
+local CallbackRequests = {}
+local CallbackRequestId = 0
+
+local function TriggerCallback(name, cb, ...)
+	CallbackRequestId = CallbackRequestId + 1
+	CallbackRequests[CallbackRequestId] = cb
+	TriggerServerEvent('apartments:server:TriggerCallback', name, CallbackRequestId, ...)
+end
+
+RegisterClientEvent('apartments:client:CallbackResponse', function(requestId, ...)
+	if CallbackRequests[requestId] then
+		CallbackRequests[requestId](...)
+		CallbackRequests[requestId] = nil
+	end
+end)
+
 local function RegisterApartmentEntranceTarget(apartmentID, apartmentData)
 	local coords = Vector(apartmentData.coords[1], apartmentData.coords[2], apartmentData.coords[3])
 	local boxName = 'apartmentEntrance_' .. apartmentID
@@ -163,34 +180,65 @@ local function DeleteInApartmentTargets()
 end
 
 local function EnterApartment(house, apartmentId, new)
-	TriggerServerEvent('qb-apartments:server:GetApartmentOffset', apartmentId)
-	CurrentApartment = apartmentId
-	ClosestHouse = house
-	RangDoorbell = nil
-	if new ~= nil then
+	TriggerCallback('qb-apartments:GetApartmentOffset', function(offset)
+		if offset == nil or offset == 0 then
+			TriggerCallback('qb-apartments:GetApartmentOffsetNewOffset', function(newoffset)
+				if newoffset > 230 then
+					newoffset = 210
+				end
+				CurrentOffset = newoffset
+				TriggerServerEvent('qb-apartments:server:AddObject', apartmentId, house, CurrentOffset)
+				local coords = Vector(
+					Apartments.Locations[house].coords[1],
+					Apartments.Locations[house].coords[2],
+					Apartments.Locations[house].coords[3] - CurrentOffset
+				)
+				local data = exports['qb-interior']:CreateApartmentFurnished(coords)
+				HouseObj = data[1]
+				POIOffsets = data[2]
+				InApartment = true
+				CurrentApartment = apartmentId
+				ClosestHouse = house
+				RangDoorbell = nil
+				TriggerServerEvent('qb-apartments:server:SetInsideMeta', house, apartmentId, true, false)
+				TriggerServerEvent('qb-apartments:server:setCurrentApartment', CurrentApartment)
+			end, house)
+		else
+			if offset > 230 then
+				offset = 210
+			end
+			CurrentOffset = offset
+			TriggerServerEvent('qb-apartments:server:AddObject', apartmentId, house, CurrentOffset)
+			local coords = Vector(
+				Apartments.Locations[ClosestHouse].coords[1],
+				Apartments.Locations[ClosestHouse].coords[2],
+				Apartments.Locations[ClosestHouse].coords[3] - CurrentOffset
+			)
+			local data = exports['qb-interior']:CreateApartmentFurnished(coords)
+			HouseObj = data[1]
+			POIOffsets = data[2]
+			InApartment = true
+			CurrentApartment = apartmentId
+			TriggerServerEvent('qb-apartments:server:SetInsideMeta', house, apartmentId, true, true)
+			TriggerServerEvent('qb-apartments:server:setCurrentApartment', CurrentApartment)
+		end
+
 		if new then
 			TriggerLocalClientEvent('qb-interior:client:SetNewState', true)
 		else
 			TriggerLocalClientEvent('qb-interior:client:SetNewState', false)
 		end
-	else
-		TriggerLocalClientEvent('qb-interior:client:SetNewState', false)
-	end
+	end, apartmentId)
 end
 
 local function LeaveApartment(house)
-	--Sound(Vector(), 'package://qb-apartments/Client/houses_door_open.ogg', true)
-	--TriggerServerEvent('qb-apartments:returnBucket')
-	--Client.GetLocalPlayer():StartCameraFade(0, 1, 0.1, Color(0, 0, 0, 1), true, true)
 	exports['qb-interior']:DespawnInterior(HouseObj, function()
-		--TriggerLocalClientEvent('qb-weathersync:client:EnableSync')
 		TriggerServerEvent('qb-interior:server:teleportPlayer', Apartments.Locations[house].coords[1], Apartments.Locations[house].coords[2], Apartments.Locations[house].coords[3], 0)
 		TriggerServerEvent('qb-apartments:server:RemoveObject', CurrentApartment, house)
 		TriggerServerEvent('qb-apartments:server:SetInsideMeta', CurrentApartment, false)
 		CurrentApartment = nil
 		InApartment = false
 		CurrentOffset = 0
-		--Sound(Vector(), 'package://qb-apartments/Client/houses_door_close.ogg', true)
 		TriggerServerEvent('qb-apartments:server:setCurrentApartment', nil)
 		DeleteInApartmentTargets()
 		DeleteApartmentsEntranceTargets()
@@ -212,17 +260,56 @@ local function SetClosestApartment()
 		local distcheck = UE.FVector.Dist(pos, apartmentPos)
 		if distcheck < dist then
 			current = id
-			SetApartmentsEntranceTargets()
 		end
 	end
-	if current ~= ClosestHouse and not InApartment then
+	if current ~= ClosestHouse and isLoggedIn and not InApartment then
 		ClosestHouse = current
-		TriggerServerEvent('qb-apartments:server:IsOwner', ClosestHouse)
+		TriggerCallback('qb-apartments:IsOwner', function(result)
+			IsOwned = result
+			DeleteApartmentsEntranceTargets()
+			DeleteInApartmentTargets()
+		end, ClosestHouse)
 	end
 end
 
 local function MenuOwners()
-	TriggerServerEvent('qb-apartments:server:GetAvailableApartments', ClosestHouse)
+	TriggerCallback('qb-apartments:GetAvailableApartments', function(apartments)
+		if next(apartments) == nil then
+			exports['qb-core']:Notify(Lang:t('error.nobody_home'), 'error')
+			exports['qb-menu']:closeMenu()
+		else
+			local apartmentMenu = {
+				{
+					header = Lang:t('text.tennants'),
+					isMenuHeader = true
+				}
+			}
+
+			for k, v in pairs(apartments) do
+				apartmentMenu[#apartmentMenu + 1] = {
+					header = v,
+					txt = '',
+					params = {
+						event = 'apartments:client:RingMenu',
+						args = {
+							apartmentId = k
+						}
+					}
+
+				}
+			end
+
+			apartmentMenu[#apartmentMenu + 1] = {
+				header = Lang:t('text.close_menu'),
+				txt = '',
+				params = {
+					event = 'qb-menu:client:closeMenu'
+				}
+
+			}
+			exports['qb-menu']:openMenu(apartmentMenu)
+		end
+	end, ClosestHouse)
 end
 
 -- Events
@@ -241,16 +328,19 @@ RegisterClientEvent('QBCore:Client:OnPlayerUnload', function()
 end)
 
 RegisterClientEvent('qb-apartments:client:setupSpawnUI', function(cData)
-	if cData then -- existing character
-		TriggerLocalClientEvent('qb-spawn:client:openUI', true, nil, false, nil)
-	else       -- new character
-		if Apartments.Starting then
-			TriggerLocalClientEvent('qb-spawn:client:openUI', true, nil, true, Apartments.Locations)
+	TriggerCallback('qb-apartments:GetOwnedApartment', function(result)
+		if result then
+			TriggerLocalClientEvent('qb-spawn:client:openUI', true, cData, false, nil)
+			--TriggerLocalClientEvent('apartments:client:SetHomeBlip', result.type)
 		else
-			TriggerLocalClientEvent('qb-spawn:client:openUI', true, nil, false, nil)
-			--TriggerLocalClientEvent('qb-apartments:client:SetHomeBlip', nil)
+			if Apartments.Starting then
+				TriggerLocalClientEvent('qb-spawn:client:openUI', true, cData, true, Apartments.Locations)
+			else
+				TriggerLocalClientEvent('qb-spawn:client:openUI', true, cData, false, nil)
+				--TriggerLocalClientEvent('apartments:client:SetHomeBlip', nil)
+			end
 		end
-	end
+	end, cData.citizenid)
 end)
 
 RegisterClientEvent('qb-apartments:client:SpawnInApartment', function(apartmentId, apartment)
@@ -269,6 +359,7 @@ RegisterClientEvent('qb-apartments:client:SpawnInApartment', function(apartmentI
 			return
 		end
 	end
+	ClosestHouse = apartment
 	EnterApartment(apartment, apartmentId, true)
 	IsOwned = true
 end)
@@ -278,33 +369,13 @@ RegisterClientEvent('qb-apartments:client:LastLocationHouse', function(apartment
 	EnterApartment(apartmentType, apartmentId, false)
 end)
 
--- RegisterClientEvent('qb-apartments:client:SetHomeBlip', function(home)
--- 	SetClosestApartment()
--- 	for name, _ in pairs(Apartments.Locations) do
--- 		local coords = {
--- 			x = Apartments.Locations[name].coords[1],
--- 			y = Apartments.Locations[name].coords[2],
--- 			z = Apartments.Locations[name].coords[3],
--- 		}
--- 		TriggerLocalClientEvent('Map:RemoveBlip', Apartments.Locations[name].blip)
--- 		Apartments.Locations[name].blip = TriggerLocalClientEvent('Map:AddBlip', {
--- 			id = name,
--- 			name = Apartments.Locations[name].label,
--- 			imgUrl = './media/map-icons/apt_owned.svg',
--- 			coords = coords,
--- 		})
--- 	end
--- end)
-
 RegisterClientEvent('qb-apartments:client:RingMenu', function(data)
 	RangDoorbell = ClosestHouse
-	--TriggerServerEvent("InteractSound_SV:PlayOnSource", "doorbell", 0.1)
 	TriggerServerEvent('qb-apartments:server:RingDoor', data.apartmentId, ClosestHouse)
 end)
 
 RegisterClientEvent('qb-apartments:client:RingDoor', function(player)
 	CurrentDoorBell = player
-	--TriggerServerEvent("InteractSound_SV:PlayOnSource", "doorbell", 0.1)
 	exports['qb-core']:Notify(Lang:t('info.at_the_door'))
 end)
 
@@ -313,15 +384,27 @@ RegisterClientEvent('qb-apartments:client:DoorbellMenu', function()
 end)
 
 RegisterClientEvent('qb-apartments:client:EnterApartment', function()
-	if IsOwned then
-		TriggerServerEvent('qb-apartments:server:EnterOwnedApartment', ClosestHouse)
-	else
-		exports['qb-core']:Notify(Lang:t('error.not_owner'), 'error')
-	end
+	TriggerCallback('qb-apartments:GetOwnedApartment', function(result)
+		if result ~= nil then
+			EnterApartment(ClosestHouse, result.name)
+		end
+	end)
 end)
 
 RegisterClientEvent('qb-apartments:client:UpdateApartment', function()
-	TriggerServerEvent('qb-apartments:server:UpdateApartment', ClosestHouse)
+	local apartmentType = ClosestHouse
+	local apartmentLabel = Apartments.Locations[ClosestHouse].label
+	TriggerCallback('qb-apartments:GetOwnedApartment', function(result)
+		if result == nil then
+			TriggerServerEvent('qb-apartments:server:CreateApartment', apartmentType, apartmentLabel, false)
+		else
+			TriggerServerEvent('qb-apartments:server:UpdateApartment', apartmentType, apartmentLabel)
+		end
+	end)
+
+	IsOwned = true
+	DeleteApartmentsEntranceTargets()
+	DeleteInApartmentTargets()
 end)
 
 RegisterClientEvent('qb-apartments:client:OpenDoor', function()
@@ -335,71 +418,6 @@ end)
 
 RegisterClientEvent('qb-apartments:client:LeaveApartment', function()
 	LeaveApartment(ClosestHouse)
-end)
-
-RegisterClientEvent('qb-apartments:client:GetApartmentOffset', function(offset)
-	if offset == nil or offset == 0 then offset = 0 end
-	CurrentOffset = offset
-
-	TriggerServerEvent('qb-apartments:server:AddObject', CurrentApartment, ClosestHouse, CurrentOffset)
-
-	local coords = Vector(
-		Apartments.Locations[ClosestHouse].coords[1],
-		Apartments.Locations[ClosestHouse].coords[2],
-		Apartments.Locations[ClosestHouse].coords[3] - CurrentOffset
-	)
-
-	local data = exports['qb-interior']:CreateApartmentFurnished(coords)
-	HouseObj = data[1]
-	POIOffsets = data[2]
-	InApartment = true
-
-	TriggerServerEvent('qb-apartments:server:SetInsideMeta', ClosestHouse, CurrentApartment, true, true)
-	TriggerServerEvent('qb-apartments:server:setCurrentApartment', CurrentApartment)
-	TriggerLocalClientEvent('qb-interior:client:SetNewState', false)
-end)
-
-RegisterClientEvent('qb-apartments:client:IsOwner', function(isOwner)
-	IsOwned = isOwner
-	DeleteApartmentsEntranceTargets()
-	DeleteInApartmentTargets()
-end)
-
-RegisterClientEvent('qb-apartments:client:GetAvailableApartments', function(apartments)
-	if next(apartments) == nil then
-		exports['qb-core']:Notify(Lang:t('error.nobody_home'), 'error')
-	else
-		local apartmentMenu = {
-			{
-				header = Lang:t('text.tennants'),
-				isMenuHeader = true
-			}
-		}
-
-		for k, v in pairs(apartments) do
-			apartmentMenu[#apartmentMenu + 1] = {
-				header = v,
-				txt = '',
-				params = {
-					event = 'qb-apartments:client:RingMenu',
-					args = {
-						apartmentId = k
-					}
-				}
-
-			}
-		end
-
-		apartmentMenu[#apartmentMenu + 1] = {
-			header = Lang:t('text.close_menu'),
-			txt = '',
-			params = {
-				event = 'qb-menu:client:closeMenu'
-			}
-
-		}
-		exports['qb-menu']:openMenu(apartmentMenu)
-	end
 end)
 
 RegisterClientEvent('qb-apartments:client:OpenStash', function()

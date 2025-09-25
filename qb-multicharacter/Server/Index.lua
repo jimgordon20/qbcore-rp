@@ -107,7 +107,7 @@ RegisterServerEvent('qb-multicharacter:server:createCharacter', function(source,
                     --QBCore.Commands.Refresh(source)
                     --loadHouseData(source)
                     TriggerClientEvent(source, 'qb-multicharacter:client:closeNUI')
-                    TriggerClientEvent(source, 'qb-apartments:client:setupSpawnUI')
+                    TriggerClientEvent(source, 'qb-apartments:client:setupSpawnUI', newData)
                     --GiveStarterItems(source)
                     Timer.ClearInterval(CheckInterval)
                 else
