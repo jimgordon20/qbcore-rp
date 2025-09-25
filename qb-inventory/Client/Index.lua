@@ -109,9 +109,10 @@ RegisterClientEvent('qb-inventory:client:openInventory', function(items, other)
 		)
 	end)
 
-	my_webui:RegisterEventHandler('CloseInventory', function(name)
+	my_webui:RegisterEventHandler('CloseInventory', function(data)
 --[[ 		Input.SetMouseEnabled(false)
 		Input.SetInputEnabled(true) ]]
+		local name = data.name
 		my_webui:Destroy()
 		if name then
 			TriggerServerEvent('qb-inventory:server:closeInventory', name)
@@ -235,7 +236,6 @@ Timer.CreateThread(function()
 		local key = UE.FKey()
 		key.KeyName = Config.Keybinds.Open
 		if Player:WasInputKeyJustPressed(key) then 
-			print('Opening the inventory:')
 			TriggerServerEvent('qb-inventory:server:openInventory') 
 		end
 		Timer.Wait(1)
