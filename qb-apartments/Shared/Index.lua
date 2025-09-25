@@ -1,28 +1,31 @@
 Apartments = {}
-Apartments.Starting = true
-Apartments.SpawnOffset = -20000
+Apartments.Starting = false
+Apartments.SpawnOffset = 21000
+Apartments.MaxOffset = 23000
 Apartments.Locations = {
 	apartment1 = {
 		name = 'apartment1',
-		label = 'Southside Apartments',
-		coords = { -249.54, 1358.93, 91.697 },
+		label = 'Mira Hotel',
+		coords = { 116485.589556, 44637.712511, 971.299048 },
 		polyzoneBoxData = {
 			heading = 180,
 			length = 100,
 			width = 100,
-			distance = 500,
+			distance = 1000,
+			debug = true,
 			created = false,
 		},
 	},
 	apartment2 = {
 		name = 'apartment2',
-		label = 'West End Apartments',
-		coords = { -249.54, -2463.590, 91.697 },
+		label = 'Las Palmas Motel',
+		coords = { 117483.544070, 55298.680342, 528.506641 },
 		polyzoneBoxData = {
 			heading = 90,
 			length = 100,
 			width = 100,
-			distance = 500,
+			distance = 1000,
+			debug = true,
 			created = false,
 		},
 	},

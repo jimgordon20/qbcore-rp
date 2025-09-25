@@ -2,34 +2,34 @@ Config = {
     Spawns = {
 
         police = {
-            coords = { 19838.9, 11656.1, 178.8 },
+            coords = { 21285.498475, -22822.663792, 496.837506 },
             location = 'police',
-            label = 'Police Department',
+            label = 'Sheriffs Office',
         },
 
         hospital = {
-            coords = { -33787.4, 134419.7, 195.8 },
+            coords = { 42724.710378, 38470.335952, 547.711786 },
             location = 'hospital',
             label = 'Hospital',
         },
 
         firedept = {
-            coords = { 18000.9, -80894.0, 176.8 },
+            coords = { 47466.083097, 79845.345592, 538.201812 },
             location = 'firedept',
             label = 'Fire Department',
         },
 
-        -- chinatown = {
-        --     coords = { -15056.6, 121118.8, 185.4 },
-        --     location = 'chinatown',
-        --     label = 'Chinatown',
-        -- },
+        bank = {
+            coords = { 28348.597337, 30850.565477, 551.375390 },
+            location = 'bank',
+            label = 'Bank',
+        },
 
-        -- littleitaly = {
-        --     coords = { 13687.1, -16999.4, 205.0 },
-        --     location = 'littleitaly',
-        --     label = 'Little Italy',
-        -- },
+        cardealer = {
+            coords = { 4886.664003, 95375.505303, 548.341051 },
+            location = 'cardealer',
+            label = 'Car Dealer',
+        },
 
         -- Apartments w/ interiors
         -- Vector(-32293.6, -89116.4, 207.9),
