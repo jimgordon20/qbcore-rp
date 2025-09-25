@@ -26,7 +26,7 @@ RegisterServerEvent('QBCore:UpdatePlayer', function(source)
     if newThirst <= 0 then newThirst = 0 end
     Player.Functions.SetMetaData('thirst', newThirst)
     Player.Functions.SetMetaData('hunger', newHunger)
-    TriggerClientEvent('hud:client:UpdateNeeds', source, newHunger, newThirst)
+    TriggerClientEvent(source, 'hud:client:UpdateNeeds', newHunger, newThirst)
     Player.Functions.Save()
 end)
 

@@ -1,8 +1,6 @@
--- Timer.SetInterval(function()
--- 	if Client.GetValue('isLoggedIn', false) then
--- 		TriggerServerEvent('QBCore:UpdatePlayer')
--- 	end
--- end, (1000 * 60) * QBConfig.UpdateInterval)
+Timer.SetInterval(function()
+	TriggerServerEvent('QBCore:UpdatePlayer')
+end, (1000 * 60) * QBConfig.UpdateInterval)
 
 -- Timer.SetInterval(function()
 -- 	if Client.GetValue('isLoggedIn', false) then
