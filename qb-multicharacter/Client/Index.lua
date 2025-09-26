@@ -1,5 +1,22 @@
 local Lang = require('Shared/locales/en')
 
+-- Local Callback System
+local CallbackRequests = {}
+local CallbackRequestId = 0
+
+local function TriggerCallback(name, cb, ...)
+    CallbackRequestId = CallbackRequestId + 1
+    CallbackRequests[CallbackRequestId] = cb
+    TriggerServerEvent('multicharacter:server:TriggerCallback', name, CallbackRequestId, ...)
+end
+
+RegisterClientEvent('multicharacter:client:CallbackResponse', function(requestId, ...)
+    if CallbackRequests[requestId] then
+        CallbackRequests[requestId](...)
+        CallbackRequests[requestId] = nil
+    end
+end)
+
 -- Functions
 
 local function setupCharMenuUI(numOfChars)
@@ -72,7 +89,7 @@ RegisterClientEvent('qb-multicharacter:client:closeNUIdefault', function()
 end)
 
 RegisterClientEvent('qb-multicharacter:client:spawnLastLocation', function(coords, cData)
-    exports['qb-core']:TriggerCallback('qb-apartments:GetOwnedApartment', function(result)
+    TriggerCallback('qb-apartments:GetOwnedApartment', function(result)
         if result then
             --TriggerClientEvent('qb-apartments:client:SetHomeBlip', result.type)
             local PlayerData = exports['qb-core']:GetPlayerData()

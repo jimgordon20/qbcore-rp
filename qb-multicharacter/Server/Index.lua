@@ -1,6 +1,20 @@
 local Lang = require('Shared/locales/en')
 local hasDonePreloading = {}
 
+-- Local Callback System
+local RegisteredCallbacks = {}
+
+local function RegisterCallback(name, cb)
+    RegisteredCallbacks[name] = cb
+end
+
+RegisterServerEvent('multicharacter:server:TriggerCallback', function(source, cbName, requestId, ...)
+    if RegisteredCallbacks[cbName] then
+        local result = RegisteredCallbacks[cbName](source, ...)
+        TriggerClientEvent(source, 'multicharacter:client:CallbackResponse', requestId, result)
+    end
+end)
+
 -- Handling Player Load
 
 RegisterServerEvent('PlayerJoined', function(source)
@@ -179,4 +193,24 @@ RegisterServerEvent('qb-multicharacter:server:setupCharacters', function(source)
     end
 
     TriggerClientEvent(source, 'qb-multicharacter:client:ReceiveCharacters', plyChars)
+end)
+
+-- Callback
+
+RegisterCallback('qb-multicharacter:GetOwnedApartment', function(source, cid)
+    if cid then
+        local result = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM apartments WHERE citizenid = ?', { cid })
+        if result[1] ~= nil then
+            return result[1]
+        end
+        return nil
+    else
+        local Player = exports['qb-core']:GetPlayer(source)
+        if not Player then return nil end
+        local result = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM apartments WHERE citizenid = ?', { Player.PlayerData.citizenid })
+        if result[1] ~= nil then
+            return result[1]
+        end
+        return nil
+    end
 end)
