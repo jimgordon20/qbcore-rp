@@ -1,20 +1,6 @@
 local Lang = require('Shared/locales/en')
 local hasDonePreloading = {}
 
--- Local Callback System
-local RegisteredCallbacks = {}
-
-local function RegisterCallback(name, cb)
-    RegisteredCallbacks[name] = cb
-end
-
-RegisterServerEvent('multicharacter:server:TriggerCallback', function(source, cbName, requestId, ...)
-    if RegisteredCallbacks[cbName] then
-        local result = RegisteredCallbacks[cbName](source, ...)
-        TriggerClientEvent(source, 'multicharacter:client:CallbackResponse', requestId, result)
-    end
-end)
-
 -- Handling Player Load
 
 RegisterServerEvent('PlayerJoined', function(source)
@@ -48,6 +34,17 @@ local function GiveStarterItems(source)
         end
         AddItem(source, v.item, v.amount, false, info)
     end
+end
+
+local function GetOwnedApartment(cid)
+    if cid then
+        local result = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM apartments WHERE citizenid = ?', { cid })
+        if result[1] ~= nil then
+            return result[1]
+        end
+        return nil
+    end
+    return nil
 end
 
 -- Commands
@@ -91,11 +88,21 @@ RegisterServerEvent('qb-multicharacter:server:loadUserData', function(source, cD
                 --QBCore.Commands.Refresh(source)
                 --loadHouseData(source)
                 if Config.SkipSelection then
-                    local coords = JSON.parse(cData.position)
-                    local pawn = source:K2_GetPawn()
-                    if pawn then pawn:K2_SetActorLocation(Vector(coords.x, coords.y, coords.z), false, nil, true) end
-                    TriggerClientEvent(source, 'QBCore:Client:OnPlayerLoaded')
-                    TriggerClientEvent(source, 'qb-multicharacter:client:spawnLastLocation', coords, cData)
+                    local result = GetOwnedApartment(cData.citizenid)
+                    if result then
+                        local Player = exports['qb-core']:GetPlayer(source)
+                        local insideMeta = Player.PlayerData.metadata['inside']
+                        if insideMeta.house then
+                            TriggerClientEvent(source, 'qb-houses:client:LastLocationHouse', insideMeta.house)
+                        elseif insideMeta.apartment.apartmentType and insideMeta.apartment.apartmentId then
+                            TriggerClientEvent(source, 'qb-apartments:client:LastLocationHouse', insideMeta.apartment.apartmentType, insideMeta.apartment.apartmentId)
+                        end
+                    else
+                        local coords = JSON.parse(cData.position)
+                        local pawn = source:K2_GetPawn()
+                        if pawn then pawn:K2_SetActorLocation(Vector(coords.x, coords.y, coords.z), false, nil, true) end
+                        TriggerClientEvent(source, 'QBCore:Client:OnPlayerLoaded')
+                    end
                 else
                     local Apartments = exports['qb-apartments']:Apartments()
                     if Apartments.Starting then
@@ -154,7 +161,6 @@ end)
 RegisterServerEvent('qb-multicharacter:server:GetNumberOfCharacters', function(source)
     local playerState = source:GetLyraPlayerState()
     local license = playerState:GetHelixUserId()
-
     local numOfChars = 0
     if next(Config.PlayersNumberOfCharacters) then
         for _, v in pairs(Config.PlayersNumberOfCharacters) do
@@ -177,7 +183,6 @@ RegisterServerEvent('qb-multicharacter:server:setupCharacters', function(source)
     local plyChars = {}
     local result = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM players WHERE license = ?', { license })
     if not result then return end
-
     for i = 1, #result do
         local rowData = result[i]
         if type(rowData) == 'table' then
@@ -191,26 +196,5 @@ RegisterServerEvent('qb-multicharacter:server:setupCharacters', function(source)
             plyChars[#plyChars + 1] = row
         end
     end
-
     TriggerClientEvent(source, 'qb-multicharacter:client:ReceiveCharacters', plyChars)
-end)
-
--- Callback
-
-RegisterCallback('qb-multicharacter:GetOwnedApartment', function(source, cid)
-    if cid then
-        local result = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM apartments WHERE citizenid = ?', { cid })
-        if result[1] ~= nil then
-            return result[1]
-        end
-        return nil
-    else
-        local Player = exports['qb-core']:GetPlayer(source)
-        if not Player then return nil end
-        local result = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM apartments WHERE citizenid = ?', { Player.PlayerData.citizenid })
-        if result[1] ~= nil then
-            return result[1]
-        end
-        return nil
-    end
 end)

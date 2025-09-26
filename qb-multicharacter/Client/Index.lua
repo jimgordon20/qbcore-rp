@@ -1,22 +1,5 @@
 local Lang = require('Shared/locales/en')
 
--- Local Callback System
-local CallbackRequests = {}
-local CallbackRequestId = 0
-
-local function TriggerCallback(name, cb, ...)
-    CallbackRequestId = CallbackRequestId + 1
-    CallbackRequests[CallbackRequestId] = cb
-    TriggerServerEvent('multicharacter:server:TriggerCallback', name, CallbackRequestId, ...)
-end
-
-RegisterClientEvent('multicharacter:client:CallbackResponse', function(requestId, ...)
-    if CallbackRequests[requestId] then
-        CallbackRequests[requestId](...)
-        CallbackRequests[requestId] = nil
-    end
-end)
-
 -- Functions
 
 local function setupCharMenuUI(numOfChars)
@@ -86,20 +69,4 @@ RegisterClientEvent('qb-multicharacter:client:closeNUIdefault', function()
     TriggerServerEvent('qb-houses:server:SetInsideMeta', 0, false)
     TriggerServerEvent('qb-apartments:server:SetInsideMeta', 0, 0, false)
     --Events.Call('qb-clothes:client:CreateFirstCharacter')
-end)
-
-RegisterClientEvent('qb-multicharacter:client:spawnLastLocation', function(coords, cData)
-    TriggerCallback('qb-apartments:GetOwnedApartment', function(result)
-        if result then
-            --TriggerClientEvent('qb-apartments:client:SetHomeBlip', result.type)
-            local PlayerData = exports['qb-core']:GetPlayerData()
-            local insideMeta = PlayerData.metadata['inside']
-            if insideMeta.house then
-                TriggerLocalClientEvent('qb-houses:client:LastLocationHouse', insideMeta.house)
-            elseif insideMeta.apartment.apartmentType and insideMeta.apartment.apartmentId then
-                TriggerLocalClientEvent('qb-apartments:client:LastLocationHouse', insideMeta.apartment.apartmentType, insideMeta.apartment.apartmentId)
-            end
-            TriggerLocalClientEvent('QBCore:Client:OnPlayerLoaded')
-        end
-    end, cData.citizenid)
 end)
