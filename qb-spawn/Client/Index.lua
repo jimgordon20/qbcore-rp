@@ -15,10 +15,6 @@ local function SetDisplay(bool, cData, new, apps)
 		my_webui:Destroy()
 		return
 	end
-	-- if not Input.IsMouseEnabled() then
-	-- 	Input.SetMouseEnabled(true)
-	-- end
-	-- my_webui:BringToFront()
 
 	my_webui = WebUI('Spawn', 'qb-spawn/Client/html/index.html', true)
 	-- NUI Events

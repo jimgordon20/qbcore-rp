@@ -1,4 +1,5 @@
 local player_data = {}
+local isLoggedIn = false
 local player_ped
 local target_active, target_entity, raycast_timer, my_webui = false, nil, nil, nil
 local nui_data, send_data, Entities, Types, Zones = {}, {}, {}, {}, {}
@@ -6,11 +7,13 @@ local nui_data, send_data, Entities, Types, Zones = {}, {}, {}, {}, {}
 -- Handlers
 
 RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
+	isLoggedIn = true
 	player_data = exports['qb-core']:GetPlayerData()
 end)
 
 RegisterClientEvent('QBCore:Client:OnPlayerUnload', function()
 	player_data = {}
+	isLoggedIn = false
 end)
 
 RegisterClientEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
@@ -332,29 +335,28 @@ end
 
 Timer.CreateThread(function()
 	while true do
-		local Player = HPlayer
-		if not Player then return end
-		--if Player:GetInputMode() ~= 1 then
-		do
-			local key = UE.FKey()
-			key.KeyName = Config.OpenKey
-			if Player:WasInputKeyJustPressed(key) then enableTarget() end
-			if Player:WasInputKeyJustReleased(key) then disableTarget() end
-		end
+		if not HPlayer then return end
+		if HPlayer:GetInputMode() ~= 1 then
+			do
+				local key = UE.FKey()
+				key.KeyName = Config.OpenKey
+				if HPlayer:WasInputKeyJustPressed(key) then enableTarget() end
+				if HPlayer:WasInputKeyJustReleased(key) then disableTarget() end
+			end
 
-		do
-			local menuControl = UE.FKey()
-			menuControl.KeyName = Config.MenuControlKey
-			if target_active and target_entity and nui_data and nui_data[1] then
-				if Player:WasInputKeyJustPressed(menuControl) then
-					print('Menu control pressed')
-					my_webui:SetConsumeInput(true)
+			do
+				local menuControl = UE.FKey()
+				menuControl.KeyName = Config.MenuControlKey
+				if target_active and target_entity and nui_data and nui_data[1] then
+					if HPlayer:WasInputKeyJustPressed(menuControl) then
+						print('Menu control pressed')
+						my_webui:SetConsumeInput(true)
+					end
 				end
 			end
-		end
 
-		Timer.Wait(1)
-		--end
+			Timer.Wait(1)
+		end
 	end
 end)
 
