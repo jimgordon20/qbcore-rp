@@ -80,7 +80,6 @@ end
 local function setupHandlers()
 	my_webui:RegisterEventHandler('selectTarget', function(option)
 		option = tonumber(option) or option
-		target_active = false
 		if not next(send_data) then return end
 		local data = send_data[option]
 		if not data then return end
@@ -102,7 +101,7 @@ local function setupHandlers()
 				TriggerLocalClientEvent(data.event, data)
 			end
 		end
-		my_webui:CallFunction('closeTarget')
+		disableTarget()
 	end)
 
 	my_webui:RegisterEventHandler('leftTarget', function()
@@ -349,8 +348,10 @@ Timer.CreateThread(function()
 				end
 			end
 			if HPlayer:WasInputKeyJustReleased(targetKey) then
-				if target_active then
-					disableTarget()
+				if HPlayer:GetInputMode() ~= 1 then
+					if target_active then
+						disableTarget()
+					end
 				end
 			end
 		end
@@ -358,8 +359,10 @@ Timer.CreateThread(function()
 		do
 			if target_active and target_entity and nui_data and nui_data[1] then
 				if HPlayer:WasInputKeyJustPressed(menuControl) then
-					print('Menu control pressed')
-					my_webui:SetConsumeInput(true)
+					if HPlayer:GetInputMode() ~= 1 then
+						print('Menu control pressed')
+						my_webui:SetConsumeInput(true)
+					end
 				end
 			end
 		end
