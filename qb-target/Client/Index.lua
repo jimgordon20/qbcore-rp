@@ -336,27 +336,32 @@ end
 Timer.CreateThread(function()
 	while true do
 		if not HPlayer then return end
-		if HPlayer:GetInputMode() ~= 1 then
-			do
-				local key = UE.FKey()
-				key.KeyName = Config.OpenKey
-				if HPlayer:WasInputKeyJustPressed(key) then enableTarget() end
-				if HPlayer:WasInputKeyJustReleased(key) then disableTarget() end
-			end
-
-			do
-				local menuControl = UE.FKey()
-				menuControl.KeyName = Config.MenuControlKey
-				if target_active and target_entity and nui_data and nui_data[1] then
-					if HPlayer:WasInputKeyJustPressed(menuControl) then
-						print('Menu control pressed')
-						my_webui:SetConsumeInput(true)
-					end
+		do
+			local key = UE.FKey()
+			key.KeyName = Config.OpenKey
+			if HPlayer:WasInputKeyJustPressed(key) then
+				if HPlayer:GetInputMode() ~= 1 then
+					enableTarget()
 				end
 			end
-
-			Timer.Wait(1)
+			if HPlayer:WasInputKeyJustReleased(key) then
+				if target_active then
+					disableTarget()
+				end
+			end
 		end
+
+		do
+			local menuControl = UE.FKey()
+			menuControl.KeyName = Config.MenuControlKey
+			if target_active and target_entity and nui_data and nui_data[1] then
+				if HPlayer:WasInputKeyJustPressed(menuControl) then
+					print('Menu control pressed')
+					my_webui:SetConsumeInput(true)
+				end
+			end
+		end
+		Timer.Wait(1)
 	end
 end)
 
