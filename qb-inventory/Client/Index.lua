@@ -229,14 +229,16 @@ end)
     end
 end) ]]
 
+local invKey = UE.FKey()
+invKey.KeyName = Config.Keybinds.Open
+
 Timer.CreateThread(function()
 	while true do
-		local Player = HPlayer
-		if not Player then return end
-		local key = UE.FKey()
-		key.KeyName = Config.Keybinds.Open
-		if Player:WasInputKeyJustPressed(key) then
-			TriggerServerEvent('qb-inventory:server:openInventory')
+		if not HPlayer then return end
+		if HPlayer:WasInputKeyJustPressed(invKey) then
+			if HPlayer:GetInputMode() ~= 1 then
+				TriggerServerEvent('qb-inventory:server:openInventory')
+			end
 		end
 		Timer.Wait(1)
 	end
