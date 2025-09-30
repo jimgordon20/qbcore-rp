@@ -110,7 +110,7 @@ RegisterClientEvent('qb-inventory:client:openInventory', function(items, other)
 	end)
 
 	my_webui:RegisterEventHandler('CloseInventory', function(data)
---[[ 		Input.SetMouseEnabled(false)
+		--[[ 		Input.SetMouseEnabled(false)
 		Input.SetInputEnabled(true) ]]
 		local name = data.name
 		my_webui:Destroy()
@@ -206,7 +206,7 @@ RegisterClientEvent('qb-inventory:client:openInventory', function(items, other)
 		end, data.AttachmentData, WeaponData)
 	end)
 
-	my_webui.Browser.OnLoadCompleted:Add(my_webui.Host, function()
+	my_webui.Browser.OnLoadCompleted:Add(my_webui.Browser, function()
 		my_webui:CallFunction(
 			'openInventory',
 			{ inventory = items, slots = Config.MaxSlots, maxweight = Config.MaxWeight, other = other }
@@ -235,15 +235,15 @@ Timer.CreateThread(function()
 		if not Player then return end
 		local key = UE.FKey()
 		key.KeyName = Config.Keybinds.Open
-		if Player:WasInputKeyJustPressed(key) then 
-			TriggerServerEvent('qb-inventory:server:openInventory') 
+		if Player:WasInputKeyJustPressed(key) then
+			TriggerServerEvent('qb-inventory:server:openInventory')
 		end
 		Timer.Wait(1)
 	end
 end)
 
 -- Commands
---[[ 
+--[[
 Input.Register('Inventory', Config.Keybinds.Open)
 Input.Register('Hotbar', Config.Keybinds.Hotbar)
 

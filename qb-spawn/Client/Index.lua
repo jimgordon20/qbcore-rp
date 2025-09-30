@@ -85,7 +85,7 @@ local function SetDisplay(bool, cData, new, apps)
 		end
 	end)
 
-	my_webui.Browser.OnLoadCompleted:Add(my_webui.Host, function()
+	my_webui.Browser.OnLoadCompleted:Add(my_webui.Browser, function()
 		my_webui:CallFunction('showUi', bool, translations)
 		if not new then
 			--exports['qb-core']:TriggerCallback('qb-houses:server:getOwnedHouses', function(houses)

@@ -39,7 +39,7 @@ local function setupCharMenuUI(numOfChars)
         TriggerServerEvent('qb-multicharacter:server:deleteCharacter', data.citizenid)
     end)
 
-    my_webui.Browser.OnLoadCompleted:Add(my_webui.Host, function()
+    my_webui.Browser.OnLoadCompleted:Add(my_webui.Browser, function()
         my_webui:CallFunction('openUI', Config.customNationality, true, numOfChars, Config.EnableDeleteButton, translations)
     end)
 end
