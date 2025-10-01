@@ -404,19 +404,19 @@ const InventoryContainer = Vue.createApp({
                     hEvent("DropItem", {
                         ...newItem,
                         fromSlot: this.currentlyDraggingSlot,
-                    });
-
-                    if (response.data) {
-                        this.otherInventory[1] = newItem;
-                        const draggingItemKey = Object.keys(this.playerInventory).find((key) => this.playerInventory[key] === draggingItem);
-                        if (draggingItemKey) {
-                            delete this.playerInventory[draggingItemKey];
+                    }, (newItemId) => {
+                        if (newItemId) {
+                            this.otherInventory[1] = newItem;
+                            const draggingItemKey = Object.keys(this.playerInventory).find((key) => this.playerInventory[key] === draggingItem);
+                            if (draggingItemKey) {
+                                delete this.playerInventory[draggingItemKey];
+                            }
+                            this.otherInventoryName = newItemId;
+                            this.otherInventoryLabel = newItemId;
+                            this.isOtherInventoryEmpty = false;
+                            this.clearDragData();
                         }
-                        this.otherInventoryName = response.data;
-                        this.otherInventoryLabel = response.data;
-                        this.isOtherInventoryEmpty = false;
-                        this.clearDragData();
-                    }
+                    });
                 } catch (error) {
                     this.inventoryError(this.currentlyDraggingSlot);
                 }
@@ -789,9 +789,7 @@ const InventoryContainer = Vue.createApp({
             if (slotElement) {
                 slotElement.style.backgroundColor = "red";
             }
-            hEvent("PlayDropFail", {}).catch((error) => {
-                console.error("Error playing drop fail:", error);
-            });
+            hEvent("PlayDropFail", {})
             setTimeout(() => {
                 if (slotElement) {
                     slotElement.style.backgroundColor = "";
