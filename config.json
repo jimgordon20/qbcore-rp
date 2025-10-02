@@ -6,6 +6,7 @@
     "qb-spawn",
     "qb-target",
     "qb-inventory",
-    "qb-apartments"
+    "qb-apartments",
+    "qb-hud"
   ]
 }

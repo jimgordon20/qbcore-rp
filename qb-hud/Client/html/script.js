@@ -209,6 +209,17 @@ const app = createApp({
             ShowWeapon = ShowWeapon;
             IsTalking = IsTalking;
             UpdateVoiceVolume = UpdateVoiceVolume;
+
+            window.UpdateHUD = updateHudData;
+            window.UpdateMoney = UpdateMoney;
+            window.UpdateVehicleStats = UpdateVehicleStats;
+            window.UpdateWeaponAmmo = UpdateWeaponAmmo;
+            window.ShowCashAmount = ShowCashAmount;
+            window.ShowBankAmount = ShowBankAmount;
+            window.ShowSpeedometer = ShowSpeedometer;
+            window.ShowWeapon = ShowWeapon;
+            window.IsTalking = IsTalking;
+            window.UpdateVoiceVolume = UpdateVoiceVolume;
         }
 
         onMounted(() => {
