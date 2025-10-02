@@ -1,5 +1,5 @@
 Apartments = {}
-Apartments.Starting = false
+Apartments.Starting = true
 Apartments.SpawnOffset = 21000
 Apartments.MaxOffset = 23000
 Apartments.Locations = {
