@@ -121,7 +121,14 @@ end)
 end) ]]
 
 RegisterClientEvent('qb-inventory:client:openInventory', function(items, other)
-	my_webui = WebUI('Inventory', 'qb-inventory/Client/html/index.html', true)
+	if not my_webui then 
+		my_webui = WebUI('Inventory', 'qb-inventory/Client/html/index.html', true) 
+	else
+		inv_open = true
+		my_webui:SetConsumeInput(true) 
+		my_webui:CallFunction('openInventory', { inventory = items, slots = Config.MaxSlots, maxweight = Config.MaxWeight, other = other })
+		return
+	end
 	-- NUI Events
 	my_webui:RegisterEventHandler('SetInventoryData', function(data)
 		TriggerServerEvent(
@@ -138,8 +145,8 @@ RegisterClientEvent('qb-inventory:client:openInventory', function(items, other)
 	my_webui:RegisterEventHandler('CloseInventory', function(data)
 		local name = data.name
 		inv_open = false
-		my_webui:Destroy()
-		my_webui = nil
+		my_webui:SetConsumeInput(false)
+		--my_webui = nil
 		if name then
 			TriggerServerEvent('qb-inventory:server:closeInventory', name)
 		elseif CurrentDrop then
@@ -260,7 +267,7 @@ Timer.CreateThread(function()
 		if HPlayer:WasInputKeyJustPressed(invKey) then
 			if HPlayer:GetInputMode() ~= 1 then
 				if inv_open then
-					if my_webui == nil then return end
+					--if my_webui == nil then return end
 					my_webui:CallFunction('closeInventory')
 				else
 					TriggerServerEvent('qb-inventory:server:openInventory')
