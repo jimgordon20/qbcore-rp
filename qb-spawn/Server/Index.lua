@@ -5,7 +5,7 @@ RegisterServerEvent('qb-spawn:server:spawnPlayer', function(source, coords)
         local Player = exports['qb-core']:GetPlayer(source)
         if not Player then return end
         local position = Player.PlayerData.position
-        coords = Vector(position.X, position.Y, position.Z)
+        coords = Vector(position.x, position.y, position.z)
     end
     local ped = source:K2_GetPawn()
     if not ped then return end
