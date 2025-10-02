@@ -515,8 +515,8 @@ const InventoryContainer = Vue.createApp({
                     item: sourceItem,
                     amount: transferAmount || sourceItem.amount,
                     shop: this.otherInventoryName,
+                    slot: targetSlot,
                 }, (canPurchase) => {
-                    console.log(canPurchase)
                     if (canPurchase) {
                         const sourceInventory = this.getInventoryByType("other");
                         const targetInventory = this.getInventoryByType("player");
@@ -526,7 +526,12 @@ const InventoryContainer = Vue.createApp({
                             return;
                         }
                         let targetItem = targetInventory[targetSlot];
-                        if (!targetItem || targetItem.name !== sourceItem.name) {
+                        if (!targetItem) {
+                            targetInventory[targetSlot] = {
+                                ...sourceItem,
+                                amount: amountToTransfer,
+                            };
+                        } else if (!targetItem || targetItem.name !== sourceItem.name) {
                             let foundSlot = Object.keys(targetInventory).find((slot) => targetInventory[slot] && targetInventory[slot].name === sourceItem.name);
                             if (foundSlot) {
                                 targetInventory[foundSlot].amount += amountToTransfer;

@@ -254,7 +254,7 @@ RegisterCallback('qb-inventory:server:attemptPurchase', function(source, data)
     local shopInfo = RegisteredShops[shop]
     if not shopInfo then return false end
 
-    local playedPed = source:K2_GetPawn()
+    local playerPed = source:K2_GetPawn()
     local playerCoords = playerPed:K2_GetActorLocation()
     if shopInfo.coords then
         local shopCoords = Vector(shopInfo.coords.X, shopInfo.coords.Y, shopInfo.coords.Z)
@@ -264,16 +264,21 @@ RegisterCallback('qb-inventory:server:attemptPurchase', function(source, data)
     if shopInfo.items[itemInfo.slot].name ~= itemInfo.name then return false end -- check item name in slot passed
 
     if amount > shopInfo.items[itemInfo.slot].amount then return false end
-    
+
     if not CanAddItem(source, itemInfo.name, amount) then
         TriggerClientEvent(source, 'QBCore:Notify', 'Cannot hold item', 'error')
         return false
     end
 
+    local canAddToSlot = false
+    if not Player.PlayerData.items[data.slot] then
+        canAddToSlot = true
+    end
+
     local price = shopInfo.items[itemInfo.slot].price * amount
     if Player.PlayerData.money.cash >= price then
         exports['qb-core']:Player('RemoveMoney', 'cash', price, 'shop-purchase')
-        AddItem(source, itemInfo.name, amount, nil, itemInfo.info)
+        AddItem(source, itemInfo.name, amount, canAddToSlot and data.slot or nil, itemInfo.info)
         --Events.Call('qb-shops:server:UpdateShopItems', shop, itemInfo, amount)
         return true
     else
