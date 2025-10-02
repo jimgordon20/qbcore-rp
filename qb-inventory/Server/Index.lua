@@ -242,89 +242,78 @@ RegisterCallback('qb-inventory:server:createDrop', function(source, item, newDro
     end
 end)
 
-CreateCallback('qb-inventory:server:attemptPurchase', function(source, cb, data)
+RegisterCallback('qb-inventory:server:attemptPurchase', function(source, data)
     local itemInfo = data.item
     local amount = data.amount
     local shop = string.gsub(data.shop, 'shop%-', '')
     local price = itemInfo.price * amount
     local Player = exports['qb-core']:GetPlayer(source)
     if not Player then
-        cb(false)
-        return
+        return false
     end
+    
     if not CanAddItem(source, itemInfo.name, amount) then
         TriggerClientEvent(source, 'QBCore:Notify', 'Cannot hold item', 'error')
-        cb(false)
-        return
+        return false
     end
-
     if Player.PlayerData.money.cash >= price then
-        Player.Functions.RemoveMoney('cash', price, 'shop-purchase')
+        exports['qb-core']:Player('RemoveMoney', 'cash', price, 'shop-purchase')
         AddItem(source, itemInfo.name, amount, nil, itemInfo.info)
-        Events.Call('qb-shops:server:UpdateShopItems', shop, itemInfo, amount)
-        cb(true)
+        --Events.Call('qb-shops:server:UpdateShopItems', shop, itemInfo, amount)
+        return true
     else
         TriggerClientEvent(source, 'QBCore:Notify', 'You do not have enough money', 'error')
-        cb(false)
+        return false
     end
 end)
 
-CreateCallback('qb-inventory:server:giveItem', function(source, cb, target, item, amount)
+RegisterCallback('qb-inventory:server:giveItem', function(source, target, item, amount)
     local player = exports['qb-core']:GetPlayer(source)
     if not player or player.PlayerData.metadata['isdead'] or player.PlayerData.metadata['inlaststand'] or player.PlayerData.metadata['ishandcuffed'] then
-        cb(false)
-        return
+        return false
     end
     local playerPed = source:K2_GetPawn()
 
     local Target = exports['qb-core']:GetPlayer(target)
     if not Target or Target.PlayerData.metadata['isdead'] or Target.PlayerData.metadata['inlaststand'] or Target.PlayerData.metadata['ishandcuffed'] then
-        cb(false)
-        return
+        return false
     end
     local targetPed = target:K2_GetPawn()
 
     local pCoords = playerPed:K2_GetActorLocation()
     local tCoords = targetPed:K2_GetActorLocation()
     if UE.FVector.Dist(pCoords, tCoords) > 100 then
-        cb(false)
-        return
+        return false
     end
 
     local itemInfo = exports['qb-core']:GetShared('Items')[item:lower()]
     if not itemInfo then
-        cb(false)
-        return
+        return false
     end
 
     local hasItem = HasItem(source, item)
     if not hasItem then
-        cb(false)
-        return
+        return false
     end
 
     local itemAmount = GetItemByName(source, item).amount
     if itemAmount <= 0 then
-        cb(false)
-        return
+        return false
     end
 
     local giveAmount = tonumber(amount)
     if giveAmount > itemAmount then
-        cb(false)
-        return
+        return false
     end
 
     local giveItem = AddItem(target, item, giveAmount)
     if not giveItem then
-        cb(false)
-        return
+        return false
     end
 
     local removeItem = RemoveItem(source, item, giveAmount)
     if not removeItem then
-        cb(false)
-        return
+        return false
     end
 
     --if itemInfo.type == 'weapon' then SetCurrentPedWeapon(playerPed, `WEAPON_UNARMED`, true) end
@@ -333,7 +322,7 @@ CreateCallback('qb-inventory:server:giveItem', function(source, cb, target, item
     --TriggerClientEvent('qb-inventory:client:giveAnim', target)
     --TriggerClientEvent('qb-inventory:client:ItemBox', target, itemInfo, 'add', giveAmount)
     --if Player(target).state.inv_busy then TriggerClientEvent('qb-inventory:client:updateInventory', target) end
-    cb(true)
+    return true
 end)
 
 -- Item move logic
