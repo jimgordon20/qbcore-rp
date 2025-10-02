@@ -12,7 +12,6 @@
     ],
     "client": [
         "Client/Index.lua",
-        "Client/drawtext.lua",
         "Client/events.lua",
         "Client/functions.lua",
         "Client/loops.lua"

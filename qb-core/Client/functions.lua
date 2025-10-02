@@ -1,5 +1,5 @@
---local my_webui = WebUI('Notify', 'file://html/index.html')
 QBCore.Functions = {}
+local my_webui = nil
 
 -- Callback Functions --
 
@@ -33,14 +33,82 @@ function QBCore.Functions.Debug(tbl)
     print(HELIXTable.Dump(tbl))
 end
 
+-- UI
+
+function QBCore.Functions.HideText()
+    if not my_webui then return end
+    my_webui:CallFunction('hideText')
+end
+
+function QBCore.Functions.DrawText(text, position)
+    if not my_webui then
+        my_webui = WebUI('DrawText', 'qb-core/Client/html/index.html', 3)
+        my_webui.Browser.OnLoadCompleted:Add(my_webui.Browser, function()
+            if type(position) ~= 'string' then position = 'left' end
+            my_webui:CallFunction('drawText', text, position)
+        end)
+    else
+        if type(position) ~= 'string' then position = 'left' end
+        my_webui:CallFunction('drawText', text, position)
+    end
+end
+
+function QBCore.Functions.ChangeText(text, position)
+    if not my_webui then return end
+    if type(position) ~= 'string' then position = 'left' end
+    my_webui:CallFunction('changeText', text, position)
+end
+
+function QBCore.Functions.KeyPressed()
+    if not my_webui then return end
+    my_webui:CallFunction('keyPressed')
+    QBCore.Functions.HideText()
+end
+
 function QBCore.Functions.Notify(text, texttype, length, icon)
-    print('Notify:', text, texttype, length, icon)
-    -- local noti_type = texttype or 'info'
-    -- if type(text) == 'table' then
-    --     Notification.Send(noti_type, text.text, text.caption)
-    -- else
-    --     Notification.Send(noti_type, text)
-    -- end
+    print('Notify: ', text, texttype, length, icon)
+    if not my_webui then
+        my_webui = WebUI('DrawText', 'qb-core/Client/html/index.html', 3)
+        my_webui.Browser.OnLoadCompleted:Add(my_webui.Browser, function()
+            local noti_type = texttype or 'primary'
+            if type(text) == 'table' then
+                my_webui:CallFunction('showNotif', {
+                    text = text.text,
+                    length = length or 5000,
+                    type = noti_type,
+                    caption = text.caption or '',
+                    icon = icon or nil
+                })
+            else
+                my_webui:CallFunction('showNotif', {
+                    text = text,
+                    length = length or 5000,
+                    type = noti_type,
+                    caption = '',
+                    icon = icon or nil
+                })
+            end
+        end)
+    else
+        local noti_type = texttype or 'primary'
+        if type(text) == 'table' then
+            my_webui:CallFunction('showNotif', {
+                text = text.text,
+                length = length or 5000,
+                type = noti_type,
+                caption = text.caption or '',
+                icon = icon or nil
+            })
+        else
+            my_webui:CallFunction('showNotif', {
+                text = text,
+                length = length or 5000,
+                type = noti_type,
+                caption = '',
+                icon = icon or nil
+            })
+        end
+    end
 end
 
 -- World Getters
