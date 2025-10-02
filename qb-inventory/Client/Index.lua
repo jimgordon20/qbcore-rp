@@ -7,23 +7,6 @@ local my_webui = nil
 require('Client/drops')
 require('Client/vehicles')
 
--- Local Callback System
-local CallbackRequests = {}
-local CallbackRequestId = 0
-
-local function TriggerCallback(name, cb, ...)
-	CallbackRequestId = CallbackRequestId + 1
-	CallbackRequests[CallbackRequestId] = cb
-	TriggerServerEvent('inventory:server:TriggerCallback', name, CallbackRequestId, ...)
-end
-
-RegisterClientEvent('inventory:client:CallbackResponse', function(requestId, ...)
-	if CallbackRequests[requestId] then
-		CallbackRequests[requestId](...)
-		CallbackRequests[requestId] = nil
-	end
-end)
-
 -- Handlers
 
 RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
@@ -181,7 +164,7 @@ RegisterClientEvent('qb-inventory:client:openInventory', function(items, other)
 		local bag = StaticMesh(SpawnPosition, PawnRotation, Config.ItemDropObject, CollisionType.StaticOnly)
 		local actorId = bag.ActorGuid
 		local newDropId = string.format('drop-%s-%s-%s-%s', actorId.A, actorId.B, actorId.C, actorId.D)
-		TriggerCallback('qb-inventory:server:createDrop', function(success)
+		TriggerCallback('server.createDrop', function(success)
 			if success then
 				SetupDropTarget(bag)
 				cb(newDropId)
@@ -190,7 +173,7 @@ RegisterClientEvent('qb-inventory:client:openInventory', function(items, other)
 	end)
 
 	my_webui:RegisterEventHandler('AttemptPurchase', function(data, cb)
-		TriggerCallback('qb-inventory:server:attemptPurchase', function(canPurchase)
+		TriggerCallback('server.attemptPurchase', function(canPurchase)
 			cb(canPurchase)
 		end, data)
 	end)
@@ -199,7 +182,7 @@ RegisterClientEvent('qb-inventory:client:openInventory', function(items, other)
 		local player, distance = exports['qb-core']:GetClosestPlayer()
 		if player and distance < 500 then
 			local playerId = player:GetID()
-			TriggerCallback('qb-inventory:server:giveItem', function(success)
+			TriggerCallback('server.giveItem', function(success)
 				cb(success)
 			end, playerId, data.item.name, data.amount)
 		else

@@ -4,20 +4,6 @@ RegisteredShops = {}
 require('Shared/locales/en')
 --require('Server/commands')
 
--- Local Callback System
-local RegisteredCallbacks = {}
-
-local function RegisterCallback(name, cb)
-	RegisteredCallbacks[name] = cb
-end
-
-RegisterServerEvent('inventory:server:TriggerCallback', function(source, cbName, requestId, ...)
-	if RegisteredCallbacks[cbName] then
-		local result = RegisteredCallbacks[cbName](source, ...)
-		TriggerClientEvent(source, 'inventory:client:CallbackResponse', requestId, result)
-	end
-end)
-
 function BroadcastRemote(eventName, ...)
     local Players = UE.UGameplayStatics.GetAllActorsOfClass(HWorld, UE.UClass.Load('/Script/SandboxGame.HPlayerController'), Players)
     if not Players or type(Players) ~= 'userdata' then return end
@@ -197,11 +183,11 @@ end)
 
 -- Callbacks
 
-exports['qb-core']:CreateCallback('qb-inventory:server:GetCurrentDrops', function(_, cb)
-    cb(Drops)
+RegisterCallback('server.GetCurrentDrops', function(_)
+    return Drops
 end)
 
-RegisterCallback('qb-inventory:server:createDrop', function(source, item, newDropId)
+RegisterCallback('server.createDrop', function(source, item, newDropId)
     local Player = exports['qb-core']:GetPlayer(source)
     if not Player then
         return false
@@ -242,7 +228,7 @@ RegisterCallback('qb-inventory:server:createDrop', function(source, item, newDro
     end
 end)
 
-RegisterCallback('qb-inventory:server:attemptPurchase', function(source, data)
+RegisterCallback('server.attemptPurchase', function(source, data)
     local itemInfo = data.item
     local amount = data.amount
     local shop = string.gsub(data.shop, 'shop%-', '')
@@ -287,7 +273,7 @@ RegisterCallback('qb-inventory:server:attemptPurchase', function(source, data)
     end
 end)
 
-RegisterCallback('qb-inventory:server:giveItem', function(source, target, item, amount)
+RegisterCallback('server.giveItem', function(source, target, item, amount)
     local player = exports['qb-core']:GetPlayer(source)
     if not player or player.PlayerData.metadata['isdead'] or player.PlayerData.metadata['inlaststand'] or player.PlayerData.metadata['ishandcuffed'] then
         return false
