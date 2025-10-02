@@ -97,7 +97,7 @@ RegisterServerEvent('qb-inventory:server:toggleHotbar', function(source)
         Player.PlayerData.items[4],
         Player.PlayerData.items[5],
     }
-    TriggerClientEvent('qb-inventory:client:hotbar', source, hotbarItems)
+    TriggerClientEvent(source, 'qb-inventory:client:hotbar', hotbarItems)    
 end)
 
 RegisterServerEvent('qb-inventory:server:openVending', function(source)
@@ -135,7 +135,7 @@ RegisterServerEvent('qb-inventory:server:closeInventory', function(source, inven
     end
     if not Inventories[inventory] then return end
     Inventories[inventory].isOpen = false
-    exports['qb-core']:DatabaseAction('INSERT INTO inventories (identifier, items) VALUES (?, ?) ON DUPLICATE KEY UPDATE items = ?', { inventory, JSON.stringify(Inventories[inventory].items), JSON.stringify(Inventories[inventory].items) })
+    exports['qb-core']:DatabaseAction('Execute', 'INSERT INTO inventories (identifier, items) VALUES (?, ?) ON DUPLICATE KEY UPDATE items = ?', { inventory, JSON.stringify(Inventories[inventory].items), JSON.stringify(Inventories[inventory].items) })
 end)
 
 RegisterServerEvent('qb-inventory:server:useItem', function(source, item)
@@ -143,12 +143,12 @@ RegisterServerEvent('qb-inventory:server:useItem', function(source, item)
     if not itemData then return end
     local itemInfo = QBShared.Items[itemData.name]
     if itemInfo.type == 'weapon' then
-        Events.Call('qb-weapons:server:equipWeapon', source, itemData)
-        TriggerClientEvent('qb-inventory:client:ItemBox', source, itemInfo, 'use')
+        --Events.Call('qb-weapons:server:equipWeapon', source, itemData)
+        TriggerClientEvent(source, 'qb-inventory:client:ItemBox', itemInfo, 'use')
         --TriggerClientEvent('qb-inventory:client:useItem', source, true, itemData)
     else
         UseItem(itemData.name, source, itemData)
-        TriggerClientEvent('qb-inventory:client:ItemBox', source, itemInfo, 'use')
+        TriggerClientEvent(source, 'qb-inventory:client:ItemBox', itemInfo, 'use')
         --TriggerClientEvent('qb-inventory:client:useItem', source, true, itemData)
     end
 end)
@@ -161,8 +161,8 @@ RegisterServerEvent('qb-inventory:server:openDrop', function(source, dropId)
     local drop = Drops[dropId]
     if not drop then return end
     if drop.isOpen then return end
-    local distance = #(playerCoords - drop.coords)
-    if distance > 2.5 then return end
+    local distance = UE.FVector.Dist(playerCoords, drop.coords)
+    if distance > 250 then return end
     local formattedInventory = {
         name = dropId,
         label = dropId,
