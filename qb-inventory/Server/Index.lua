@@ -277,7 +277,7 @@ RegisterCallback('qb-inventory:server:attemptPurchase', function(source, data)
 
     local price = shopInfo.items[itemInfo.slot].price * amount
     if Player.PlayerData.money.cash >= price then
-        exports['qb-core']:Player('RemoveMoney', 'cash', price, 'shop-purchase')
+        exports['qb-core']:Player(source, 'RemoveMoney', 'cash', price, 'shop-purchase')
         AddItem(source, itemInfo.name, amount, canAddToSlot and data.slot, itemInfo.info)
         --Events.Call('qb-shops:server:UpdateShopItems', shop, itemInfo, amount)
         return true
