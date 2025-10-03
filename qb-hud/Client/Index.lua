@@ -40,7 +40,7 @@ RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
     isLoggedIn = true
     player_data = exports['qb-core']:GetPlayerData()
     --updateVoiceLevel()
-    my_webui = WebUI('HUD', 'qb-hud/Client/html/index.html', 2)
+    my_webui = WebUI('qb-hud', 'qb-hud/Client/html/index.html', 2)
 end)
 
 RegisterClientEvent('QBCore:Client:OnPlayerUnload', function()

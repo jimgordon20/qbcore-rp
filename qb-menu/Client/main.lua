@@ -6,7 +6,7 @@ local my_webui = nil
 
 local function setupUI()
     if my_webui then return end
-    my_webui = WebUI('Menu', 'qb-menu/Client/html/index.html', true)
+    my_webui = WebUI('qb-menu', 'qb-menu/Client/html/index.html', true)
     my_webui.Browser.OnLoadCompleted:Add(my_webui.Browser, function()
         my_webui:RegisterEventHandler('clickedButton', function(option)
             if headerShown then headerShown = false end

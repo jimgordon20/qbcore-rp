@@ -8,6 +8,7 @@
     "qb-inventory",
     "qb-apartments",
     "qb-hud",
-    "qb-menu"
+    "qb-menu",
+    "qb-input"
   ]
 }

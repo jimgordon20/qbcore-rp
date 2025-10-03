@@ -56,7 +56,7 @@ const OpenMenu = (data) => {
         if (event != null) {
             event.preventDefault();
         }
-        await hEvent('buttonSubmit', { data: formInputs }); // Wait for promise?
+        await hEvent("buttonSubmit", { data: formInputs }); // Wait for promise?
         CloseMenu();
     });
 };
@@ -155,17 +155,8 @@ const CloseMenu = () => {
     formInputs = {};
 };
 
-const SetStyle = (style) => {
-    var stylesheet = $("<link>", {
-        rel: "stylesheet",
-        type: "text/css",
-        href: `./styles/${style}.css`,
-    });
-    stylesheet.appendTo("head");
-};
-
 const CancelMenu = () => {
-    hEvent('closeMenu');
+    hEvent("closeMenu");
     return CloseMenu();
 };
 

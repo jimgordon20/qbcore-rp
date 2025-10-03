@@ -1,5 +1,6 @@
 local Lang = require('Shared/locales/en')
 local Houses = {}
+local my_webui = nil
 
 -- Functions
 
@@ -16,7 +17,7 @@ local function SetDisplay(bool, cData, new, apps)
 		return
 	end
 
-	my_webui = WebUI('Spawn', 'qb-spawn/Client/html/index.html', true)
+	my_webui = WebUI('qb-spawn', 'qb-spawn/Client/html/index.html', true)
 	-- NUI Events
 	my_webui:RegisterEventHandler('qb-spawn:setCam', function(data)
 		local location = tostring(data.posname)

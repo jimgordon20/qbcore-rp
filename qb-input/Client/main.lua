@@ -1,44 +1,28 @@
 local properties = nil
-Timer.SetTimeout(function()
-    my_webui = WebUI('Input', 'qb-input/Client/html/index.html')
+local my_webui = nil
+
+local function setupUI()
+    if my_webui then return end
+    my_webui = WebUI('qb-input', 'qb-input/Client/html/index.html', true)
     my_webui:RegisterEventHandler('buttonSubmit', function()
-        --SetNuiFocus(false)
+        if not properties then return end
         properties:resolve(data.data)
         properties = nil
-        --cb('ok')
     end)
-
     my_webui:RegisterEventHandler('closeMenu', function()
-        --SetNuiFocus(false)
+        if not properties then return end
         properties:resolve(nil)
         properties = nil
-        --cb('ok')
     end)
-end, 2000)
-
-AddEventHandler('onResourceStart', function(resourceName)
-    if GetCurrentResourceName() ~= resourceName then
-        return
-    end
-    Wait(1000)
-    my_webui:CallFunction('SetStyle', Config.Style)
-end)
-
-RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
-    my_webui:CallFunction('SetStyle', Config.Style)
-end)
-
-local function ShowInput(data)
-    Wait(150)
-    if not data then return end
-    if properties then return end
-
-    properties = promise.new()
-
-    --SetNuiFocus(true, true)
-    my_webui:CallFunction('OpenMenu', data)
-
-    return Citizen.Await(properties)
 end
 
-exports('ShowInput', ShowInput)
+local function ShowInput(data)
+    if not data then return end
+    if properties then return end
+    if not my_webui then setupUI() end
+    properties = promise.new()
+    my_webui:CallFunction('OpenMenu', data)
+    return properties:await()
+end
+
+exports('qb-input', 'ShowInput', ShowInput)
