@@ -605,7 +605,11 @@ const InventoryContainer = Vue.createApp({
                             fromSlot: item.slot,
                         }, (newDropId) => {
                             if (newDropId) {
-                                delete this.playerInventory[playerItemKey];
+                                if (item.amount - amountToGive <= 0) 
+                                    delete this.playerInventory[playerItemKey];
+                                else
+                                    this.playerInventory[playerItemKey].amount -= amountToGive;
+
                                 this.otherInventory[1] = newItem;
                                 this.otherInventoryName = newDropId;
                                 this.otherInventoryLabel = newDropId;
