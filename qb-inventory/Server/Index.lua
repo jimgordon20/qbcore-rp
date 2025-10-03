@@ -142,8 +142,8 @@ end)
 RegisterServerEvent('qb-inventory:server:openDrop', function(source, dropId)
     local Player = exports['qb-core']:GetPlayer(source)
     if not Player then return end
-    local playerPed = GetPlayerPed(source)
-    local playerCoords = GetEntityCoords(playerPed)
+    local playerPed = source:K2_GetPawn()
+    local playerCoords = playerPed:K2_GetActorLocation()
     local drop = Drops[dropId]
     if not drop then return end
     if drop.isOpen then return end
@@ -157,7 +157,7 @@ RegisterServerEvent('qb-inventory:server:openDrop', function(source, dropId)
         inventory = drop.items
     }
     drop.isOpen = true
-    TriggerClientEvent('qb-inventory:client:openInventory', source, Player.PlayerData.items, formattedInventory)
+    TriggerClientEvent(source, 'qb-inventory:client:openInventory', Player.PlayerData.items, formattedInventory)
 end)
 
 RegisterServerEvent('qb-inventory:server:pickUpDrop', function(source, bagObject)
