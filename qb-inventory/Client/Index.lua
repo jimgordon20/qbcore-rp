@@ -2,7 +2,7 @@ local Lang = require('Shared/locales/en')
 Player_data = exports['qb-core']:GetPlayerData()
 local hotbarShown = false
 local inv_open = false
-local my_webui = nil
+local my_webui = WebUI('Inventory', 'qb-inventory/Client/html/index.html', 0)
 
 require('Client/drops')
 require('Client/vehicles')
@@ -12,7 +12,7 @@ require('Client/vehicles')
 RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
 	--LocalPlayer.state:set('inv_busy', false, true)
 	Player_data = exports['qb-core']:GetPlayerData()
---[[ 	exports['qb-core']:TriggerCallback('qb-inventory:server:GetCurrentDrops', function(theDrops)
+	--[[ 	exports['qb-core']:TriggerCallback('qb-inventory:server:GetCurrentDrops', function(theDrops)
 		Drops = theDrops
 	end) ]]
 end)
@@ -103,16 +103,9 @@ end)
 	my_webui:CallFunction('UseItemResponse', bool, itemData)
 end) ]]
 
-RegisterClientEvent('qb-inventory:client:openInventory', function(items, other)
-	if not my_webui then 
-		my_webui = WebUI('Inventory', 'qb-inventory/Client/html/index.html', true) 
-	else
-		inv_open = true
-		my_webui:SetConsumeInput(true) 
-		my_webui:CallFunction('openInventory', { inventory = items, slots = Config.MaxSlots, maxweight = Config.MaxWeight, other = other })
-		return
-	end
-	-- NUI Events
+-- NUI Events
+
+my_webui.Browser.OnLoadCompleted:Add(my_webui.Browser, function()
 	my_webui:RegisterEventHandler('SetInventoryData', function(data)
 		TriggerServerEvent(
 			'qb-inventory:server:SetInventoryData',
@@ -128,8 +121,7 @@ RegisterClientEvent('qb-inventory:client:openInventory', function(items, other)
 	my_webui:RegisterEventHandler('CloseInventory', function(data)
 		local name = data.name
 		inv_open = false
-		my_webui:SetConsumeInput(false)
-		--my_webui = nil
+		my_webui:SetLayer(0)
 		if name then
 			TriggerServerEvent('qb-inventory:server:closeInventory', name)
 		elseif CurrentDrop then
@@ -233,11 +225,12 @@ RegisterClientEvent('qb-inventory:client:openInventory', function(items, other)
 			end
 		end, data.AttachmentData, WeaponData)
 	end)
+end)
 
-	my_webui.Browser.OnLoadCompleted:Add(my_webui.Browser, function()
-		inv_open = true
-		my_webui:CallFunction('openInventory', { inventory = items, slots = Config.MaxSlots, maxweight = Config.MaxWeight, other = other })
-	end)
+RegisterClientEvent('qb-inventory:client:openInventory', function(items, other)
+	inv_open = true
+	my_webui:SetLayer(5)
+	my_webui:CallFunction('openInventory', { inventory = items, slots = Config.MaxSlots, maxweight = Config.MaxWeight, other = other })
 end)
 
 -- Open UI
@@ -251,7 +244,6 @@ Timer.CreateThread(function()
 		if HPlayer:WasInputKeyJustPressed(invKey) then
 			if HPlayer:GetInputMode() ~= 1 then
 				if inv_open then
-					if my_webui == nil then return end
 					my_webui:CallFunction('closeInventory')
 				else
 					TriggerServerEvent('qb-inventory:server:openInventory')
