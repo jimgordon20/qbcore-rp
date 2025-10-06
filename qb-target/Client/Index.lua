@@ -28,6 +28,10 @@ RegisterClientEvent('QBCore:Player:SetPlayerData', function(val)
 	player_data = val
 end)
 
+function onShutdown()
+	my_webui:Destroy()
+end
+
 -- Functions
 
 local function JobCheck(job)
@@ -112,6 +116,11 @@ local function setupHandlers()
 		disableTarget()
 	end)
 end
+
+my_webui = WebUI('Target', 'qb-target/Client/html/index.html', 0)
+my_webui.Browser.OnLoadCompleted:Add(my_webui.Browser, function()
+	setupHandlers()
+end)
 
 -- Exports
 
@@ -304,15 +313,12 @@ end
 function enableTarget()
 	if target_active then return end
 	target_active = true
-	my_webui = WebUI('Target', 'qb-target/Client/html/index.html', false)
-	my_webui.Browser.OnLoadCompleted:Add(my_webui.Browser, function()
-		setupHandlers()
-		my_webui:CallFunction('openTarget')
-		raycast_timer = Timer.SetInterval(function()
-			local trace_result = handleRaycast()
-			handleEntity(trace_result)
-		end, 100)
-	end)
+	my_webui:SetLayer(3)
+	my_webui:CallFunction('openTarget')
+	raycast_timer = Timer.SetInterval(function()
+		local trace_result = handleRaycast()
+		handleEntity(trace_result)
+	end, 100)
 end
 
 function disableTarget()
@@ -321,8 +327,7 @@ function disableTarget()
 	nui_data, send_data = {}, {}
 	if my_webui then
 		my_webui:CallFunction('closeTarget')
-		my_webui:Destroy()
-		my_webui = nil
+		my_webui:SetLayer(0)
 	end
 	if raycast_timer then
 		Timer.ClearInterval(raycast_timer)
@@ -360,7 +365,6 @@ Timer.CreateThread(function()
 			if target_active and target_entity and nui_data and nui_data[1] then
 				if HPlayer:WasInputKeyJustPressed(menuControl) then
 					if HPlayer:GetInputMode() ~= 1 then
-						print('Menu control pressed')
 						my_webui:SetConsumeInput(true)
 					end
 				end
@@ -388,14 +392,16 @@ end)
 -- Timer.SetTimeout(function()
 -- 	-- Test Box Zone 1 - Simple interaction
 -- 	AddBoxZone('test_box_1', {
--- 		X = -249.54, -- Adjust these coordinates to where your player spawns
--- 		Y = 1358.93, -- or a location you can easily reach
+-- 		X = -249.54,
+-- 		Y = 1358.93,
 -- 		Z = 91.697
 -- 	}, 5.0, 5.0, {
+-- 		name = 'test_box_1', -- Added this
 -- 		heading = 0,
--- 		minZ = -2.0,
--- 		maxZ = 3.0,
--- 		debug = true -- This will show the box visually
+-- 		minZ = 89.697,
+-- 		maxZ = 93.697,
+-- 		debug = true,
+-- 		distance = 5.0 -- Should be here, not in the options
 -- 	}, {
 -- 		{
 -- 			icon = 'fas fa-hand',
@@ -408,19 +414,21 @@ end)
 
 -- 	-- Example sphere zone
 -- 	AddSphereZone('test_sphere_1', {
--- 		X = -249.54,
--- 		Y = 1358.93,
--- 		Z = 91.697
--- 	}, 3.0, { -- radius of 3.0 units
--- 		debug = true,
--- 		distance = 5.0
--- 	}, {
+-- 			X = -249.54,
+-- 			Y = 1358.93,
+-- 			Z = 91.697
+-- 		}, 3.0,             -- radius of 3.0 units
 -- 		{
--- 			icon = 'fas fa-hand',
--- 			label = 'Sphere Test Interaction',
--- 			action = function()
--- 				print('Sphere zone clicked!')
--- 			end
--- 		}
--- 	})
+-- 			name = 'test_sphere_1', -- Added this
+-- 			debug = true,
+-- 			distance = 5.0
+-- 		}, {
+-- 			{
+-- 				icon = 'fas fa-hand',
+-- 				label = 'Sphere Test Interaction',
+-- 				action = function()
+-- 					print('Sphere zone clicked!')
+-- 				end
+-- 			}
+-- 		})
 -- end, 2000)
