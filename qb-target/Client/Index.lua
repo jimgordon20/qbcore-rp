@@ -365,7 +365,7 @@ Timer.CreateThread(function()
 			if target_active and target_entity and nui_data and nui_data[1] then
 				if HPlayer:WasInputKeyJustPressed(menuControl) then
 					if HPlayer:GetInputMode() ~= 1 then
-						my_webui:SetConsumeInput(true)
+						my_webui:SetLayer(5)
 					end
 				end
 			end
