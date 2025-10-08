@@ -71,24 +71,24 @@ local function openMenu(data, sort, skipFirst)
     headerShown = false
     sendData = data
     my_webui:SetLayer(5)
-    my_webui:CallFunction('openMenu', data.buttons)
+    my_webui:CallFunction('openMenu', data)
 end
 
 local function closeMenu()
     sendData = nil
     headerShown = false
     if not my_webui then return end
-    my_webui:CallFunction('closeMenu')
     my_webui:SetLayer(0)
+    my_webui:CallFunction('closeMenu')
 end
 
 local function showHeader(data)
     if not data or not next(data) then return end
     if not my_webui then return end
-    my_webui:SetLayer(3)
     headerShown = true
     sendData = data
-    my_webui:CallFunction('openMenu', table.clone(data.buttons))
+    my_webui:SetLayer(3)
+    my_webui:CallFunction('openMenu', data)
 end
 
 -- Events

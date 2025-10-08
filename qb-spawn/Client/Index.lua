@@ -24,7 +24,6 @@ local function SetDisplay(bool, cData, new, apps)
         return
     end
 
-    my_webui:SetLayer(5)
     my_webui:CallFunction('showUi', bool, translations)
     if not new then
         --exports['qb-core']:TriggerCallback('qb-houses:server:getOwnedHouses', function(houses)
@@ -42,6 +41,7 @@ local function SetDisplay(bool, cData, new, apps)
     elseif new then
         my_webui:CallFunction('setupApartments', apps, new)
     end
+    my_webui:SetLayer(5)
 end
 
 -- UI
