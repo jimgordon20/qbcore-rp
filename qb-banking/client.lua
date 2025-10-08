@@ -132,14 +132,13 @@ end)
 --     end
 -- end)
 
-if Config.useTarget then
+Timer.SetTimeout(function()
     for i = 1, #Config.locations do
         exports['qb-target']:AddSphereZone('bank_' .. i, {
             X = Config.locations[i].X,
             Y = Config.locations[i].Y,
             Z = Config.locations[i].Z
         }, 100.0, {
-            name = 'bank_' .. i,
             debug = true,
             distance = 1000
         }, {
@@ -167,36 +166,4 @@ if Config.useTarget then
     --         distance = 1.5
     --     })
     -- end
-end
-
--- if not Config.useTarget then
---     for i = 1, #Config.locations do
---         local zone = CircleZone:Create(Config.locations[i], 3.0, {
---             name = 'bank_' .. i,
---             debugPoly = false,
---         })
---         zones[#zones + 1] = zone
---     end
-
---     local combo = ComboZone:Create(zones, {
---         name = 'bank_combo',
---         debugPoly = false,
---     })
-
---     combo:onPlayerInOut(function(isPointInside)
---         isPlayerInsideBankZone = isPointInside
---         if isPlayerInsideBankZone then
---             exports['qb-core']:DrawText('Open Bank')
---             CreateThread(function()
---                 while isPlayerInsideBankZone do
---                     Wait(0)
---                     if IsControlJustPressed(0, 38) then
---                         OpenBank()
---                     end
---                 end
---             end)
---         else
---             exports['qb-core']:HideText()
---         end
---     end)
--- end
+end, 2000)

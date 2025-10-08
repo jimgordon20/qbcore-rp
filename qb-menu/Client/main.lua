@@ -37,6 +37,13 @@ my_webui.Browser.OnLoadCompleted:Add(my_webui.Browser, function()
     end)
 end)
 
+function onShutdown()
+    if my_webui then
+        my_webui:Destroy()
+        my_webui = nil
+    end
+end
+
 -- Functions
 
 local function sortData(data, skipfirst)

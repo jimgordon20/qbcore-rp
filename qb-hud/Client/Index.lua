@@ -3,6 +3,13 @@ local my_webui = WebUI('qb-hud', 'qb-hud/Client/html/index.html', 0)
 local player_data = {}
 local round = math.floor
 
+function onShutdown()
+    if my_webui then
+        my_webui:Destroy()
+        my_webui = nil
+    end
+end
+
 -- Timer.SetTimeout(function()
 --     my_webui = WebUI('HUD', 'qb-inventory/Client/html/index.html')
 -- end, 2000)
