@@ -3,27 +3,6 @@ QBCore.Player_Buckets = {}
 QBCore.Entity_Buckets = {}
 QBCore.UsableItems = {}
 
--- Callback Functions --
-
--- Create Server Callback
-function QBCore.Functions.CreateCallback(name, cb)
-	QBCore.ServerCallbacks[name] = cb
-end
-
--- Trigger Server Callback
-function QBCore.Functions.TriggerCallback(name, source, cb, ...)
-	if not QBCore.ServerCallbacks[name] then
-		return
-	end
-	QBCore.ServerCallbacks[name](source, cb, ...)
-end
-
--- Trigger Client Callback
-function QBCore.Functions.TriggerClientCallback(name, source, cb, ...)
-	QBCore.ClientCallbacks[name] = cb
-	TriggerClientEvent('QBCore:Client:TriggerClientCallback', source, name, ...)
-end
-
 -- Getter Functions
 
 function QBCore.Functions.GetIdentifier(source)

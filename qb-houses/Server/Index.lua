@@ -88,9 +88,9 @@ exports('qb-houses', 'hasKey', hasKey)
 
 -- Callbacks
 
-exports['qb-core']:CreateCallback('qb-houses:server:ownership', function(source, cb, house)
+CreateCallback('ownership', function(source, house)
     local Player = exports['qb-core']:GetPlayer(source)
-    if not Player then return cb(false, false) end
+    if not Player then return false, false end
     local has_key = false
     local is_owned = false
     local license = Player.PlayerData.license
@@ -107,28 +107,28 @@ exports['qb-core']:CreateCallback('qb-houses:server:ownership', function(source,
     else
         is_owned = false
     end
-    cb(has_key, is_owned)
+    return has_key, is_owned
 end)
 
-exports['qb-core']:CreateCallback('qb-houses:server:locations', function(_, cb, house)
+CreateCallback('qb-houses:server:locations', function(_, house)
     local house_data = Config.Houses[house]
     local retval = {
         stash = house_data.stash,
         outfit = house_data.outfit,
         logout = house_data.logout,
     }
-    cb(retval)
+    return retval
 end)
 
-exports['qb-core']:CreateCallback('qb-houses:server:getKeys', function(_, cb, house)
-    cb(housekeyholders[house])
+CreateCallback('getKeys', function(_, house)
+    return housekeyholders[house]
 end)
 
-exports['qb-core']:CreateCallback('qb-houses:server:getHouses', function(_, cb)
-    cb(Config.Houses)
+CreateCallback('getHouses', function()
+    return Config.Houses
 end)
 
-exports['qb-core']:CreateCallback('qb-houses:server:getOwnedHouses', function(_, cb, citizenid)
+CreateCallback('getOwnedHouses', function(_, citizenid)
     local houses = {}
     for house, cid in pairs(houseownercid) do
         if cid == citizenid then
@@ -138,7 +138,7 @@ exports['qb-core']:CreateCallback('qb-houses:server:getOwnedHouses', function(_,
             }
         end
     end
-    cb(houses)
+    return houses
 end)
 
 -- Events

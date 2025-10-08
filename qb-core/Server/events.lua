@@ -43,10 +43,3 @@ RegisterServerEvent('QBCore:ToggleDuty', function(source)
     Events.Call('QBCore:Server:SetDuty', source, Player.PlayerData.job.onduty)
     TriggerClientEvent('QBCore:Client:SetDuty', source, Player.PlayerData.job.onduty)
 end)
-
--- Callbacks
-
-QBCore.Functions.CreateCallback('QBCore:Server:SpawnVehicle', function(source, cb, model, coords)
-    local vehicle = QBCore.Functions.CreateVehicle(source, model, coords)
-    cb(vehicle)
-end)
