@@ -21,11 +21,12 @@ local function GetFirstFreeSlot(items, maxSlots)
 end
 
 local function SetupShopItems(shopItems)
+    local sharedItems = exports['qb-core']:GetShared('Items')
     local items = {}
     local slot = 1
     if shopItems and next(shopItems) then
         for _, item in pairs(shopItems) do
-            local itemInfo = exports['qb-core']:GetShared('Items')[item.name:lower()]
+            local itemInfo = sharedItems[item.name:lower()]
             if itemInfo then
                 items[slot] = {
                     name = itemInfo['name'],
