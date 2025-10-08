@@ -1,0 +1,80 @@
+local Lang = require('locales/en')
+local sharedItems = exports['qb-core']:GetSharedItems()
+local sharedJobs = exports['qb-core']:GetSharedJobs()
+
+-- Functions
+
+local function distCheck(coords1, coords2)
+    return UE.FVector.Dist(coords1, coords2)
+end
+
+-- Events
+
+RegisterServerEvent('qb-cityhall:server:ApplyJob', function(source, job)
+    local Player = exports['qb-core']:GetPlayer(source)
+    if not Player then return end
+    local ped = source:K2_GetPawn()
+    if not ped then return end
+    local pedCoords = ped:K2_GetActorLocation()
+    local coords = Config.Cityhalls[1].coords
+    if distCheck(pedCoords, coords) > 1500 then return end
+
+    local JobInfo = sharedJobs[job]
+    exports['qb-core']:Player(source, 'SetJob', job)
+    TriggerClientEvent(source, 'QBCore:Notify', Lang:t('info.new_job', { job = JobInfo.label }))
+end)
+
+RegisterServerEvent('qb-cityhall:server:requestId', function(source, item)
+    local Player = exports['qb-core']:GetPlayer(source)
+    if not Player then return end
+    local ped = source:K2_GetPawn()
+    if not ped then return end
+    local pedCoords = ped:K2_GetActorLocation()
+    local coords = Config.Cityhalls[1].coords
+    if distCheck(pedCoords, coords) > 1500 then return end
+
+    local itemInfo = Config.Cityhalls[1].licenses[item]
+    if not exports['qb-core']:Player(source, 'RemoveMoney', itemInfo.cost) then
+        return TriggerClientEvent(source, 'QBCore:Notify', ('You don\'t have enough money on you, you need %s cash'):format(itemInfo.cost), 'error')
+    end
+
+    local info = {}
+    if item == 'id_card' then
+        info.citizenid = Player.PlayerData.citizenid
+        info.firstname = Player.PlayerData.charinfo.firstname
+        info.lastname = Player.PlayerData.charinfo.lastname
+        info.birthdate = Player.PlayerData.charinfo.birthdate
+        info.gender = Player.PlayerData.charinfo.gender
+        info.nationality = Player.PlayerData.charinfo.nationality
+    elseif item == 'driver_license' then
+        info.firstname = Player.PlayerData.charinfo.firstname
+        info.lastname = Player.PlayerData.charinfo.lastname
+        info.birthdate = Player.PlayerData.charinfo.birthdate
+        info.type = 'Class C Driver License'
+    elseif item == 'weaponlicense' then
+        info.firstname = Player.PlayerData.charinfo.firstname
+        info.lastname = Player.PlayerData.charinfo.lastname
+        info.birthdate = Player.PlayerData.charinfo.birthdate
+    end
+
+    if not exports['qb-inventory']:AddItem(source, item, 1, false, info, 'qb-cityhall:server:requestId') then return end
+    TriggerClientEvent(source, 'qb-inventory:client:ItemBox', sharedItems[item], 'add')
+end)
+
+-- Callbacks
+
+RegisterCallback('getIdentityData', function(source)
+    local Player = exports['qb-core']:GetPlayer(source)
+    if not Player then return {} end
+
+    local licensesMeta = Player.PlayerData.metadata['licences']
+    local availableLicenses = {}
+
+    for license, data in pairs(Config.Cityhalls[1].licenses) do
+        if not data.metadata or licensesMeta[data.metadata] then
+            availableLicenses[license] = data
+        end
+    end
+
+    return availableLicenses
+end)

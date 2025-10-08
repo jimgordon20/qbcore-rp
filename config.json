@@ -10,6 +10,7 @@
     "qb-hud",
     "qb-menu",
     "qb-input",
-    "qb-banking"
+    "qb-banking",
+    "qb-cityhall"
   ]
 }
