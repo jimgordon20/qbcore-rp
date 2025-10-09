@@ -1,0 +1,404 @@
+local Lang = require('locales/en')
+local PlayerJob = QBCore.Functions.GetPlayerData().job
+local PlayerGang = QBCore.Functions.GetPlayerData().gang
+
+-- Events
+
+RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
+    PlayerJob = QBCore.Functions.GetPlayerData().job
+    PlayerGang = QBCore.Functions.GetPlayerData().gang
+end)
+
+RegisterClientEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
+    PlayerJob = JobInfo
+end)
+
+RegisterNetEvent('QBCore:Client:OnGangUpdate', function(InfoGang)
+    PlayerGang = InfoGang
+end)
+
+-- Events
+
+RegisterClientEvent('qb-management:client:openBossMenu', function()
+    if not PlayerJob.name or not PlayerJob.isboss then return end
+
+    local bossMenu = {
+        {
+            header = Lang:t('headers.bsm') .. string.upper(PlayerJob.label),
+            icon = 'fa-solid fa-circle-info',
+            isMenuHeader = true,
+        },
+        {
+            header = Lang:t('body.manage'),
+            txt = Lang:t('body.managed'),
+            icon = 'fa-solid fa-list',
+            params = {
+                event = 'qb-management:client:employeelist',
+            }
+        },
+        {
+            header = Lang:t('body.hire'),
+            txt = Lang:t('body.hired'),
+            icon = 'fa-solid fa-hand-holding',
+            params = {
+                event = 'qb-management:client:HireMenu',
+            }
+        },
+        {
+            header = Lang:t('body.storage'),
+            txt = Lang:t('body.storaged'),
+            icon = 'fa-solid fa-box-open',
+            params = {
+                isServer = true,
+                event = 'qb-management:server:stash',
+            }
+        },
+        {
+            header = Lang:t('body.outfits'),
+            txt = Lang:t('body.outfitsd'),
+            icon = 'fa-solid fa-shirt',
+            params = {
+                event = 'qb-management:client:Wardrobe',
+            }
+        }
+    }
+
+    for _, v in pairs(DynamicMenuItems) do
+        bossMenu[#bossMenu + 1] = v
+    end
+
+    bossMenu[#bossMenu + 1] = {
+        header = Lang:t('body.exit'),
+        icon = 'fa-solid fa-angle-left',
+        params = {
+            event = 'qb-menu:closeMenu',
+        }
+    }
+
+    exports['qb-menu']:openMenu(bossMenu)
+end)
+
+RegisterClientEvent('qb-management:client:OpenMenu', function()
+    if not PlayerGang.name then return end
+    local gangMenu = {
+        {
+            header = Lang:t('headersgang.bsm') .. string.upper(PlayerGang.label),
+            icon = 'fa-solid fa-circle-info',
+            isMenuHeader = true,
+        },
+        {
+            header = Lang:t('bodygang.manage'),
+            txt = Lang:t('bodygang.managed'),
+            icon = 'fa-solid fa-list',
+            params = {
+                event = 'qb-management:client:ManageGang',
+            }
+        },
+        {
+            header = Lang:t('bodygang.hire'),
+            txt = Lang:t('bodygang.hired'),
+            icon = 'fa-solid fa-hand-holding',
+            params = {
+                event = 'qb-management:client:HireMembers',
+            }
+        },
+        {
+            header = Lang:t('bodygang.storage'),
+            txt = Lang:t('bodygang.storaged'),
+            icon = 'fa-solid fa-box-open',
+            params = {
+                isServer = true,
+                event = 'qb-management:server:stash',
+            }
+        },
+        {
+            header = Lang:t('bodygang.outfits'),
+            txt = Lang:t('bodygang.outfitsd'),
+            icon = 'fa-solid fa-shirt',
+            params = {
+                event = 'qb-management:client:Warbobe',
+            }
+        }
+    }
+
+    for _, v in pairs(DynamicMenuItems) do
+        gangMenu[#gangMenu + 1] = v
+    end
+
+    gangMenu[#gangMenu + 1] = {
+        header = Lang:t('bodygang.exit'),
+        icon = 'fa-solid fa-angle-left',
+        params = {
+            event = 'qb-menu:closeMenu',
+        }
+    }
+
+    exports['qb-menu']:openMenu(gangMenu)
+end)
+
+RegisterClientEvent('qb-management:client:employeelist', function()
+    local EmployeesMenu = {
+        {
+            header = Lang:t('body.mempl') .. string.upper(PlayerJob.label),
+            isMenuHeader = true,
+            icon = 'fa-solid fa-circle-info',
+        },
+    }
+    TriggerCallback('GetEmployees', function(cb)
+        for _, v in pairs(cb) do
+            EmployeesMenu[#EmployeesMenu + 1] = {
+                header = v.name,
+                txt = v.grade.name,
+                icon = 'fa-solid fa-circle-user',
+                params = {
+                    event = 'qb-management:client:ManageEmployee',
+                    args = {
+                        player = v,
+                        work = PlayerJob
+                    }
+                }
+            }
+        end
+        EmployeesMenu[#EmployeesMenu + 1] = {
+            header = Lang:t('body.return'),
+            icon = 'fa-solid fa-angle-left',
+            params = {
+                event = 'qb-management:client:OpenMenu',
+            }
+        }
+        exports['qb-menu']:openMenu(EmployeesMenu)
+    end, PlayerJob.name)
+end)
+
+RegisterClientEvent('qb-management:client:ManageEmployee', function(data)
+    local EmployeeMenu = {
+        {
+            header = Lang:t('body.mngpl') .. data.player.name .. ' - ' .. string.upper(PlayerJob.label),
+            isMenuHeader = true,
+            icon = 'fa-solid fa-circle-info'
+        },
+    }
+    for k, v in pairs(QBCore.Shared.Jobs[data.work.name].grades) do
+        EmployeeMenu[#EmployeeMenu + 1] = {
+            header = v.name,
+            txt = Lang:t('body.grade') .. k,
+            params = {
+                isServer = true,
+                event = 'qb-management:server:GradeUpdate',
+                icon = 'fa-solid fa-file-pen',
+                args = {
+                    cid = data.player.empSource,
+                    grade = tonumber(k),
+                    gradename = v.name
+                }
+            }
+        }
+    end
+    EmployeeMenu[#EmployeeMenu + 1] = {
+        header = Lang:t('body.fireemp'),
+        icon = 'fa-solid fa-user-large-slash',
+        params = {
+            isServer = true,
+            event = 'qb-management:server:FireEmployee',
+            args = data.player.empSource
+        }
+    }
+    EmployeeMenu[#EmployeeMenu + 1] = {
+        header = Lang:t('body.return'),
+        icon = 'fa-solid fa-angle-left',
+        params = {
+            event = 'qb-management:client:OpenMenu',
+        }
+    }
+    exports['qb-menu']:openMenu(EmployeeMenu)
+end)
+
+RegisterClientEvent('qb-management:client:ManageGang', function()
+    local GangMembersMenu = {
+        {
+            header = Lang:t('bodygang.mempl') .. string.upper(PlayerGang.label),
+            icon = 'fa-solid fa-circle-info',
+            isMenuHeader = true,
+        },
+    }
+    TriggerCallback('GetEmployees', function(cb)
+        for _, v in pairs(cb) do
+            GangMembersMenu[#GangMembersMenu + 1] = {
+                header = v.name,
+                txt = v.grade.name,
+                icon = 'fa-solid fa-circle-user',
+                params = {
+                    event = 'qb-management:lient:ManageMember',
+                    args = {
+                        player = v,
+                        work = PlayerGang
+                    }
+                }
+            }
+        end
+        GangMembersMenu[#GangMembersMenu + 1] = {
+            header = Lang:t('bodygang.return'),
+            icon = 'fa-solid fa-angle-left',
+            params = {
+                event = 'qb-management:client:OpenMenu',
+            }
+        }
+        exports['qb-menu']:openMenu(GangMembersMenu)
+    end, PlayerGang.name)
+end)
+
+RegisterClientEvent('qb-management:client:ManageMember', function(data)
+    local MemberMenu = {
+        {
+            header = Lang:t('bodygang.mngpl') .. data.player.name .. ' - ' .. string.upper(PlayerGang.label),
+            isMenuHeader = true,
+            icon = 'fa-solid fa-circle-info',
+        },
+    }
+    for k, v in pairs(QBCore.Shared.Gangs[data.work.name].grades) do
+        MemberMenu[#MemberMenu + 1] = {
+            header = v.name,
+            txt = Lang:t('bodygang.grade') .. k,
+            params = {
+                isServer = true,
+                event = 'qb-management:server:GradeUpdate',
+                icon = 'fa-solid fa-file-pen',
+                args = {
+                    cid = data.player.empSource,
+                    grade = tonumber(k),
+                    gradename = v.name
+                }
+            }
+        }
+    end
+    MemberMenu[#MemberMenu + 1] = {
+        header = Lang:t('bodygang.fireemp'),
+        icon = 'fa-solid fa-user-large-slash',
+        params = {
+            isServer = true,
+            event = 'qb-management:server:FireMember',
+            args = data.player.empSource
+        }
+    }
+    MemberMenu[#MemberMenu + 1] = {
+        header = Lang:t('bodygang.return'),
+        icon = 'fa-solid fa-angle-left',
+        params = {
+            event = 'qb-management:client:ManageGang',
+        }
+    }
+    exports['qb-menu']:openMenu(MemberMenu)
+end)
+
+RegisterClientEvent('qb-management:client:HireMenu', function()
+    local HireMenu = {
+        {
+            header = Lang:t('body.hireemp') .. string.upper(PlayerJob.label),
+            isMenuHeader = true,
+            icon = 'fa-solid fa-circle-info',
+        },
+    }
+    TriggerCallback('GetPlayers', function(players)
+        for _, v in pairs(players) do
+            if v and v ~= PlayerId() then
+                HireMenu[#HireMenu + 1] = {
+                    header = v.name,
+                    txt = Lang:t('body.cid') .. v.citizenid .. ' - ID: ' .. v.sourceplayer,
+                    icon = 'fa-solid fa-user-check',
+                    params = {
+                        isServer = true,
+                        event = 'qb-management:server:HireEmployee',
+                        args = v.sourceplayer
+                    }
+                }
+            end
+        end
+        HireMenu[#HireMenu + 1] = {
+            header = Lang:t('body.return'),
+            icon = 'fa-solid fa-angle-left',
+            params = {
+                event = 'qb-management:client:OpenMenu',
+            }
+        }
+        exports['qb-menu']:openMenu(HireMenu)
+    end)
+end)
+
+RegisterClientEvent('qb-management:client:HireMembers', function()
+    local HireMembersMenu = {
+        {
+            header = Lang:t('bodygang.hireemp') .. string.upper(PlayerGang.label),
+            isMenuHeader = true,
+            icon = 'fa-solid fa-circle-info',
+        },
+    }
+    TriggerCallback('GetPlayers', function(players)
+        for _, v in pairs(players) do
+            if v and v ~= PlayerId() then
+                HireMembersMenu[#HireMembersMenu + 1] = {
+                    header = v.name,
+                    txt = Lang:t('bodygang.cid') .. v.citizenid .. ' - ID: ' .. v.sourceplayer,
+                    icon = 'fa-solid fa-user-check',
+                    params = {
+                        isServer = true,
+                        event = 'qb-management:server:HireMember',
+                        args = v.sourceplayer
+                    }
+                }
+            end
+        end
+        HireMembersMenu[#HireMembersMenu + 1] = {
+            header = Lang:t('bodygang.return'),
+            icon = 'fa-solid fa-angle-left',
+            params = {
+                event = 'qb-management:client:OpenMenu',
+            }
+        }
+        exports['qb-menu']:openMenu(HireMembersMenu)
+    end)
+end)
+
+-- Target
+
+for job, zones in pairs(Config.BossMenus) do
+    for index, coords in ipairs(zones) do
+        local zoneName = job .. '_bossmenu_' .. index
+        exports['qb-target']:AddCircleZone(zoneName, coords, 100, {
+            debug = true,
+            distance = 1000
+        }, {
+            options = {
+                {
+                    type = 'client',
+                    event = 'qb-management:client:OpenMenu',
+                    icon = 'fas fa-sign-in-alt',
+                    label = Lang:t('target.label'),
+                    canInteract = function() return job == PlayerJob.name and PlayerJob.isboss end,
+                },
+            },
+            distance = 2.5
+        })
+    end
+end
+
+for gang, zones in pairs(Config.GangMenus) do
+    for index, coords in ipairs(zones) do
+        local zoneName = gang .. '_gangmenu_' .. index
+        exports['qb-target']:AddCircleZone(zoneName, coords, 0.5, {
+            name = zoneName,
+            debugPoly = false,
+            useZ = true
+        }, {
+            options = {
+                {
+                    type = 'client',
+                    event = 'qb-management:client:OpenMenu',
+                    icon = 'fas fa-sign-in-alt',
+                    label = Lang:t('targetgang.label'),
+                    canInteract = function() return gang == PlayerGang.name and PlayerGang.isboss end,
+                },
+            },
+            distance = 2.5
+        })
+    end
+end
