@@ -10,5 +10,4 @@ RegisterServerEvent('qb-spawn:server:spawnPlayer', function(source, coords)
     local ped = source:K2_GetPawn()
     if not ped then return end
     ped:K2_SetActorLocationAndRotation(Vector(coords.X, coords.Y, coords.Z), Rotator(0, 0, 0), false, _, true)
-    TriggerClientEvent(source, 'QBCore:Client:OnPlayerLoaded')
 end)

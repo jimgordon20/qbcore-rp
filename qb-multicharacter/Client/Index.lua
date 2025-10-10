@@ -73,7 +73,6 @@ end)
 
 RegisterClientEvent('qb-multicharacter:client:closeNUIdefault', function()
     my_webui:SetLayer(0)
-    TriggerLocalClientEvent('QBCore:Client:OnPlayerLoaded')
     TriggerServerEvent('qb-houses:server:SetInsideMeta', 0, false)
     TriggerServerEvent('qb-apartments:server:SetInsideMeta', 0, 0, false)
     --Events.Call('qb-clothes:client:CreateFirstCharacter')

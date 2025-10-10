@@ -101,7 +101,6 @@ RegisterServerEvent('qb-multicharacter:server:loadUserData', function(source, cD
                         local coords = JSON.parse(cData.position)
                         local pawn = source:K2_GetPawn()
                         if pawn then pawn:K2_SetActorLocation(Vector(coords.x, coords.y, coords.z), false, nil, true) end
-                        TriggerClientEvent(source, 'QBCore:Client:OnPlayerLoaded')
                     end
                 else
                     local Apartments = exports['qb-apartments']:Apartments()
@@ -139,7 +138,6 @@ RegisterServerEvent('qb-multicharacter:server:createCharacter', function(source,
                     print('^2[qb-core]^7 ' .. PlayerState:GetPlayerName() .. ' has successfully loaded!')
                     --QBCore.Commands.Refresh(source)
                     --loadHouseData(source)
-                    TriggerClientEvent(source, 'QBCore:Client:OnPlayerLoaded')
                     TriggerClientEvent(source, 'qb-multicharacter:client:closeNUIdefault')
                     GiveStarterItems(source)
                     Timer.ClearInterval(CheckInterval)

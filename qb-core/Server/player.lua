@@ -8,15 +8,10 @@ RegisterServerEvent('PlayerJoined', function(newPlayer)
     print('Player State: ', newPlayer:GetLyraPlayerState())
     local playerState = newPlayer:GetLyraPlayerState()
     print('Player ID: ', playerState:GetPlayerId())
-    print('Player Name: ', playerState:GetPlayerName()) -- returns same as ID
-    --print('Helix User ID: ', playerState:GetHelixUserId())
+    print('Player Name: ', playerState:GetPlayerName())
 end)
 
 -- Logout
-
--- Player.Subscribe('Destroy', function(source)
---     QBCore.Player.Logout(source)
--- end)
 
 function QBCore.Player.Logout(source)
     local PlayerState = source:GetLyraPlayerState()
@@ -24,9 +19,7 @@ function QBCore.Player.Logout(source)
     if not QBCore.Players[source] then return end
     local Player = QBCore.Players[source]
     Player.Functions.Save()
-    --if source:GetControlledCharacter() then source:GetControlledCharacter():Destroy() end
     TriggerClientEvent(source, 'QBCore:Client:OnPlayerUnload')
-    --Events.Call('QBCore:Server:OnPlayerUnload', source)
     QBCore.Player_Buckets[Player.PlayerData.license] = nil
     QBCore.Players[source] = nil
 end
@@ -80,6 +73,7 @@ function QBCore.Player.Login(source, citizenid, newData)
     else
         QBCore.Player.CheckPlayerData(source, newData)
     end
+    TriggerClientEvent(source, 'QBCore:Client:OnPlayerLoaded')
     return true
 end
 
@@ -117,7 +111,7 @@ function QBCore.Player.CheckPlayerData(source, PlayerData)
         PlayerData.name = PlayerState:GetPlayerName()
     end
     applyDefaults(PlayerData, QBConfig.Player.PlayerDefaults)
-    return QBCore.Player.CreatePlayer(PlayerData, Offline)
+    QBCore.Player.CreatePlayer(PlayerData, Offline)
 end
 
 function QBCore.Player.CreatePlayer(PlayerData, Offline)
@@ -454,7 +448,10 @@ function QBCore.Player.DeleteCharacter(source, citizenid)
     local result = Database.Select('SELECT license FROM players WHERE citizenid = ? LIMIT 1', { citizenid })
     if license == result[1].Columns:ToTable().license then
         local transactionStarted = Database.Execute('BEGIN TRANSACTION')
-        if not transactionStarted then print('[Error] qb-core couldn\'t start a transaction when deleting a character.') return end
+        if not transactionStarted then
+            print('[Error] qb-core couldn\'t start a transaction when deleting a character.')
+            return
+        end
         local query = 'DELETE FROM %s WHERE citizenid = ?'
         local tableCount = #playertables
         local queries = {}
@@ -463,10 +460,18 @@ function QBCore.Player.DeleteCharacter(source, citizenid)
         for i = 1, tableCount do
             local v = playertables[i]
             local QuerySuccess = Database.Execute(query:format(v.table), { citizenid })
-            if not QuerySuccess then Success = false break end
+            if not QuerySuccess then
+                Success = false
+                break
+            end
         end
 
-        if not Success then Database.Execute('ROLLBACK') else Database.Execute('COMMIT') return true end
+        if not Success then
+            Database.Execute('ROLLBACK')
+        else
+            Database.Execute('COMMIT')
+            return true
+        end
     else
         source:Kick(Lang:t('info.exploit_dropped'))
         --Events.Call('qb-log:server:CreateLog', 'anticheat', 'Anti-Cheat', 'white', GetPlayerName(source) .. ' Has Been Dropped For Character Deletion Exploit', true)
@@ -475,9 +480,9 @@ function QBCore.Player.DeleteCharacter(source, citizenid)
 end
 
 for functionName, func in pairs(QBCore.Player) do
-	if type(func) == 'function' then
-		exports('qb-core', functionName, func)
-	end
+    if type(func) == 'function' then
+        exports('qb-core', functionName, func)
+    end
 end
 
 exports('qb-core', 'Player', function(Player, MethodName, ...)

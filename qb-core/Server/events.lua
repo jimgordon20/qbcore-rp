@@ -1,20 +1,3 @@
--- Callback Events --
-
--- Client Callback
-RegisterServerEvent('QBCore:Server:TriggerClientCallback', function(_, name, ...)
-    if QBCore.ClientCallbacks[name] then
-        QBCore.ClientCallbacks[name](...)
-        QBCore.ClientCallbacks[name] = nil
-    end
-end)
-
--- Server Callback
-RegisterServerEvent('QBCore:Server:TriggerCallback', function(source, name, ...)
-    QBCore.Functions.TriggerCallback(name, source, function(...)
-        TriggerClientEvent(source, 'QBCore:Client:TriggerCallback', name, ...)
-    end, ...)
-end)
-
 -- Events
 
 RegisterServerEvent('QBCore:UpdatePlayer', function(source)
