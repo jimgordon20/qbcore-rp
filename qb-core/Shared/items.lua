@@ -1,6 +1,4 @@
-QBShared = QBShared or {}
-
-QBShared.Items = {
+QBCore.Shared.Items = {
     -- WEAPONS
     weapon_acm            = { name = 'weapon_acm', label = 'ACM', weight = 1000, type = 'weapon', image = 'weapon_acm.png', unique = true, useable = true, shouldClose = true, description = '' },
     weapon_austro         = { name = 'weapon_austro', label = 'AUSTRO', weight = 1000, type = 'weapon', image = 'weapon_austro.png', unique = true, useable = true, shouldClose = true, description = '' },

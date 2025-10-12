@@ -1,9 +1,12 @@
-QBShared = QBShared or {}
+QBCore = {}
+QBCore.PlayerData = {}
+QBCore.Config = {}
+QBCore.Shared = {}
 
 local StringCharset = {}
 local NumberCharset = {}
 
-QBShared.StarterItems = {
+QBCore.Shared.StarterItems = {
     ['phone'] = { amount = 1, item = 'phone' },
     ['id_card'] = { amount = 1, item = 'id_card' },
     ['driver_license'] = { amount = 1, item = 'driver_license' },
@@ -13,17 +16,17 @@ for i = 48, 57 do NumberCharset[#NumberCharset + 1] = string.char(i) end
 for i = 65, 90 do StringCharset[#StringCharset + 1] = string.char(i) end
 for i = 97, 122 do StringCharset[#StringCharset + 1] = string.char(i) end
 
-function QBShared.RandomStr(length)
+function QBCore.Shared.RandomStr(length)
     if length <= 0 then return '' end
-    return QBShared.RandomStr(length - 1) .. StringCharset[math.random(1, #StringCharset)]
+    return QBCore.Shared.RandomStr(length - 1) .. StringCharset[math.random(1, #StringCharset)]
 end
 
-function QBShared.RandomInt(length)
+function QBCore.Shared.RandomInt(length)
     if length <= 0 then return '' end
-    return QBShared.RandomInt(length - 1) .. NumberCharset[math.random(1, #NumberCharset)]
+    return QBCore.Shared.RandomInt(length - 1) .. NumberCharset[math.random(1, #NumberCharset)]
 end
 
-function QBShared.SplitStr(str, delimiter)
+function QBCore.Shared.SplitStr(str, delimiter)
     local result = {}
     local from = 1
     local delim_from, delim_to = string.find(str, delimiter, from)
@@ -36,24 +39,24 @@ function QBShared.SplitStr(str, delimiter)
     return result
 end
 
-function QBShared.Trim(value)
+function QBCore.Shared.Trim(value)
     return (string.gsub(value, '^%s*(.-)%s*$', '%1'))
 end
 
-function QBShared.FirstToUpper(value)
+function QBCore.Shared.FirstToUpper(value)
     return (value:gsub('^%l', string.upper))
 end
 
-function QBShared.Round(value, numDecimalPlaces)
+function QBCore.Shared.Round(value, numDecimalPlaces)
     if not numDecimalPlaces then return math.floor(value + 0.5) end
     local power = 10 ^ numDecimalPlaces
     return math.floor((value * power) + 0.5) / (power)
 end
 
-for k, v in pairs(QBShared) do
+for k, v in pairs(QBCore.Shared) do
     if type(v) == 'function' then
         exports('qb-core', 'Shared', function(functionName, ...)
-            return QBShared[functionName](...)
+            return QBCore.Shared[functionName](...)
         end)
     end
 end

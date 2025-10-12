@@ -1,6 +1,4 @@
-QBShared = QBShared or {}
-
-QBShared.Vehicles = {
+QBCore.Shared.Vehicles = {
 	bp_police = {
 		asset_name = 'helix::BP_PoliceCar',
 		collision_type = CollisionType.Normal,

@@ -1,5 +1,5 @@
 local Lang = require('locales/en')
-local sharedJobs = exports['qb-core']:GetSharedJobs()
+local sharedJobs = exports['qb-core']:GetShared('Jobs')
 
 -- Functions
 

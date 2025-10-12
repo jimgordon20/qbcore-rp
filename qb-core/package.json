@@ -1,6 +1,6 @@
 {
     "shared": [
-        "Shared/Index.lua",
+        "Shared/locale.lua",
         "Shared/locales/en.lua",
         "Shared/main.lua",
         "Shared/config.lua",
@@ -11,13 +11,11 @@
         "Shared/weapons.lua"
     ],
     "client": [
-        "Client/Index.lua",
         "Client/events.lua",
         "Client/functions.lua",
         "Client/loops.lua"
     ],
     "server": [
-        "Server/Index.lua",
         "Server/database.lua",
         "Server/functions.lua",
         "Server/player.lua",

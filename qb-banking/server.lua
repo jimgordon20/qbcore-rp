@@ -448,7 +448,7 @@ end)
 
 -- Threads
 
-local Jobs = exports['qb-core']:GetCoreObject().Shared.Jobs
+local Jobs = exports['qb-core']:GetShared('Jobs')
 
 local accounts = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM bank_accounts')
 for _, account in ipairs(accounts) do

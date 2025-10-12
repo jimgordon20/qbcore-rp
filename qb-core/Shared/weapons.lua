@@ -1,6 +1,4 @@
-QBShared = QBShared or {}
-
-QBShared.Weapons = {
+QBCore.Shared.Weapons = {
     --[[ weapon_acm = {
         ammo_type = 'rifle_ammo',
         asset_name = 'helix::SK_ACM',

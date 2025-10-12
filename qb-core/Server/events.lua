@@ -3,8 +3,8 @@
 RegisterServerEvent('QBCore:UpdatePlayer', function(source)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
-    local newHunger = Player.PlayerData.metadata['hunger'] - QBConfig.Player.HungerRate
-    local newThirst = Player.PlayerData.metadata['thirst'] - QBConfig.Player.ThirstRate
+    local newHunger = Player.PlayerData.metadata['hunger'] - QBCore.Config.Player.HungerRate
+    local newThirst = Player.PlayerData.metadata['thirst'] - QBCore.Config.Player.ThirstRate
     if newHunger <= 0 then newHunger = 0 end
     if newThirst <= 0 then newThirst = 0 end
     Player.Functions.SetMetaData('thirst', newThirst)

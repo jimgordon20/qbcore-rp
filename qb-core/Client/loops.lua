@@ -1,6 +1,6 @@
 Timer.SetInterval(function()
 	TriggerServerEvent('QBCore:UpdatePlayer')
-end, (1000 * 60) * QBConfig.UpdateInterval)
+end, (1000 * 60) * QBCore.Config.UpdateInterval)
 
 -- Timer.SetInterval(function()
 -- 	if Client.GetValue('isLoggedIn', false) then
@@ -16,4 +16,4 @@ end, (1000 * 60) * QBConfig.UpdateInterval)
 -- 			TriggerServerEvent('qb-ambulancejob:server:decreaseHealth', decreaseThreshold)
 -- 		end
 -- 	end
--- end, QBConfig.StatusInterval)
+-- end, QBCore.Config.StatusInterval)
