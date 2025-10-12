@@ -1,5 +1,5 @@
 local Lang = require('locales/en')
-local QBPlayers = exports['qb-core']:GetCoreObject().Players
+local QBPlayers = exports['qb-core']:GetQBPlayers()
 
 -- Functions
 

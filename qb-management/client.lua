@@ -1,19 +1,21 @@
 local Lang = require('locales/en')
-local PlayerJob = QBCore.Functions.GetPlayerData().job
-local PlayerGang = QBCore.Functions.GetPlayerData().gang
+local PlayerJob = {}
+local PlayerGang = {}
+local sharedJobs = exports['qb-core']:GetShared('Jobs')
+local sharedGangs = exports['qb-core']:GetShared('Gangs')
 
 -- Events
 
 RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
-    PlayerJob = QBCore.Functions.GetPlayerData().job
-    PlayerGang = QBCore.Functions.GetPlayerData().gang
+    PlayerJob = exports['qb-core']:GetPlayerData().job
+    PlayerGang = exports['qb-core']:GetPlayerData().gang
 end)
 
 RegisterClientEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
 end)
 
-RegisterNetEvent('QBCore:Client:OnGangUpdate', function(InfoGang)
+RegisterClientEvent('QBCore:Client:OnGangUpdate', function(InfoGang)
     PlayerGang = InfoGang
 end)
 
@@ -178,7 +180,7 @@ RegisterClientEvent('qb-management:client:ManageEmployee', function(data)
             icon = 'fa-solid fa-circle-info'
         },
     }
-    for k, v in pairs(QBCore.Shared.Jobs[data.work.name].grades) do
+    for k, v in pairs(sharedJobs[data.work.name].grades) do
         EmployeeMenu[#EmployeeMenu + 1] = {
             header = v.name,
             txt = Lang:t('body.grade') .. k,
@@ -255,7 +257,7 @@ RegisterClientEvent('qb-management:client:ManageMember', function(data)
             icon = 'fa-solid fa-circle-info',
         },
     }
-    for k, v in pairs(QBCore.Shared.Gangs[data.work.name].grades) do
+    for k, v in pairs(sharedGangs[data.work.name].grades) do
         MemberMenu[#MemberMenu + 1] = {
             header = v.name,
             txt = Lang:t('bodygang.grade') .. k,
@@ -360,42 +362,46 @@ end)
 
 -- Target
 
-for job, zones in pairs(Config.BossMenus) do
-    for index, coords in ipairs(zones) do
-        local zoneName = job .. '_bossmenu_' .. index
-        exports['qb-target']:AddCircleZone(zoneName, coords, 100, {
-            debug = true,
-            distance = 1000
-        }, {
-            options = {
+Timer.SetTimeout(function()
+    for job, zones in pairs(Config.BossMenus) do
+        for index, coords in ipairs(zones) do
+            local zoneName = job .. '_bossmenu_' .. index
+            exports['qb-target']:AddSphereZone(zoneName, {
+                X = coords.X,
+                Y = coords.Y,
+                Z = coords.Z
+            }, 100, {
+                debug = true,
+                distance = 1000
+            }, {
                 {
                     icon = 'fas fa-sign-in-alt',
                     event = 'qb-management:client:OpenMenu',
                     label = Lang:t('target.label'),
                     --canInteract = function() return job == PlayerJob.name and PlayerJob.isboss end,
                 },
-            },
-            distance = 2.5
-        })
+            })
+        end
     end
-end
 
-for gang, zones in pairs(Config.GangMenus) do
-    for index, coords in ipairs(zones) do
-        local zoneName = gang .. '_gangmenu_' .. index
-        exports['qb-target']:AddCircleZone(zoneName, coords, 100, {
-            debug = true,
-            distance = 1000
-        }, {
-            options = {
+    for gang, zones in pairs(Config.GangMenus) do
+        for index, coords in ipairs(zones) do
+            local zoneName = gang .. '_gangmenu_' .. index
+            exports['qb-target']:AddSphereZone(zoneName, {
+                X = coords.X,
+                Y = coords.Y,
+                Z = coords.Z
+            }, 100, {
+                debug = true,
+                distance = 1000
+            }, {
                 {
                     icon = 'fas fa-sign-in-alt',
                     event = 'qb-management:client:OpenMenu',
                     label = Lang:t('targetgang.label'),
                     --canInteract = function() return gang == PlayerGang.name and PlayerGang.isboss end,
                 },
-            },
-            distance = 2.5
-        })
+            })
+        end
     end
-end
+end, 5000)
