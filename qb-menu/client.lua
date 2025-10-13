@@ -1,6 +1,6 @@
 local headerShown = false
 local sendData = nil
-local my_webui = WebUI('qb-menu', 'qb-menu/Client/html/index.html', 0)
+local my_webui = WebUI('qb-menu', 'qb-menu/html/index.html', 0)
 
 my_webui.Browser.OnLoadCompleted:Add(my_webui.Browser, function()
     my_webui:RegisterEventHandler('clickedButton', function(option)
