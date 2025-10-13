@@ -1,9 +1,9 @@
 {
     "shared": [],
     "client": [
-        "Client/Index.lua"
+        "client.lua"
     ],
     "server": [
-        "Server/Index.lua"
+        "server.lua"
     ]
 }
