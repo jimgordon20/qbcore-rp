@@ -14,6 +14,13 @@ my_webui.Browser.OnLoadCompleted:Add(my_webui.Browser, function()
     end)
 end)
 
+function onShutdown()
+    if my_webui then
+        my_webui:Destroy()
+        my_webui = nil
+    end
+end
+
 local function ShowInput(data)
     if not data then return end
     if properties then return end
