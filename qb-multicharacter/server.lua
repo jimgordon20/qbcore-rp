@@ -1,4 +1,4 @@
-local Lang = require('Shared/locales/en')
+local Lang = require('locales/en')
 local hasDonePreloading = {}
 
 -- Handling Player Load

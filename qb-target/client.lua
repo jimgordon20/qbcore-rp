@@ -3,7 +3,7 @@ local isLoggedIn = false
 local player_ped
 local target_active, target_entity, raycast_timer = false, nil, nil
 local nui_data, send_data, Entities, Types, Zones = {}, {}, {}, {}, {}
-local my_webui = WebUI('Target', 'qb-target/Client/html/index.html', 0)
+local my_webui = WebUI('Target', 'qb-target/html/index.html', 0)
 
 -- UI
 
@@ -393,47 +393,3 @@ end)
 -- configureType('WorldStaticMesh', Config.GlobalWorldStaticMeshOptions)
 -- configureType('ALS_WorldCharacterBP_C', Config.ALS_WorldCharacterBP_C)
 -- configureType('WorldVehicleDoorComponent', Config.GlobalWorldVehicleDoorOptions)
-
--- Timer.SetTimeout(function()
--- 	-- Test Box Zone 1 - Simple interaction
--- 	AddBoxZone('test_box_1', {
--- 		X = -249.54,
--- 		Y = 1358.93,
--- 		Z = 91.697
--- 	}, 5.0, 5.0, {
--- 		name = 'test_box_1', -- Added this
--- 		heading = 0,
--- 		minZ = 89.697,
--- 		maxZ = 93.697,
--- 		debug = true,
--- 		distance = 5.0 -- Should be here, not in the options
--- 	}, {
--- 		{
--- 			icon = 'fas fa-hand',
--- 			label = 'Test Interaction',
--- 			action = function()
--- 				print('Test zone 1 clicked!')
--- 			end
--- 		}
--- 	})
-
--- 	-- Example sphere zone
--- 	AddSphereZone('test_sphere_1', {
--- 			X = -249.54,
--- 			Y = 1358.93,
--- 			Z = 91.697
--- 		}, 3.0,             -- radius of 3.0 units
--- 		{
--- 			name = 'test_sphere_1', -- Added this
--- 			debug = true,
--- 			distance = 5.0
--- 		}, {
--- 			{
--- 				icon = 'fas fa-hand',
--- 				label = 'Sphere Test Interaction',
--- 				action = function()
--- 					print('Sphere zone clicked!')
--- 				end
--- 			}
--- 		})
--- end, 2000)

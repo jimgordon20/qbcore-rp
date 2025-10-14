@@ -378,7 +378,6 @@ Timer.SetTimeout(function()
                     icon = 'fas fa-sign-in-alt',
                     event = 'qb-management:client:OpenMenu',
                     label = Lang:t('target.label'),
-                    --canInteract = function() return job == PlayerJob.name and PlayerJob.isboss end,
                 },
             })
         end
@@ -387,11 +386,7 @@ Timer.SetTimeout(function()
     for gang, zones in pairs(Config.GangMenus) do
         for index, coords in ipairs(zones) do
             local zoneName = gang .. '_gangmenu_' .. index
-            exports['qb-target']:AddSphereZone(zoneName, {
-                X = coords.X,
-                Y = coords.Y,
-                Z = coords.Z
-            }, 100, {
+            exports['qb-target']:AddSphereZone(zoneName, coords, 100, {
                 debug = true,
                 distance = 1000
             }, {
@@ -399,7 +394,6 @@ Timer.SetTimeout(function()
                     icon = 'fas fa-sign-in-alt',
                     event = 'qb-management:client:OpenMenu',
                     label = Lang:t('targetgang.label'),
-                    --canInteract = function() return gang == PlayerGang.name and PlayerGang.isboss end,
                 },
             })
         end

@@ -6,7 +6,7 @@ end
 
 -- Get current script's directory and build path to qb-core
 local currentDir = getScriptDir() -- Should be: .../scripts/qb-multicharacter/Shared/locales/
-local qbCorePath = currentDir .. '../../../qb-core/Shared/locale.lua'
+local qbCorePath = currentDir .. '../../qb-core/Shared/locale.lua'
 
 -- Normalize the path
 qbCorePath = qbCorePath:gsub('\\', '/') -- Convert backslashes to forward slashes

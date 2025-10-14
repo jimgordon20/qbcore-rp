@@ -1,6 +1,6 @@
-local Lang = require('Shared/locales/en')
+local Lang = require('locales/en')
 local Houses = {}
-local my_webui = WebUI('qb-spawn', 'qb-spawn/Client/html/index.html', 0)
+local my_webui = WebUI('qb-spawn', 'qb-spawn/html/index.html', 0)
 
 -- Functions
 
@@ -26,7 +26,7 @@ local function SetDisplay(bool, cData, new, apps)
 
     my_webui:CallFunction('showUi', bool, translations)
     if not new then
-        --exports['qb-core']:TriggerCallback('qb-houses:server:getOwnedHouses', function(houses)
+        --TriggerCallback('qb-houses:server:getOwnedHouses', function(houses)
         local myHouses = {}
         -- if houses then
         -- 	for i = 1, #houses do

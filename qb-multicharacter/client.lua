@@ -1,5 +1,5 @@
-local Lang = require('Shared/locales/en')
-local my_webui = WebUI('qb-multicharacter', 'qb-multicharacter/Client/html/index.html', 0)
+local Lang = require('locales/en')
+local my_webui = WebUI('qb-multicharacter', 'qb-multicharacter/html/index.html', 0)
 
 my_webui.Browser.OnLoadCompleted:Add(my_webui.Browser, function()
     my_webui:RegisterEventHandler('selectCharacter', function(data)

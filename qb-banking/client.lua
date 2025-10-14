@@ -138,11 +138,7 @@ end)
 
 Timer.SetTimeout(function()
     for i = 1, #Config.locations do
-        exports['qb-target']:AddSphereZone('bank_' .. i, {
-            X = Config.locations[i].X,
-            Y = Config.locations[i].Y,
-            Z = Config.locations[i].Z
-        }, 100.0, {
+        exports['qb-target']:AddSphereZone('bank_' .. i, Config.locations[i], 100.0, {
             debug = true,
             distance = 1000
         }, {
