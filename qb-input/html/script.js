@@ -1,178 +1,187 @@
-let formInputs = {};
+document.addEventListener("DOMContentLoaded", function () {
+    let formInputs = {};
 
-const OpenMenu = (data) => {
-    if (data == null || data == "") {
-        console.log("No data detected");
-        return null;
-    }
-
-    $(`.main-wrapper`).fadeIn(0);
-
-    let form = ["<form id='qb-input-form'>", `<div class="heading">${data.header != null ? data.header : "Form Title"}</div>`];
-
-    data.inputs.forEach((item, index) => {
-        switch (item.type) {
-            case "text":
-                form.push(renderTextInput(item));
-                break;
-            case "password":
-                form.push(renderPasswordInput(item));
-                break;
-            case "number":
-                form.push(renderNumberInput(item));
-                break;
-            case "radio":
-                form.push(renderRadioInput(item));
-                break;
-            case "select":
-                form.push(renderSelectInput(item));
-                break;
-            case "checkbox":
-                form.push(renderCheckboxInput(item));
-                break;
-            case "color":
-                form.push(renderColorInput(item));
-                break;
-            default:
-                form.push(`<div class="label">${item.text}</div>`);
+    const OpenMenu = (data) => {
+        if (data == null || data == "") {
+            console.log("No data detected");
+            return null;
         }
-    });
-    form.push(`<div class="footer"><button type="submit" class="btn btn-success" id="submit">${data.submitText ? data.submitText : "Submit"}</button></div>`);
 
-    form.push("</form>");
+        $(`.main-wrapper`).fadeIn(0);
 
-    $(".main-wrapper").html(form.join(" "));
+        let form = ["<form id='qb-input-form'>", `<div class="heading">${data.header != null ? data.header : "Form Title"}</div>`];
 
-    $("#qb-input-form").on("change", function (event) {
-        if ($(event.target).attr("type") == "checkbox") {
-            const value = $(event.target).is(":checked") ? "true" : "false";
-            formInputs[$(event.target).attr("value")] = value;
-        } else {
-            formInputs[$(event.target).attr("name")] = $(event.target).val();
-        }
-    });
+        data.inputs.forEach((item, index) => {
+            switch (item.type) {
+                case "text":
+                    form.push(renderTextInput(item));
+                    break;
+                case "password":
+                    form.push(renderPasswordInput(item));
+                    break;
+                case "number":
+                    form.push(renderNumberInput(item));
+                    break;
+                case "radio":
+                    form.push(renderRadioInput(item));
+                    break;
+                case "select":
+                    form.push(renderSelectInput(item));
+                    break;
+                case "checkbox":
+                    form.push(renderCheckboxInput(item));
+                    break;
+                case "color":
+                    form.push(renderColorInput(item));
+                    break;
+                default:
+                    form.push(`<div class="label">${item.text}</div>`);
+            }
+        });
+        form.push(`<div class="footer"><button type="submit" class="btn btn-success" id="submit">${data.submitText ? data.submitText : "Submit"}</button></div>`);
 
-    $("#qb-input-form").on("submit", async function (event) {
-        if (event != null) {
-            event.preventDefault();
-        }
-        await hEvent("buttonSubmit", { data: formInputs }); // Wait for promise?
-        CloseMenu();
-    });
-};
+        form.push("</form>");
 
-const renderTextInput = (item) => {
-    const { text, name } = item;
-    formInputs[name] = item.default ? item.default : "";
-    const isRequired = item.isRequired == "true" || item.isRequired ? "required" : "";
-    const defaultValue = item.default ? `value="${item.default}"` : "";
+        $(".main-wrapper").html(form.join(" "));
 
-    return ` <input placeholder="${text}" type="text" class="form-control" name="${name}" ${defaultValue} ${isRequired}/>`;
-};
-const renderPasswordInput = (item) => {
-    const { text, name } = item;
-    formInputs[name] = item.default ? item.default : "";
-    const isRequired = item.isRequired == "true" || item.isRequired ? "required" : "";
-    const defaultValue = item.default ? `value="${item.default}"` : "";
+        $("#qb-input-form").on("change", function (event) {
+            if ($(event.target).attr("type") == "checkbox") {
+                const value = $(event.target).is(":checked") ? "true" : "false";
+                formInputs[$(event.target).attr("value")] = value;
+            } else {
+                formInputs[$(event.target).attr("name")] = $(event.target).val();
+            }
+        });
 
-    return ` <input placeholder="${text}" type="password" class="form-control" name="${name}" ${defaultValue} ${isRequired}/>`;
-};
-const renderNumberInput = (item) => {
-    try {
+        $("#qb-input-form").on("submit", async function (event) {
+            if (event != null) {
+                event.preventDefault();
+            }
+            await hEvent("buttonSubmit", { data: formInputs }); // Wait for promise?
+            CloseMenu();
+        });
+    };
+
+    const renderTextInput = (item) => {
         const { text, name } = item;
         formInputs[name] = item.default ? item.default : "";
         const isRequired = item.isRequired == "true" || item.isRequired ? "required" : "";
         const defaultValue = item.default ? `value="${item.default}"` : "";
 
-        return `<input placeholder="${text}" type="number" class="form-control" name="${name}" ${defaultValue} ${isRequired}/>`;
-    } catch (err) {
-        console.log(err);
-        return "";
-    }
-};
+        return ` <input placeholder="${text}" type="text" class="form-control" name="${name}" ${defaultValue} ${isRequired}/>`;
+    };
+    const renderPasswordInput = (item) => {
+        const { text, name } = item;
+        formInputs[name] = item.default ? item.default : "";
+        const isRequired = item.isRequired == "true" || item.isRequired ? "required" : "";
+        const defaultValue = item.default ? `value="${item.default}"` : "";
 
-const renderRadioInput = (item) => {
-    const { options, name, text } = item;
-    formInputs[name] = options[0].value;
+        return ` <input placeholder="${text}" type="password" class="form-control" name="${name}" ${defaultValue} ${isRequired}/>`;
+    };
+    const renderNumberInput = (item) => {
+        try {
+            const { text, name } = item;
+            formInputs[name] = item.default ? item.default : "";
+            const isRequired = item.isRequired == "true" || item.isRequired ? "required" : "";
+            const defaultValue = item.default ? `value="${item.default}"` : "";
 
-    let div = `<div class="form-input-group"> <div class="form-group-title">${text}</div>`;
-    div += '<div class="input-group">';
-    options.forEach((option, index) => {
-        div += `<label for="radio_${name}_${index}"> <input type="radio" id="radio_${name}_${index}" name="${name}" value="${option.value}"
-                ${(item.default ? item.default == option.value : index == 0) ? "checked" : ""}> ${option.text}</label>`;
-    });
+            return `<input placeholder="${text}" type="number" class="form-control" name="${name}" ${defaultValue} ${isRequired}/>`;
+        } catch (err) {
+            console.log(err);
+            return "";
+        }
+    };
 
-    div += "</div>";
-    div += "</div>";
-    return div;
-};
+    const renderRadioInput = (item) => {
+        const { options, name, text } = item;
+        formInputs[name] = options[0].value;
 
-const renderCheckboxInput = (item) => {
-    const { options, name, text } = item;
+        let div = `<div class="form-input-group"> <div class="form-group-title">${text}</div>`;
+        div += '<div class="input-group">';
+        options.forEach((option, index) => {
+            div += `<label for="radio_${name}_${index}"> <input type="radio" id="radio_${name}_${index}" name="${name}" value="${option.value}"
+                    ${(item.default ? item.default == option.value : index == 0) ? "checked" : ""}> ${option.text}</label>`;
+        });
 
-    let div = `<div class="form-input-group"> <div class="form-group-title">${text}</div>`;
-    div += '<div class="input-group-chk">';
+        div += "</div>";
+        div += "</div>";
+        return div;
+    };
 
-    options.forEach((option, index) => {
-        div += `<label for="chk_${name}_${index}">${option.text} <input type="checkbox" id="chk_${name}_${index}" name="${name}" value="${option.value}" ${option.checked ? "checked" : ""}></label>`;
-        formInputs[option.value] = option.checked ? "true" : "false";
-    });
+    const renderCheckboxInput = (item) => {
+        const { options, name, text } = item;
 
-    div += "</div>";
-    div += "</div>";
-    return div;
-};
+        let div = `<div class="form-input-group"> <div class="form-group-title">${text}</div>`;
+        div += '<div class="input-group-chk">';
 
-const renderSelectInput = (item) => {
-    const { options, name, text } = item;
-    let div = `<div class="select-title">${text}</div>`;
+        options.forEach((option, index) => {
+            div += `<label for="chk_${name}_${index}">${option.text} <input type="checkbox" id="chk_${name}_${index}" name="${name}" value="${option.value}" ${option.checked ? "checked" : ""}></label>`;
+            formInputs[option.value] = option.checked ? "true" : "false";
+        });
 
-    div += `<select class="form-select" name="${name}" title="${text}">`;
-    formInputs[name] = options[0].value;
+        div += "</div>";
+        div += "</div>";
+        return div;
+    };
 
-    options.forEach((option, index) => {
-        const isDefaultValue = item.default == option.value;
-        div += `<option value="${option.value}" ${isDefaultValue ? "selected" : ""}>${option.text}</option>`;
-        if (isDefaultValue) {
-            formInputs[name] = option.value;
+    const renderSelectInput = (item) => {
+        const { options, name, text } = item;
+        let div = `<div class="select-title">${text}</div>`;
+
+        div += `<select class="form-select" name="${name}" title="${text}">`;
+        formInputs[name] = options[0].value;
+
+        options.forEach((option, index) => {
+            const isDefaultValue = item.default == option.value;
+            div += `<option value="${option.value}" ${isDefaultValue ? "selected" : ""}>${option.text}</option>`;
+            if (isDefaultValue) {
+                formInputs[name] = option.value;
+            }
+        });
+        div += "</select>";
+        return div;
+    };
+
+    const renderColorInput = (item) => {
+        const { text, name } = item;
+        formInputs[name] = item.default ? item.default : "#ffffff";
+        const isRequired = item.isRequired == "true" || item.isRequired ? "required" : "";
+        const defaultValue = item.default ? `value="${item.default}"` : "";
+        return ` <input placeholder="${text}" type="color" class="form-control" name="${name}" ${defaultValue} ${isRequired}/>`;
+    };
+
+    const CloseMenu = () => {
+        $(`.main-wrapper`).fadeOut(0);
+        $("#qb-input-form").remove();
+        formInputs = {};
+    };
+
+    const CancelMenu = () => {
+        hEvent("closeMenu");
+        return CloseMenu();
+    };
+
+    window.addEventListener("message", (event) => {
+        const data = event.data;
+        switch (data.name) {
+            case "OpenMenu":
+                return OpenMenu(data.args[0]);
+            case "CloseMenu":
+                return CloseMenu();
+            default:
+                return;
         }
     });
-    div += "</select>";
-    return div;
-};
 
-const renderColorInput = (item) => {
-    const { text, name } = item;
-    formInputs[name] = item.default ? item.default : "#ffffff";
-    const isRequired = item.isRequired == "true" || item.isRequired ? "required" : "";
-    const defaultValue = item.default ? `value="${item.default}"` : "";
-    return ` <input placeholder="${text}" type="color" class="form-control" name="${name}" ${defaultValue} ${isRequired}/>`;
-};
-
-const CloseMenu = () => {
-    $(`.main-wrapper`).fadeOut(0);
-    $("#qb-input-form").remove();
-    formInputs = {};
-};
-
-const CancelMenu = () => {
-    hEvent("closeMenu");
-    return CloseMenu();
-};
-
-document.onkeyup = function (event) {
-    const charCode = event.key;
-    if (charCode == "Escape") {
-        CancelMenu();
-    } else if (charCode == "Enter") {
-        SubmitData();
+    function handleMouseDown(event) {
+        if (event.button === 2) {
+            CancelMenu();
+        }
     }
-};
 
-// IDK why this is a thing ? what if they misclick?
-$(document).click(function (event) {
-    var $target = $(event.target);
-    if (!$target.closest(".main-wrapper").length && $(".main-wrapper").is(":visible")) {
-        CancelMenu();
-    }
+    window.addEventListener("mousedown", handleMouseDown);
+
+    window.addEventListener("unload", function () {
+        window.removeEventListener("mousedown", handleMouseDown);
+    });
 });

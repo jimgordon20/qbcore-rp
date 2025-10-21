@@ -1,17 +1,18 @@
 local properties = nil
-local my_webui = WebUI('qb-input', 'qb-input/html/index.html', 0)
+local my_webui = WebUI('qb-input', 'qb-input/html/index.html')
 
-my_webui.Browser.OnLoadCompleted:Add(my_webui.Browser, function()
-    my_webui:RegisterEventHandler('buttonSubmit', function()
-        if not properties then return end
-        properties:resolve(data.data)
-        properties = nil
-    end)
-    my_webui:RegisterEventHandler('closeMenu', function()
-        if not properties then return end
-        properties:resolve(nil)
-        properties = nil
-    end)
+my_webui:RegisterEventHandler('buttonSubmit', function()
+    my_webui:SetInputMode(0)
+    if not properties then return end
+    properties:resolve(data.data)
+    properties = nil
+end)
+
+my_webui:RegisterEventHandler('closeMenu', function()
+    my_webui:SetInputMode(0)
+    if not properties then return end
+    properties:resolve(nil)
+    properties = nil
 end)
 
 function onShutdown()
@@ -26,8 +27,9 @@ local function ShowInput(data)
     if properties then return end
     if not my_webui then setupUI() end
     properties = promise.new()
-    my_webui:CallFunction('OpenMenu', data)
-    my_webui:SetLayer(5)
+    my_webui:SendEvent('OpenMenu', data)
+    my_webui:BringToFront()
+    my_webui:SetInputMode(1)
     return properties:await()
 end
 
@@ -37,8 +39,8 @@ local function CloseMenu()
         properties:resolve(nil)
         properties = nil
     end
-    my_webui:CallFunction('CloseMenu')
-    my_webui:SetLayer(0)
+    my_webui:SendEvent('CloseMenu')
+    my_webui:SetInputMode(0)
 end
 
 -- Events
