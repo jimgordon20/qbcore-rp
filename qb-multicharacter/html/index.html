@@ -344,6 +344,16 @@
                 window.openUI = openUI;
                 window.setupCharacters = setupCharacters;
                 window.setupCharInfo = setupCharInfo;
+                window.addEventListener('message', function(event) {
+                    switch(event.data.name) {
+                        case "openUI":
+                            openUI(...event.data.args);
+                            break;
+                        case "setupCharacters":
+                            setupCharacters(...event.data.args);
+                            break;
+                    }
+                })
             },
         });
     </script>

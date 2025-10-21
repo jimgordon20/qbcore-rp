@@ -111,6 +111,22 @@
                     window.showUi = showUi;
                     window.setupLocations = setupLocations;
                     window.setupApartments = setupApartments;
+
+                    window.addEventListener('message', function(event) {
+                        if (!event.data || !event.data.name) return;
+                        
+                        switch(event.data.name) {
+                            case "showUi":
+                                showUi(...event.data.args);
+                                break;
+                            case "setupLocations":
+                                setupLocations(...event.data.args);
+                                break;
+                            case "setupApartments":
+                                setupApartments(...event.data.args);
+                                break;
+                        }
+                    });
                 },
             });
         </script>

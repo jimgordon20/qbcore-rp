@@ -20,11 +20,12 @@ local function SetDisplay(bool, cData, new, apps)
     end
 
     if not bool then
-        my_webui:SetLayer(0)
+        my_webui:SetStackOrder(0)
+        my_webui:SetInputMode(0)
         return
     end
 
-    my_webui:CallFunction('showUi', bool, translations)
+    my_webui:SendEvent('showUi', bool, translations)
     if not new then
         --TriggerCallback('qb-houses:server:getOwnedHouses', function(houses)
         local myHouses = {}
@@ -36,17 +37,18 @@ local function SetDisplay(bool, cData, new, apps)
         -- 		}
         -- 	end
         -- end
-        my_webui:CallFunction('setupLocations', Config.Spawns, myHouses, new)
+        my_webui:SendEvent('setupLocations', Config.Spawns, myHouses, new)
         --end, cData.citizenid)
     elseif new then
-        my_webui:CallFunction('setupApartments', apps, new)
+        my_webui:SendEvent('setupApartments', apps, new)
     end
-    my_webui:SetLayer(5)
+    my_webui:SetStackOrder(1)
+    my_webui:SetInputMode(1)
 end
 
 -- UI
 
-my_webui.Browser.OnLoadCompleted:Add(my_webui.Browser, function()
+my_webui.Widget.Browser.OnLoadCompleted:Add(my_webui.Widget, function()
     my_webui:RegisterEventHandler('qb-spawn:setCam', function(data)
         local location = tostring(data.posname)
         local type = tostring(data.type)
