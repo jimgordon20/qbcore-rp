@@ -68,8 +68,7 @@ const bankingApp = Vue.createApp({
             });
             this.statements = {};
             Object.keys(bankData.statements).forEach((accountKey) => {
-                if (!bankData.statements[accountKey]?.length || bankData.statements[accountKey]?.length <= 0)
-                    return;
+                if (!bankData.statements[accountKey]?.length || bankData.statements[accountKey]?.length <= 0) return;
                 this.statements[accountKey] = bankData.statements[accountKey].map((statement) => ({
                     id: statement.id,
                     date: statement.date,
@@ -459,11 +458,6 @@ const bankingApp = Vue.createApp({
         balanceClass(statementType) {
             return statementType === "deposit" ? "positive-balance" : "negative-balance";
         },
-        handleKeydown(event) {
-            if (event.key === "Escape") {
-                this.closeApplication();
-            }
-        },
         closeApplication() {
             if (this.isBankOpen) {
                 this.isBankOpen = false;
@@ -477,13 +471,17 @@ const bankingApp = Vue.createApp({
             }
             hEvent("closeApp", {});
         },
+        handleMessage(event) {
+            const action = event.data.name;
+            if (action === "openBank") {
+                this.openBank(event.data.args[0]);
+            } else if (action === "openATM") {
+                this.tempBankData = event.data.args[0];
+                this.showPinPrompt = true;
+            }
+        },
     },
     mounted() {
-        window.openBank = (data) => this.openBank(data);
-        window.openATM = (data) => this.openATM(data);
-        document.addEventListener("keydown", this.handleKeydown);
-    },
-    beforeUnmount() {
-        document.removeEventListener("keydown", this.handleKeydown);
+        window.addEventListener("message", this.handleMessage);
     },
 }).mount("#app");
