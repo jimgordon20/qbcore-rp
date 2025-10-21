@@ -4,11 +4,6 @@ local player_data = {}
 
 -- Event Handlers
 
-RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
-    player_data = exports['qb-core']:GetPlayerData()
-    setupPeds()
-end)
-
 RegisterClientEvent('qb-shops:client:openShop', function(data)
     -- wait for target UI cleanup
     Timer.SetTimeout(function()
