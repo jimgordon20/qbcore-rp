@@ -18,35 +18,33 @@ end
 
 function QBCore.Functions.HideText()
     if not my_webui then return end
-    my_webui:CallFunction('hideText')
-    my_webui:SetLayer(0)
+    my_webui:SendEvent('hideText')
+    my_webui:SetInputMode(0)
 end
 
 function QBCore.Functions.DrawText(text, position)
     if not my_webui then return end
     if type(position) ~= 'string' then position = 'left' end
-    my_webui:SetLayer(3)
-    my_webui:CallFunction('drawText', text, position)
+    my_webui:SendEvent('drawText', text, position)
 end
 
 function QBCore.Functions.ChangeText(text, position)
     if not my_webui then return end
     if type(position) ~= 'string' then position = 'left' end
-    my_webui:CallFunction('changeText', text, position)
+    my_webui:SendEvent('changeText', text, position)
 end
 
 function QBCore.Functions.KeyPressed()
     if not my_webui then return end
-    my_webui:CallFunction('keyPressed')
+    my_webui:SendEvent('keyPressed')
     QBCore.Functions.HideText()
 end
 
 function QBCore.Functions.Notify(text, texttype, length, icon)
     if not my_webui then return end
     local noti_type = texttype or 'primary'
-    my_webui:SetLayer(3)
     if type(text) == 'table' then
-        my_webui:CallFunction('showNotif', {
+        my_webui:SendEvent('showNotif', {
             text = text.text,
             length = length or 5000,
             type = noti_type,
@@ -54,7 +52,7 @@ function QBCore.Functions.Notify(text, texttype, length, icon)
             icon = icon or nil
         })
     else
-        my_webui:CallFunction('showNotif', {
+        my_webui:SendEvent('showNotif', {
             text = text,
             length = length or 5000,
             type = noti_type,
@@ -62,10 +60,6 @@ function QBCore.Functions.Notify(text, texttype, length, icon)
             icon = icon or nil
         })
     end
-
-    Timer.SetTimeout(function()
-        my_webui:SetLayer(0)
-    end, length or 5000)
 end
 
 -- World Getters

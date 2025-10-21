@@ -33,6 +33,25 @@ const defaultConfig = {
 const app = Vue.createApp({
     mounted() {
         window.showNotif = this.showNotif;
+        window.addEventListener('message', function(event) {
+            switch(event.data.name) {
+                case "showNotif":
+                    this.showNotif(...event.data.args);
+                    break;
+                case "drawText":
+                    drawText(...event.data.args);
+                    break;
+                case "hideText":
+                    hideText();
+                    break;
+                case "changeText":
+                    changeText(...event.data.args);
+                    break;
+                case "keyPressed":
+                    keyPressed();
+                    break;
+            }
+        })
     },
     methods: {
         async showNotif(data) {
