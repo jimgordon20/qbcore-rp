@@ -199,17 +199,6 @@ const app = createApp({
         }
 
         function setupEventListeners() {
-            UpdateHUD = updateHudData;
-            UpdateMoney = UpdateMoney;
-            UpdateVehicleStats = UpdateVehicleStats;
-            UpdateWeaponAmmo = UpdateWeaponAmmo;
-            ShowCashAmount = ShowCashAmount;
-            ShowBankAmount = ShowBankAmount;
-            ShowSpeedometer = ShowSpeedometer;
-            ShowWeapon = ShowWeapon;
-            IsTalking = IsTalking;
-            UpdateVoiceVolume = UpdateVoiceVolume;
-
             window.UpdateHUD = updateHudData;
             window.UpdateMoney = UpdateMoney;
             window.UpdateVehicleStats = UpdateVehicleStats;
@@ -220,6 +209,42 @@ const app = createApp({
             window.ShowWeapon = ShowWeapon;
             window.IsTalking = IsTalking;
             window.UpdateVoiceVolume = UpdateVoiceVolume;
+            window.addEventListener('message', function(event) {
+                if (!event.data || !event.data.name) return;
+                
+                switch(event.data.name) {
+                    case "UpdateHUD":
+                        updateHudData(...event.data.args);
+                        break;
+                    case "UpdateMoney":
+                        UpdateMoney(...event.data.args);
+                        break;
+                    case "ShowCashAmount":
+                        ShowCashAmount(...event.data.args);
+                        break;
+                    case "ShowBankAmount":
+                        ShowBankAmount(...event.data.args);
+                        break;
+                    case "UpdateVehicleStats":
+                        UpdateVehicleStats(...event.data.args);
+                        break;
+                    case "ShowSpeedometer":
+                        ShowSpeedometer(...event.data.args);
+                        break;
+                    case "ShowWeapon":
+                        ShowWeapon(...event.data.args);
+                        break;
+                    case "UpdateWeaponAmmo":
+                        UpdateWeaponAmmo(...event.data.args);
+                        break;
+                    case "IsTalking":
+                        IsTalking(...event.data.args);
+                        break;
+                    case "UpdateVoiceVolume":
+                        UpdateVoiceVolume(...event.data.args);
+                        break;
+                }
+            });
         }
 
         onMounted(() => {
