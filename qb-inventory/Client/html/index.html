@@ -14,7 +14,6 @@
         <script src="app.js" defer></script>
     </head>
     <body>
-        <p style="font-family: Arial, Helvetica, sans-serif; color: red">qb-inventory Debug Text</p>
         <div id="app">
             <div class="inventory-container" v-if="isInventoryOpen" @mousemove="drag" @mouseup="endDrag" @mousedown="containerMouseDownAction">
                 <div class="inventory-section player-inventory-section" :class="{ 'centered-inventory-section': shouldCenterInventory }">
