@@ -1,8 +1,10 @@
 local isLoggedIn = false
 local inputTimer = nil
-local my_webui = WebUI('qb-hud', 'qb-hud/html/index.html', 0)
+local my_webui = WebUI('qb-hud', 'qb-hud/html/index.html')
 local player_data = {}
 local playerPawn = nil
+local health = 0
+local healthComp = nil
 local round = math.floor
 
 function onShutdown()
@@ -16,20 +18,29 @@ function onShutdown()
     end
 end
 
+local function disableDefaultHUD()
+    local actors = UE.TArray(UE.AActor)
+    UE.UGameplayStatics.GetAllActorsWithTag(HWorld, 'HWebUI', actors)
+    if actors[1] then
+        actors[1]:SetHUDVisibility(false, false, true, true)
+    end
+end
+
 -- Event Handlers
 
 RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
     isLoggedIn = true
     player_data = exports['qb-core']:GetPlayerData()
-    my_webui:SetStackOrder(0)
     playerPawn = HPlayer:K2_GetPawn()
+    healthComp = playerPawn.HealthComponent
+    health = healthComp:GetHealth()
+    disableDefaultHUD()
 end)
 
 RegisterClientEvent('QBCore:Client:OnPlayerUnload', function()
     isLoggedIn = false
     playerPawn = nil
     player_data = {}
-    my_webui:SetStackOrder(0)
 end)
 
 RegisterClientEvent('QBCore:Player:SetPlayerData', function(val)
@@ -54,12 +65,55 @@ RegisterClientEvent('qb-hud:client:OnMoneyChange', function(type, amount, isMinu
     my_webui:SendEvent('UpdateMoney', round(cashAmount), round(bankAmount), round(amount), isMinus, type)
 end)
 
+-- Game Events
+
+-- RegisterClientEvent('HEvent:PlayerLoaded', function()
+--     print(HPlayer:K2_GetPawn())
+-- end)
+
+-- RegisterClientEvent('HEvent:Possessed', function()
+--     print(HPlayer:K2_GetPawn())
+-- end)
+
+-- RegisterClientEvent('HEvent:UnPossessed', function()
+--     print('Player has been unpossessed')
+-- end)
+
+RegisterClientEvent('HEvent:HealthChanged', function(oldHealth, newHealth)
+    if not my_webui then return end
+    health = newHealth
+    print('Health changed from ' .. oldHealth .. ' to ' .. newHealth)
+end)
+
+RegisterClientEvent('HEvent:Death', function()
+    print('Player has died')
+end)
+
+RegisterClientEvent('HEvent:WeaponEquipped', function(displayName, weaponName)
+    if not my_webui then return end
+    print('Equipped weapon: ' .. displayName .. ' (' .. weaponName .. ')')
+end)
+
+RegisterClientEvent('HEvent:WeaponUnequipped', function()
+    if not my_webui then return end
+    print('Unequipped weapon')
+end)
+
+RegisterClientEvent('HEvent:EnteredVehicle', function(seat)
+    if not my_webui then return end
+    print('Entered vehicle, seat: ' .. seat)
+end)
+
+RegisterClientEvent('HEvent:ExitedVehicle', function(seat)
+    if not my_webui then return end
+    print('Exited vehicle, seat: ' .. seat)
+end)
+
 -- HUD Thread
 
 inputTimer = Timer.SetInterval(function()
     if not isLoggedIn then return end
     if not playerPawn then return end
-    local health     = playerPawn.HealthComponent:GetHealth()
     local armor      = player_data.metadata['armor']
     local hunger     = player_data.metadata['hunger']
     local thirst     = player_data.metadata['thirst']
