@@ -1,7 +1,7 @@
 local properties = nil
 local my_webui = WebUI('qb-input', 'qb-input/html/index.html')
 
-my_webui:RegisterEventHandler('buttonSubmit', function()
+my_webui:RegisterEventHandler('buttonSubmit', function(data)
     my_webui:SetInputMode(0)
     if not properties then return end
     properties:resolve(data.data)
