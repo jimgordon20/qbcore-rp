@@ -233,6 +233,8 @@ local function LeaveApartment(house)
 end
 
 local function SetClosestApartment()
+	if not isLoggedIn then return end
+	if not HPlayer then return end
 	local ped = HPlayer:K2_GetPawn()
 	if not ped then return end
 	local pos = ped:K2_GetActorLocation()
