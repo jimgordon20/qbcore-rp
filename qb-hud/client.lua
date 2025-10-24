@@ -26,15 +26,9 @@ local function disableDefaultHUD()
     end
 end
 
--- Event Handlers
-
-RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
-    isLoggedIn = true
-    disableDefaultHUD()
-    player_data = exports['qb-core']:GetPlayerData()
+local function voiceListener()
     if HPlayer then
         local LocalVoipSubsystem = UE.USubsystemBlueprintLibrary.GetLocalPlayerSubsystem(HPlayer, UE.UClass.Load('/Script/OnsetVoip.OnsetVoipLocalPlayerSubsystem'))
-        print('LocalVoipSubsystem', LocalVoipSubsystem)
         LocalVoipSubsystem.OnVoipTalkingStateChange:Add(HPlayer, function(_, isTalking)
             if not my_webui then return end
             my_webui:SendEvent('IsTalking', isTalking)
@@ -42,12 +36,20 @@ RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
     elseif not HPlayer then
         local PC = UE.UGameplayStatics.GetPlayerController(HWorld, 0)
         local LocalVoipSubsystem = UE.USubsystemBlueprintLibrary.GetLocalPlayerSubsystem(PC, UE.UClass.Load('/Script/OnsetVoip.OnsetVoipLocalPlayerSubsystem'))
-        print('LocalVoipSubsystem', LocalVoipSubsystem)
         LocalVoipSubsystem.OnVoipTalkingStateChange:Add(PC, function(_, isTalking)
             if not my_webui then return end
             my_webui:SendEvent('IsTalking', isTalking)
         end)
     end
+end
+
+-- Event Handlers
+
+RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
+    isLoggedIn = true
+    disableDefaultHUD()
+    voiceListener()
+    player_data = exports['qb-core']:GetPlayerData()
 end)
 
 RegisterClientEvent('QBCore:Client:OnPlayerUnload', function()
