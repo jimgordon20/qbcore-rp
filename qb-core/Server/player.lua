@@ -416,14 +416,7 @@ local playertables = {
 }
 
 function QBCore.Player.DeleteCharacter(source, citizenid)
-    -- Make Controller from SoftObjectPtr
-    local ObjectPath, SoftRef = nil
-    if type(source) == 'string' then
-        ObjectPath = UE.UKismetSystemLibrary.MakeSoftObjectPath(source)
-        SoftRef = UE.UKismetSystemLibrary.Conv_SoftObjPathToSoftObjRef(ObjectPath)
-        source = UE.UKismetSystemLibrary.Conv_SoftObjectReferenceToObject(SoftRef)
-    end
-
+    if not source or not citizenid then print('[Error] qb-core couldn\'t delete character') return end
     local PlayerState = source:GetLyraPlayerState()
     local license = PlayerState:GetHelixUserId()
     local result = Database.Select('SELECT license FROM players WHERE citizenid = ? LIMIT 1', { citizenid })
