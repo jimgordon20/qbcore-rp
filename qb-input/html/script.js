@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const OpenMenu = (data) => {
         if (data == null || data == "") {
-            console.log("No data detected");
             return null;
         }
 
@@ -87,7 +86,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             return `<input placeholder="${text}" type="number" class="form-control" name="${name}" ${defaultValue} ${isRequired}/>`;
         } catch (err) {
-            console.log(err);
             return "";
         }
     };

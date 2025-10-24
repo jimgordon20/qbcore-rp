@@ -30,11 +30,18 @@ end
 
 RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
     isLoggedIn = true
-    player_data = exports['qb-core']:GetPlayerData()
-    playerPawn = HPlayer:K2_GetPawn()
-    healthComp = playerPawn.HealthComponent
-    health = healthComp:GetHealth()
     disableDefaultHUD()
+    player_data = exports['qb-core']:GetPlayerData()
+    if HPlayer then
+        playerPawn = HPlayer:K2_GetPawn()
+        healthComp = playerPawn.HealthComponent
+        health = healthComp:GetHealth()
+    elseif not HPlayer then
+        HPlayer = UE.UGameplayStatics.GetPlayerController(HWorld, 0)
+        playerPawn = HPlayer:K2_GetPawn()
+        healthComp = playerPawn.HealthComponent
+        health = healthComp:GetHealth()
+    end
 end)
 
 RegisterClientEvent('QBCore:Client:OnPlayerUnload', function()
@@ -67,17 +74,13 @@ end)
 
 -- Game Events
 
--- RegisterClientEvent('HEvent:PlayerLoaded', function()
---     print(HPlayer:K2_GetPawn())
--- end)
+RegisterClientEvent('HEvent:PlayerLoggedIn', function()
+    print('HEvent:PlayerLoggedIn - K2_PostLogin')
+end)
 
--- RegisterClientEvent('HEvent:Possessed', function()
---     print(HPlayer:K2_GetPawn())
--- end)
-
--- RegisterClientEvent('HEvent:UnPossessed', function()
---     print('Player has been unpossessed')
--- end)
+RegisterClientEvent('HEvent:PlayerLoaded', function()
+    print('HEvent:PlayerLoaded - Controller Ready')
+end)
 
 RegisterClientEvent('HEvent:HealthChanged', function(oldHealth, newHealth)
     if not my_webui then return end
@@ -107,6 +110,24 @@ end)
 RegisterClientEvent('HEvent:ExitedVehicle', function(seat)
     if not my_webui then return end
     print('Exited vehicle, seat: ' .. seat)
+end)
+
+RegisterClientEvent('HEvent:PlayerPossessed', function()
+    print('HEvent:PlayerPossessed - Controller Possessed Pawn')
+    if HPlayer then
+        playerPawn = HPlayer:K2_GetPawn()
+        healthComp = playerPawn.HealthComponent
+        health = healthComp:GetHealth()
+    elseif not HPlayer then
+        HPlayer = UE.UGameplayStatics.GetPlayerController(HWorld, 0)
+        playerPawn = HPlayer:K2_GetPawn()
+        healthComp = playerPawn.HealthComponent
+        health = healthComp:GetHealth()
+    end
+end)
+
+RegisterClientEvent('HEvent:PlayerUnPossessed', function()
+    playerPawn = nil
 end)
 
 -- HUD Thread

@@ -1,5 +1,6 @@
 local Lang = require('locales/en')
 local isLoggedIn = false
+local playerPawn = nil
 local InApartment = false
 local ClosestHouse = nil
 local CurrentApartment = nil
@@ -233,7 +234,9 @@ local function LeaveApartment(house)
 end
 
 local function SetClosestApartment()
-	local ped = HPlayer:K2_GetPawn()
+	if not isLoggedIn then return end
+	if not playerPawn then return end
+	local ped = playerPawn
 	if not ped then return end
 	local pos = ped:K2_GetActorLocation()
 	local current = nil
@@ -263,6 +266,12 @@ end
 
 RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
 	isLoggedIn = true
+	if HPlayer then
+		playerPawn = HPlayer:K2_GetPawn()
+	elseif not HPlayer then
+		local PC = UE.UGameplayStatics.GetPlayerController(HWorld, 0)
+		playerPawn = PC:K2_GetPawn()
+	end
 end)
 
 RegisterClientEvent('QBCore:Client:OnPlayerUnload', function()

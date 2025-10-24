@@ -1,16 +1,6 @@
 QBCore.Players = {}
 QBCore.Player = {}
 
--- Login
-
-RegisterServerEvent('PlayerJoined', function(newPlayer)
-    print('Player Joined: ', newPlayer)
-    print('Player State: ', newPlayer:GetLyraPlayerState())
-    local playerState = newPlayer:GetLyraPlayerState()
-    print('Player ID: ', playerState:GetPlayerId())
-    print('Player Name: ', playerState:GetPlayerName())
-end)
-
 -- Logout
 
 function QBCore.Player.Logout(source)
@@ -52,6 +42,8 @@ local function formatItems(inventory)
     end
     return formattedItems
 end
+
+-- Login
 
 function QBCore.Player.Login(source, citizenid, newData)
     if not source then return false end
@@ -398,6 +390,8 @@ function QBCore.Player.Save(source)
             JSON.stringify(PlayerData.metadata),
             JSON.stringify(ItemsJson),
         })
+
+    print(('[QBCORE] Saved player data for %s (Citizen ID: %s)'):format(PlayerData.name, PlayerData.citizenid))
 end
 
 local playertables = {

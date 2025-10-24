@@ -47,7 +47,6 @@ document.addEventListener("DOMContentLoaded", function () {
         targetEye.classList.add("target-success");
         targetLabel.textContent = "";
         for (let [index, itemData] of data.options.entries()) {
-            console.log("Creating target option:", index, itemData);
             createTargetOption(index, itemData);
         }
     }

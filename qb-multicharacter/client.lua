@@ -58,8 +58,8 @@ end
 
 -- Events
 
-RegisterClientEvent('PlayerJoined', function()
-    TriggerLocalClientEvent('qb-multicharacter:client:chooseChar')
+RegisterClientEvent('HEvent:PlayerPossessed', function()
+    TriggerServerEvent('qb-multicharacter:server:chooseChar')
 end)
 
 RegisterClientEvent('qb-multicharacter:client:closeNUI', function()
