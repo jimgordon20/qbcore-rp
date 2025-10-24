@@ -4,7 +4,7 @@ local my_webui = WebUI('qb-hud', 'qb-hud/html/index.html')
 local player_data = {}
 local playerPawn = nil
 local health = 0
-local healthComp = nil
+local playerDead = false
 local round = math.floor
 
 function onShutdown()
@@ -34,13 +34,19 @@ RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
     player_data = exports['qb-core']:GetPlayerData()
     if HPlayer then
         playerPawn = HPlayer:K2_GetPawn()
-        healthComp = playerPawn.HealthComponent
-        health = healthComp:GetHealth()
+        local voiceComp = HPlayer:GetVoipTalker()
+        voiceComp.OnVoipTalkingStateChange:Add(HPlayer, function(_, isTalking)
+            if not my_webui then return end
+            my_webui:SendEvent('IsTalking', isTalking)
+        end)
     elseif not HPlayer then
         HPlayer = UE.UGameplayStatics.GetPlayerController(HWorld, 0)
         playerPawn = HPlayer:K2_GetPawn()
-        healthComp = playerPawn.HealthComponent
-        health = healthComp:GetHealth()
+        local voiceComp = HPlayer:GetVoipTalker()
+        voiceComp.OnVoipTalkingStateChange:Add(HPlayer, function(_, isTalking)
+            if not my_webui then return end
+            my_webui:SendEvent('IsTalking', isTalking)
+        end)
     end
 end)
 
@@ -82,24 +88,25 @@ RegisterClientEvent('HEvent:PlayerLoaded', function()
     print('HEvent:PlayerLoaded - Controller Ready')
 end)
 
-RegisterClientEvent('HEvent:HealthChanged', function(oldHealth, newHealth)
+RegisterClientEvent('HEvent:HealthChanged', function(_, newHealth)
     if not my_webui then return end
     health = newHealth
-    print('Health changed from ' .. oldHealth .. ' to ' .. newHealth)
+    if newHealth > 0 and playerDead then playerDead = false end
 end)
 
 RegisterClientEvent('HEvent:Death', function()
     print('Player has died')
+    playerDead = true
 end)
 
 RegisterClientEvent('HEvent:WeaponEquipped', function(displayName, weaponName)
     if not my_webui then return end
-    print('Equipped weapon: ' .. displayName .. ' (' .. weaponName .. ')')
+    my_webui:SendEvent('ShowWeapon', true)
 end)
 
 RegisterClientEvent('HEvent:WeaponUnequipped', function()
     if not my_webui then return end
-    print('Unequipped weapon')
+    my_webui:SendEvent('ShowWeapon', false)
 end)
 
 RegisterClientEvent('HEvent:EnteredVehicle', function(seat)
@@ -114,16 +121,6 @@ end)
 
 RegisterClientEvent('HEvent:PlayerPossessed', function()
     print('HEvent:PlayerPossessed - Controller Possessed Pawn')
-    if HPlayer then
-        playerPawn = HPlayer:K2_GetPawn()
-        healthComp = playerPawn.HealthComponent
-        health = healthComp:GetHealth()
-    elseif not HPlayer then
-        HPlayer = UE.UGameplayStatics.GetPlayerController(HWorld, 0)
-        playerPawn = HPlayer:K2_GetPawn()
-        healthComp = playerPawn.HealthComponent
-        health = healthComp:GetHealth()
-    end
 end)
 
 RegisterClientEvent('HEvent:PlayerUnPossessed', function()
@@ -135,11 +132,11 @@ end)
 inputTimer = Timer.SetInterval(function()
     if not isLoggedIn then return end
     if not playerPawn then return end
-    local armor      = player_data.metadata['armor']
-    local hunger     = player_data.metadata['hunger']
-    local thirst     = player_data.metadata['thirst']
-    local stress     = player_data.metadata['stress']
-    local playerDead = player_data.metadata['inlaststand'] or player_data.metadata['isdead'] or false
+    local armor  = player_data.metadata['armor']
+    local hunger = player_data.metadata['hunger']
+    local thirst = player_data.metadata['thirst']
+    local stress = player_data.metadata['stress']
+    --local playerDead = player_data.metadata['inlaststand'] or player_data.metadata['isdead'] or false
 
     if my_webui then
         my_webui:SendEvent('UpdateHUD', health, armor, hunger, thirst, stress, playerDead)
