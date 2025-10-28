@@ -14,12 +14,6 @@ my_webui:RegisterEventHandler('clickedButton', function(option)
             if data.params.event then
                 if data.params.isServer then
                     TriggerServerEvent(data.params.event, data.params.args)
-                elseif data.params.isCommand then
-                    ExecuteCommand(data.params.event)
-                elseif data.params.isQBCommand then
-                    TriggerServerEvent('QBCore:CallCommand', data.params.event, data.params.args)
-                elseif data.params.isAction then
-                    data.params.event(data.params.args)
                 else
                     TriggerLocalClientEvent(data.params.event, data.params.args)
                 end

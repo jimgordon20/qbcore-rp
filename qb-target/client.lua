@@ -17,16 +17,8 @@ my_webui:RegisterEventHandler('selectTarget', function(option)
     disableTarget()
     send_data = {}
     if data.event then
-        if data.type == 'client' then
-            TriggerLocalClientEvent(data.event, data)
-        elseif data.type == 'server' then
-            if data.canInteract then data.canInteract = nil end
-            if data.action then data.action = nil end
-            local networked_entity = data.entity.bReplicates
-            if not networked_entity then data.entity = nil end
+        if data.type == 'server' then
             TriggerServerEvent(data.event, data)
-        elseif data.type == 'command' then
-            TriggerServerEvent('QBCore:CallCommand', data.event, data)
         else
             TriggerLocalClientEvent(data.event, data)
         end
