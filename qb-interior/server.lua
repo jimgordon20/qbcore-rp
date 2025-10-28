@@ -1,118 +1,136 @@
+local interiors = {}
+local nextId = 1
+
 -- Functions
 
 local function TeleportToInterior(player, x, y, z, h)
 	local ped = player:K2_GetPawn()
 	if not ped then return end
 	ped:K2_SetActorLocationAndRotation(Vector(x, y, z), Rotator(0, h, 0), false, _, true)
-	--player:StopCameraFade()
 end
 
 RegisterServerEvent('qb-interior:server:teleportPlayer', function(player, x, y, z, h)
 	TeleportToInterior(player, x, y, z, h)
 end)
 
--- exports('qb-interior', 'DespawnInterior', function(objects)
--- 	for _, v in pairs(objects) do
--- 		if v:IsValid(v) then
--- 			v:Destroy()
--- 		end
--- 	end
--- end)
+exports('qb-interior', 'DespawnInterior', function(id)
+	if interiors[id] and interiors[id].object then
+		interiors[id].object:K2_DestroyActor()
+		interiors[id] = nil
+	end
+end)
 
--- local function CreateShell(player, spawn, exitXYZH, model)
--- 	local objects = {}
--- 	local POIOffsets = {}
--- 	POIOffsets.exit = exitXYZH
--- 	--player:StartCameraFade(0, 1, 0.1, Color(0.0, 0.0, 0.0, 1), true, true)
--- 	local house = StaticMesh(Vector(spawn.X, spawn.Y, spawn.Z - 1000), Rotator(), model)
--- 	--house:SetGravityEnabled(false)
--- 	objects[#objects + 1] = house
--- 	TeleportToInterior(
--- 		player,
--- 		spawn.X - POIOffsets.exit.x,
--- 		spawn.Y - POIOffsets.exit.y,
--- 		spawn.Z + POIOffsets.exit.z,
--- 		POIOffsets.exit.h
--- 	)
--- 	return { objects, POIOffsets }
--- end
+local function CreateShell(player, spawn, exitXYZH, model, teleport)
+	local id = nextId
+	nextId = nextId + 1
 
--- -- -- Shells
+	local POIOffsets = {}
+	POIOffsets.exit = exitXYZH
+	local house = StaticMesh(Vector(spawn.X, spawn.Y, spawn.Z), Rotator(), model)
 
--- exports('qb-interior', 'CreateApartmentFurnished', function(player, spawn)
--- 	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
--- 	local model = '/Game/Shells/modernhotel_shell/SM_modernhotel_shell.SM_modernhotel_shell'
--- 	local obj = CreateShell(player, spawn, exit, model)
--- 	if obj and obj[2] then
--- 		obj[2].clothes = JSON.parse('{"x": 247.8, "y": -296.9, "z": 110.0, "h": 2.263}')
--- 		obj[2].stash = JSON.parse('{"x": -237.7, "y": -296.9, "z": 110.0, "h": 2.263}')
--- 		obj[2].logout = JSON.parse('{"x": -458.3, "y": 134.6, "z": 93.0, "h": 2.263}')
--- 	end
--- 	-- if IsNew then
--- 	-- 	Timer.SetTimeout(function()
--- 	-- 		TriggerClientEvent(player, 'qb-clothes:client:CreateFirstCharacter')
--- 	-- 		IsNew = false
--- 	-- 	end, 1000)
--- 	-- end
--- 	return { obj[1], obj[2] }
--- end)
+	interiors[id] = {
+		object = house,
+		POIOffsets = POIOffsets
+	}
 
--- exports('qb-interior', 'CreateContainer', function(spawn)
--- 	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
--- 	local model = '/Game/Shells/container_shell/SM_container_shell.SM_container_shell'
--- 	return CreateShell(spawn, exit, model)
--- end)
+	if teleport or teleport == nil then
+		Timer.SetTimeout(function()
+			TeleportToInterior(
+				player,
+				spawn.X - POIOffsets.exit.x,
+				spawn.Y - POIOffsets.exit.y,
+				spawn.Z + POIOffsets.exit.z,
+				POIOffsets.exit.h
+			)
+		end, 1000)
+	end
 
--- exports('qb-interior', 'CreateFurniMid', function(spawn)
--- 	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
--- 	local model = '/Game/Shells/furnitured_midapart/SM_furnitured_midapart.SM_furnitured_midapart'
--- 	return CreateShell(spawn, exit, model)
--- end)
+	return id, POIOffsets
+end
 
--- exports('qb-interior', 'CreateFranklinAunt', function(spawn)
--- 	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
--- 	local model = '/Game/Shells/shell_frankaunt/SM_shell_frankaunt.SM_shell_frankaunt'
--- 	return CreateShell(spawn, exit, model)
--- end)
+-- Shells
 
--- exports('qb-interior', 'CreateGarageMed', function(spawn)
--- 	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
--- 	local model = '/Game/Shells/garage_med/SM_shell_garagem.SM_shell_garagem'
--- 	return CreateShell(spawn, exit, model)
--- end)
+exports('qb-interior', 'CreateApartmentFurnished', function(player, spawn, isNew, teleport)
+	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
+	local model = '/Game/Shells/modernhotel_shell/SM_modernhotel_shell.SM_modernhotel_shell'
+	local id, POIOffsets = CreateShell(player, spawn, exit, model, teleport)
 
--- exports('qb-interior', 'CreateLesterShell', function(spawn)
--- 	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
--- 	local model = '/Game/Shells/shell_lester/SM_shell_lester.SM_shell_lester'
--- 	return CreateShell(spawn, exit, model)
--- end)
+	if POIOffsets then
+		POIOffsets.clothes = JSON.parse('{"x": 247.8, "y": -296.9, "z": 110.0, "h": 2.263}')
+		POIOffsets.stash = JSON.parse('{"x": -237.7, "y": -296.9, "z": 110.0, "h": 2.263}')
+		POIOffsets.logout = JSON.parse('{"x": -458.3, "y": 134.6, "z": 93.0, "h": 2.263}')
+		interiors[id].POIOffsets = POIOffsets
+	end
 
--- exports('qb-interior', 'CreateOffice1', function(spawn)
--- 	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
--- 	local model = '/Game/Shells/shell_office1/SM_shell_office1.SM_shell_office1'
--- 	return CreateShell(spawn, exit, model)
--- end)
+	if isNew then
+		Timer.SetTimeout(function()
+			local characterCreatorComponentClass = UE.UClass.Load('/AdvancedCharacterCreator/Blueprints/BPC_CharacterCreator.BPC_CharacterCreator_C')
+			local pawn = player:K2_GetPawn()
+			local characterCreatorComponent = pawn:GetComponentByClass(characterCreatorComponentClass)
+			characterCreatorComponent:ShowCharacterCustomizationUI()
+			isNew = false
+		end, 3000)
+	end
 
--- exports('qb-interior', 'CreateStore1', function(spawn)
--- 	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
--- 	local model = '/Game/Shells/shell_store1/SM_shell_store1.SM_shell_store1'
--- 	return CreateShell(spawn, exit, model)
--- end)
+	return { interiors[id].object, POIOffsets }
+end)
 
--- exports('qb-interior', 'CreateTrailer', function(spawn)
--- 	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
--- 	local model = '/Game/Shells/shell_trailer/SM_shell_trailer.SM_shell_trailer'
--- 	return CreateShell(spawn, exit, model)
--- end)
+exports('qb-interior', 'CreateContainer', function(spawn)
+	local exit = JSON.parse('{"x": 10.0, "y": 458.0, "z": 93.0, "h": 100.51}')
+	local model = '/Game/Shells/container_shell/SM_container_shell.SM_container_shell'
+	return CreateShell(spawn, exit, model)
+end)
 
--- exports('qb-interior', 'CreateWarehouse1', function(spawn)
--- 	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
--- 	local model = '/Game/Shells/shell_warehouse1/SM_shell_warehouse1.SM_shell_warehouse1'
--- 	return CreateShell(spawn, exit, model)
--- end)
+exports('qb-interior', 'CreateFurniMid', function(spawn)
+	local exit = JSON.parse('{"x": 118.0, "y": 830.0, "z": 93.0, "h": 82.04}')
+	local model = '/Game/Shells/furnitured_midapart/SM_furnitured_midapart.SM_furnitured_midapart'
+	return CreateShell(spawn, exit, model)
+end)
 
--- exports('qb-interior', 'CreateStandardMotel', function(spawn)
--- 	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
--- 	local model = '/Game/Shells/standardmotel_shell/SM_standardmotel_shell.SM_standardmotel_shell'
--- 	return CreateShell(spawn, exit, model)
--- end)
+exports('qb-interior', 'CreateFranklinAunt', function(spawn)
+	local exit = JSON.parse('{"x": -21.0, "y": 466.50, "z": 93.0, "h": 82.55}')
+	local model = '/Game/Shells/shell_frankaunt/SM_shell_frankaunt.SM_shell_frankaunt'
+	return CreateShell(spawn, exit, model)
+end)
+
+exports('qb-interior', 'CreateGarageMed', function(spawn)
+	local exit = JSON.parse('{"x": 1153.0, "y": -129.0, "z": 93.0, "h": -6.23}')
+	local model = '/Game/Shells/shell_garagem/SM_shell_garagem.SM_shell_garagem'
+	return CreateShell(spawn, exit, model)
+end)
+
+exports('qb-interior', 'CreateLesterShell', function(spawn)
+	local exit = JSON.parse('{"x": -134.30, "y": 480.0, "z": 93.0, "h": 72.58}')
+	local model = '/Game/Shells/shell_lester/SM_shell_lester.SM_shell_lester'
+	return CreateShell(spawn, exit, model)
+end)
+
+exports('qb-interior', 'CreateOffice1', function(spawn)
+	local exit = JSON.parse('{"x": 105.0, "y": -402.0, "z": 93.0, "h": -84.68}')
+	local model = '/Game/Shells/shell_office1/SM_shell_office1.SM_shell_office1'
+	return CreateShell(spawn, exit, model)
+end)
+
+exports('qb-interior', 'CreateStore1', function(spawn)
+	local exit = JSON.parse('{"x": -223.0, "y": 358.0, "z": 93.0, "h": 86.02}')
+	local model = '/Game/Shells/shell_store1/SM_shell_store1.SM_shell_store1'
+	return CreateShell(spawn, exit, model)
+end)
+
+exports('qb-interior', 'CreateTrailer', function(spawn)
+	local exit = JSON.parse('{"x": -107.0, "y": 164.0, "z": 93.0, "h": 93.35}')
+	local model = '/Game/Shells/shell_trailer/SM_shell_trailer.SM_shell_trailer'
+	return CreateShell(spawn, exit, model)
+end)
+
+exports('qb-interior', 'CreateWarehouse1', function(spawn)
+	local exit = JSON.parse('{"x": -730.0, "y": -18.0, "z": 93.0, "h": 169.90}')
+	local model = '/Game/Shells/shell_warehouse1/SM_shell_warehouse1.SM_shell_warehouse1'
+	return CreateShell(spawn, exit, model)
+end)
+
+exports('qb-interior', 'CreateStandardMotel', function(spawn)
+	local exit = JSON.parse('{"x": 430.0, "y": 347.0, "z": 93.0, "h": 90.81}')
+	local model = '/Game/Shells/standardmotel_shell/SM_standardmotel_shell.SM_standardmotel_shell'
+	return CreateShell(spawn, exit, model)
+end)
