@@ -77,15 +77,6 @@ RegisterServerEvent('qb-inventory:server:openInventory', function(source)
     end
 
     OpenInventory(source)
-    -- exports['qb-core']:TriggerClientCallback('qb-inventory:client:vehicleCheck', source, function(netId, class)
-    --     if netId then
-    --         local vehicle = NetworkGetEntityFromNetworkId(netId)
-    --         local plate = GetVehicleNumberPlateText(vehicle)
-    --         OpenInventory(source, 'trunk-' .. plate)
-    --         return
-    --     end
-    --     OpenInventory(source)
-    -- end)
 end)
 
 RegisterServerEvent('qb-inventory:server:toggleHotbar', function(source)
