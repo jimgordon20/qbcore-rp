@@ -335,11 +335,13 @@ end
 Input.BindKey(Config.OpenKey, function()
     if not isLoggedIn then return end
     if target_active then return end
+    if HPlayer:GetInputMode() == 1 then return end
     enableTarget()
 end, 'Pressed')
 
 Input.BindKey(Config.OpenKey, function()
     if not isLoggedIn then return end
+    if HPlayer:GetInputMode() == 1 then return end
     if target_active and not subMenuOpen then
         disableTarget()
         subMenuOpen = false
