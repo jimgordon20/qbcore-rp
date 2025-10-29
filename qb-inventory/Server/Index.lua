@@ -54,14 +54,28 @@ RegisterServerEvent('qb-inventory:server:openInventory', function(source)
     if not Player or Player.PlayerData.metadata['isdead'] or Player.PlayerData.metadata['inlaststand'] or Player.PlayerData.metadata['ishandcuffed'] then return end
     local player_ped = source:K2_GetPawn()
     if not player_ped then return end
-    --AddItem(source, 'nitrous', 1, nil, nil, 'Testing')
-    --AddItem(source, 'repairkit', 1, nil, nil, 'Testing')
---[[     local in_vehicle = player_ped:GetVehicle()
-    if in_vehicle then
-        local plate = in_vehicle:GetValue('plate')
+    local InsideTag = UE.UHelixResourceUtility.RequestGameplayTag('Status.Vehicle.Inside')
+    local IsInVehicle = player_ped:HasMatchingGameplayTag(Inside)
+
+    if IsInVehicle then
+        local in_vehicle = player_ped.VehicleInteractionComponent:GetCurrentVehicle()
+        local plate = tostring(math.abs(in_vehicle.ActorGuid.A)):sub(1, 7)
         OpenInventory(source, 'glovebox-' .. plate)
         return
-    end ]]
+    end
+
+    local ClosestVehicle, ClosestDistance = exports['qb-core']:GetClosestVehicle(source)
+    if ClosestVehicle and ClosestDistance < 350 then
+        local Comps = ClosestVehicle:K2_GetComponentsByClass(UE.UClass.Load('/Game/SimpleVehicle/Blueprints/Components/Attachments/Trunk.Trunk_C'))
+        if Comps:ToTable()[1] then
+            local Trunk = Comps[1]
+            -- @TODO Trunk component detection
+        else
+            OpenInventory(source, 'trunk-' .. tostring(math.abs(ClosestVehicle.ActorGuid.A)):sub(1, 7))
+            return
+        end
+    end
+
     OpenInventory(source)
     -- exports['qb-core']:TriggerClientCallback('qb-inventory:client:vehicleCheck', source, function(netId, class)
     --     if netId then
