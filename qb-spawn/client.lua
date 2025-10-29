@@ -74,17 +74,15 @@ my_webui:RegisterEventHandler('qb-spawn:spawnplayer', function(data)
     local PlayerData = exports['qb-core']:GetPlayerData()
     local insideMeta = PlayerData.metadata['inside']
     if type == 'current' then
-        Timer.SetNextTick(function()
-            if insideMeta.house ~= nil then
-                local houseId = insideMeta.house
-                TriggerLocalClientEvent('qb-houses:client:LastLocationHouse', houseId)
-            elseif insideMeta.apartment.apartmentType ~= nil or insideMeta.apartment.apartmentId ~= nil then
-                local apartmentType = insideMeta.apartment.apartmentType
-                local apartmentId = insideMeta.apartment.apartmentId
-                TriggerLocalClientEvent('qb-apartments:client:LastLocationHouse', apartmentType, apartmentId)
-            end
-            TriggerServerEvent('qb-spawn:server:spawnPlayer')
-        end)
+        if insideMeta.house ~= nil then
+            local houseId = insideMeta.house
+            TriggerLocalClientEvent('qb-houses:client:LastLocationHouse', houseId)
+        elseif insideMeta.apartment.apartmentType ~= nil or insideMeta.apartment.apartmentId ~= nil then
+            local apartmentType = insideMeta.apartment.apartmentType
+            local apartmentId = insideMeta.apartment.apartmentId
+            TriggerLocalClientEvent('qb-apartments:client:LastLocationHouse', apartmentType, apartmentId)
+        end
+        TriggerServerEvent('qb-spawn:server:spawnPlayer')
         SetDisplay(false)
     elseif type == 'house' then
         TriggerLocalClientEvent('qb-houses:client:enterOwnedHouse', location)
