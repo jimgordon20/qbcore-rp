@@ -229,7 +229,7 @@ function QBCore.Functions.GetClosestPlayer(source, coords)
 	local player_coords = coords or player_ped:K2_GetActorLocation()
 	local hits = Trace:SphereMulti(player_coords, player_coords, 1000)
 	local closest_player, closest_distance = nil, -1
-	for k, v in pairs(hits) do
+	for k, hit in pairs(hits) do
 		local distance = hit.Distance
 		if closest_distance == -1 or distance < closest_distance then
 			local _, _, _, _, _, _, _, _, _, hitActor = UE.UGameplayStatics.BreakHitResult(hit, _, _, _, _, _, _, _, _, _, hitActor, _, _, _, _, _, _, _, _)
@@ -250,7 +250,7 @@ function QBCore.Functions.GetClosestNPC(source, coords)
 	local player_coords = coords or player_ped:K2_GetActorLocation()
 	local hits = Trace:SphereMulti(player_coords, player_coords, 1000)
 	local closest_npc, closest_distance = nil, -1
-	for k, v in pairs(hits) do
+	for k, hit in pairs(hits) do
 		local distance = hit.Distance
 		if closest_distance == -1 or distance < closest_distance then
 			local _, _, _, _, _, _, _, _, _, hitActor = UE.UGameplayStatics.BreakHitResult(hit, _, _, _, _, _, _, _, _, _, hitActor, _, _, _, _, _, _, _, _)
@@ -269,15 +269,13 @@ function QBCore.Functions.GetClosestVehicle(source, coords)
 	local player_coords = coords or player_ped:K2_GetActorLocation()
 	local hits = Trace:SphereMulti(player_coords, player_coords, 1000)
 	local closest_vehicle, closest_distance = nil, -1
-	for k, v in pairs(hits) do
+	for k, hit in pairs(hits) do
 		local distance = hit.Distance
 		if closest_distance == -1 or distance < closest_distance then
 			local _, _, _, _, _, _, _, _, _, hitActor = UE.UGameplayStatics.BreakHitResult(hit, _, _, _, _, _, _, _, _, _, hitActor, _, _, _, _, _, _, _, _)
 			if hitActor:IsA(UE.AMMVehiclePawn) then
-				if hitActor then
-					closest_vehicle = hitActor
-					closest_distance = distance
-				end
+				closest_vehicle = hitActor
+				closest_distance = distance
 			end
 		end
 	end
@@ -290,7 +288,7 @@ function QBCore.Functions.GetClosestWeapon(source, coords)
 	local player_coords = coords or player_ped:K2_GetActorLocation()
 	local hits = Trace:SphereMulti(player_coords, player_coords, 1000)
 	local closest_weapon, closest_distance = nil, -1
-	for k, v in pairs(hits) do
+	for k, hit in pairs(hits) do
 		local distance = hit.Distance
 		if closest_distance == -1 or distance < closest_distance then
 			local _, _, _, _, _, _, _, _, _, hitActor = UE.UGameplayStatics.BreakHitResult(hit, _, _, _, _, _, _, _, _, _, hitActor, _, _, _, _, _, _, _, _)
