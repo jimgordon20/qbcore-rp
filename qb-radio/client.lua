@@ -118,6 +118,7 @@ end)
 
 Input.BindKey('R', function()
     if not isLoggedIn then return end
+    if HPlayer:GetInputMode() == 1 and not radioOpen then return end
     radioOpen = not radioOpen
     if radioOpen then
         my_webui:BringToFront()
