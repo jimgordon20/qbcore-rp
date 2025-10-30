@@ -1,7 +1,7 @@
 QBCore.Players = {}
 QBCore.Player = {}
 
-RegisterServerEvent('HEvent:PlayerUnLoaded', function(source)
+RegisterServerEvent('HEvent:PlayerUnloaded', function(source)
     QBCore.Player.Logout(source)
 end)
 
