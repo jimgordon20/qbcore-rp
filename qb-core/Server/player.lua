@@ -1,6 +1,10 @@
 QBCore.Players = {}
 QBCore.Player = {}
 
+RegisterServerEvent('HEvent:PlayerUnloaded', function(source)
+    QBCore.Player.Logout(source)
+end)
+
 -- Logout
 
 function QBCore.Player.Logout(source)
@@ -410,7 +414,10 @@ local playertables = {
 }
 
 function QBCore.Player.DeleteCharacter(source, citizenid)
-    if not source or not citizenid then print('[Error] qb-core couldn\'t delete character') return end
+    if not source or not citizenid then
+        print('[Error] qb-core couldn\'t delete character')
+        return
+    end
     local PlayerState = source:GetLyraPlayerState()
     local license = PlayerState:GetHelixUserId()
     local result = Database.Select('SELECT license FROM players WHERE citizenid = ? LIMIT 1', { citizenid })
