@@ -298,7 +298,7 @@ RegisterCallback('server.attemptPurchase', function(source, data)
     local playerCoords = playerPed:K2_GetActorLocation()
     if shopInfo.coords then
         local shopCoords = Vector(shopInfo.coords.X, shopInfo.coords.Y, shopInfo.coords.Z)
-        if UE.FVector.Dist(playerCoords, shopCoords) > 150 then return false end
+        if UE.FVector.Dist(playerCoords, shopCoords) > 650 then return false end
     end
 
     if shopInfo.items[itemInfo.slot].name ~= itemInfo.name then return false end -- check item name in slot passed

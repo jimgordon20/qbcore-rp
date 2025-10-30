@@ -21,7 +21,7 @@ Timer.SetTimeout(function()
             Z = shopData.coords.Z
         }, 100.0, {
             debug = true,
-            distance = 1000
+            distance = 500
         }, {
             {
                 icon = shopData.targetIcon or Config.DefaultTargetIcon,
