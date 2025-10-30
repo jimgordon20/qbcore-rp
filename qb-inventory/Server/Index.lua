@@ -129,7 +129,7 @@ RegisterServerEvent('qb-inventory:server:closeInventory', function(source, inven
     end
     if not Inventories[inventory] then return end
     Inventories[inventory].isOpen = false
-    exports['qb-core']:DatabaseAction('Execute', 'INSERT INTO inventories (identifier, items) VALUES (?, ?) ON DUPLICATE KEY UPDATE items = ?', { inventory, JSON.stringify(Inventories[inventory].items), JSON.stringify(Inventories[inventory].items) })
+    exports['qb-core']:DatabaseAction('Execute', 'INSERT INTO inventories (identifier, items) VALUES (?, ?) ON CONFLICT(identifier) DO UPDATE SET items = ?', { inventory, JSON.stringify(Inventories[inventory].items), JSON.stringify(Inventories[inventory].items) })
 end)
 
 RegisterServerEvent('qb-inventory:server:useItem', function(source, item)
