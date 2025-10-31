@@ -168,12 +168,6 @@ RegisterServerEvent('qb-inventory:server:openDrop', function(source, dropId)
     TriggerClientEvent(source, 'qb-inventory:client:openInventory', Player.PlayerData.items, formattedInventory)
 end)
 
-RegisterServerEvent('qb-inventory:server:pickUpDrop', function(source, bagObject)
-    local playerPed = source:GetControlledCharacter()
-    bagObject:SetAttachmentSettings(Vector(0, 0, 0), Rotator(0, 0, 0), 'hand_r_socket')
-    playerPed:PickUp(bagObject)
-end)
-
 RegisterServerEvent('qb-inventory:server:updateDrop', function(source, dropId)
     local playerPed = source:K2_GetPawn()
     local playerCoords = playerPed:K2_GetActorLocation()
@@ -182,14 +176,6 @@ RegisterServerEvent('qb-inventory:server:updateDrop', function(source, dropId)
     DropData.isHeld = nil
     if DropData.entity:IsValid() then
         DropData.entity:K2_DetachFromActor(UE.EDetachmentRule.KeepWorld, UE.EDetachmentRule.KeepWorld, UE.EDetachmentRule.KeepWorld)
-    end
-end)
-
-RegisterServerEvent('qb-inventory:server:snowball', function(source, action)
-    if action == 'add' then
-        AddItem(source, 'weapon_snowball')
-    elseif action == 'remove' then
-        RemoveItem(source, 'weapon_snowball')
     end
 end)
 
