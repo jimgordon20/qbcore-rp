@@ -139,17 +139,19 @@ my_webui:RegisterEventHandler('UseItem', function(data)
 	TriggerServerEvent('qb-inventory:server:useItem', data.item)
 end)
 
-my_webui:RegisterEventHandler('DropItem', function(item, cb)
+my_webui:RegisterEventHandler('DropItem', function(item--[[, cb]])
 	TriggerCallback('server.createDrop', function(dropId)
 		if dropId then
-			cb(dropId)
+			my_webui:SendEvent('closeInventory')
+			--cb(dropId)
 		end
 	end, item)
 end)
 
-my_webui:RegisterEventHandler('AttemptPurchase', function(data, cb)
+my_webui:RegisterEventHandler('AttemptPurchase', function(data--[[, cb]])
 	TriggerCallback('server.attemptPurchase', function(canPurchase)
-		cb(canPurchase)
+		my_webui:SendEvent('closeInventory')
+		--cb(canPurchase)
 	end, data)
 end)
 

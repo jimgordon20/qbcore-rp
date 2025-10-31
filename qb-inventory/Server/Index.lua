@@ -153,10 +153,10 @@ RegisterServerEvent('qb-inventory:server:openDrop', function(source, dropId)
     local playerPed = source:K2_GetPawn()
     local playerCoords = playerPed:K2_GetActorLocation()
     local drop = Drops[dropId]
-    if not drop then return end
-    if drop.isOpen then return end
+    if not drop or drop.isOpen then return end
     local distance = UE.FVector.Dist(playerCoords, drop.coords)
     if distance > 250 then return end
+
     local formattedInventory = {
         name = dropId,
         label = dropId,
@@ -247,7 +247,7 @@ RegisterCallback('server.createDrop', function(source, item)
                 coords = playerCoords,
                 maxweight = Config.DropSize.maxweight,
                 slots = Config.DropSize.slots,
-                isOpen = true
+                isOpen = false
             }
             --BroadcastRemote('qb-inventory:client:setupDropTarget', bag.Object)
         else
