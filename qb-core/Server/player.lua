@@ -2,14 +2,13 @@ QBCore.Players = {}
 QBCore.Player = {}
 
 RegisterServerEvent('HEvent:PlayerUnloaded', function(source)
+    print('HEvent:PlayerUnloaded:', source)
     QBCore.Player.Logout(source)
 end)
 
 -- Logout
 
 function QBCore.Player.Logout(source)
-    local PlayerState = source:GetLyraPlayerState()
-    local playerId = PlayerState:GetPlayerId()
     if not QBCore.Players[source] then return end
     local Player = QBCore.Players[source]
     Player.Functions.Save()
