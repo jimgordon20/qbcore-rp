@@ -44,6 +44,11 @@ RegisterClientEvent('QBCore:Player:SetPlayerData', function(val)
     player_data = val
 end)
 
+RegisterClientEvent('qb-hud:client:onRadio', function(bool)
+    if not my_webui then return end
+    my_webui:SendEvent('onRadio', bool)
+end)
+
 -- Money HUD
 
 RegisterClientEvent('qb-hud:client:ShowAccounts', function(type, amount)

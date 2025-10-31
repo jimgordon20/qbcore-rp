@@ -32,7 +32,7 @@
                         <div>
                             <q-circular-progress class="q-ml-xl" style="opacity: 40%" :value="static" :thickness="0.18" :style="{color: talkingColor}" :min="0" :max="100"></q-circular-progress>
                             <q-circular-progress class="q-ml-xl" style="left: -50%" show-value :value="voice" :thickness="0.18" :style="{color: talkingColor}" :min="0" :max="5" center-color="blue-grey-10" track-color="grey-8">
-                                <q-icon name="o_mic_none" size="sm" color="white" />
+                                <q-icon :name="onRadio ? 'o_radio' : 'o_mic_none'" size="sm" color="white" />
                             </q-circular-progress>
                         </div>
                     </transition>

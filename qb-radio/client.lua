@@ -16,6 +16,7 @@ local function leaveradio()
         RadioChannel = 0
         onRadio = false
         exports['qb-core']:Notify(Lang:t('you_leave'), 'error')
+        TriggerLocalClientEvent('qb-hud:client:onRadio', onRadio)
     end, RadioChannel)
 end
 
@@ -36,6 +37,7 @@ local function connecttoradio(channel)
         RadioChannel = intChannel
         onRadio = true
         exports['qb-core']:Notify(Lang:t('joined_to_radio', { channel = intChannel .. ' MHz' }), 'success')
+        TriggerLocalClientEvent('qb-hud:client:onRadio', onRadio)
         return true
     end, intChannel)
 

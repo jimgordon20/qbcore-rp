@@ -20,6 +20,7 @@ const app = createApp({
         const stress = ref(0);
         const voice = ref(5);
         const talking = ref(false);
+        const onRadio = ref(false);
         // Color properties
         const talkingColor = ref("#FFFFFF");
         const healthColor = ref("#3FA554");
@@ -121,6 +122,10 @@ const app = createApp({
             voice.value = radius;
         }
 
+        function OnRadio(bool) {
+            onRadio.value = bool;
+        }
+
         onMounted(() => {
             window.addEventListener("message", function (event) {
                 if (!event.data || !event.data.name) return;
@@ -138,8 +143,8 @@ const app = createApp({
                     case "ShowBankAmount":
                         ShowBankAmount(event.data.args[0]);
                         break;
-                    case "ShowWeapon":
-                        ShowWeapon(event.data.args[0]);
+                    case "onRadio":
+                        OnRadio(event.data.args[0]);
                         break;
                     case "IsTalking":
                         IsTalking(event.data.args[0]);
@@ -161,6 +166,7 @@ const app = createApp({
             armor,
             voice,
             talking,
+            onRadio,
             hunger,
             thirst,
             stress,
