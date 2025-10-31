@@ -1,5 +1,4 @@
 local Lang = require('locales/en')
-local QBPlayers = exports['qb-core']:GetQBPlayers()
 
 -- Functions
 
@@ -166,7 +165,7 @@ RegisterServerEvent('qb-management:server:GradeUpdate', function(source, data)
             TriggerClientEvent(source, 'QBCore:Notify', 'Promotion grade does not exist.', 'error')
         end
     end
-    TriggerClientEvent(source, 'qb-management:client:OpenMenu')
+    TriggerClientEvent(source, 'qb-management:client:openBossMenu')
 end)
 
 RegisterServerEvent('qb-management:server:FireEmployee', function(source, target)
@@ -197,25 +196,25 @@ RegisterServerEvent('qb-management:server:FireEmployee', function(source, target
             TriggerClientEvent(source, 'QBCore:Notify', 'Error..', 'error')
         end
     end
-    TriggerClientEvent(source, 'qb-management:client:OpenMenu')
+    TriggerClientEvent(source, 'qb-management:client:openBossMenu')
 end)
 
 RegisterServerEvent('qb-management:server:HireEmployee', function(source, recruit)
     local Player = exports['qb-core']:GetPlayer(source)
     if not Player then return end
-    local Target = exports['qb-core']:GetPlayer(recruit)
+    local Target = exports['qb-core']:GetPlayerByCitizenId(recruit)
     if not Target then return end
 
-    if not Player.PlayerData.job.isboss then
-        ExploitBan(source, 'HireEmployee Exploiting')
-        return
-    end
+    -- if not Player.PlayerData.job.isboss then
+    --     ExploitBan(source, 'HireEmployee Exploiting')
+    --     return
+    -- end
 
-    if Target and exports['qb-core']:Player(Target, 'SetJob', Player.PlayerData.job.name, 0) then
+    if Target and exports['qb-core']:Player(Target.PlayerData.source, 'SetJob', Player.PlayerData.job.name, 0) then
         TriggerClientEvent(source, 'QBCore:Notify', 'You hired ' .. (Target.PlayerData.charinfo.firstname .. ' ' .. Target.PlayerData.charinfo.lastname) .. ' come ' .. Player.PlayerData.job.label .. '', 'success')
         TriggerClientEvent(Target.PlayerData.source, 'QBCore:Notify', 'You were hired as ' .. Player.PlayerData.job.label .. '', 'success')
     end
-    TriggerClientEvent(source, 'qb-management:client:OpenMenu')
+    TriggerClientEvent(source, 'qb-management:client:openBossMenu')
 end)
 
 -- Callbacks
@@ -282,29 +281,45 @@ RegisterCallback('GetMembers', function(source, gangname)
     return members
 end)
 
+local function getPlayers()
+    local actors = UE.TArray(UE.AActor)
+    -- local class = UE.UClass.Load('/Game/Helix/Blueprints/Player/BP_HelixPlayerController.BP_HelixPlayerController_C')
+    local class = UE.UClass.Load('/SandboxGameplay/Character/BP_Helix_Character_Player.BP_Helix_Character_Player_C')
+    UE.UGameplayStatics.GetAllActorsOfClass(HWorld, class, actors)
+    return actors:ToTable()
+end
+
 RegisterCallback('GetPlayers', function(source)
     local players = {}
     local PlayerPed = source:K2_GetPawn()
+    print('Source Ped: ', PlayerPed)
     if not PlayerPed then return end
     local pCoords = PlayerPed:K2_GetActorLocation()
-    for _, v in pairs(QBPlayers) do
-        local targetped = v:K2_GetPawn()
-        local tCoords = targetped:K2_GetActorLocation()
-        local dist = distCheck(pCoords, tCoords)
-        if PlayerPed ~= targetped and dist < 1000 then
-            local ped = exports['qb-core']:GetPlayer(v)
-            players[#players + 1] = {
-                id = v,
-                coords = GetEntityCoords(targetped),
-                name = ped.PlayerData.charinfo.firstname .. ' ' .. ped.PlayerData.charinfo.lastname,
-                citizenid = ped.PlayerData.citizenid,
-                sources = GetPlayerPed(ped.PlayerData.source),
-                sourceplayer = ped.PlayerData.source
-            }
+    print('Source Coords: ', pCoords)
+    local worldPawns = getPlayers()
+    for _, pawn in pairs(worldPawns) do
+        if PlayerPed ~= pawn then
+            print('Checking Pawn: ', pawn)
+            local tCoords = pawn:K2_GetActorLocation()
+            print('Target Coords: ', tCoords)
+            local dist = distCheck(pCoords, tCoords)
+            print('Distance: ', dist)
+            if dist < 1000 then
+                local controller = pawn:GetController()
+                if not controller then return end
+                local targetPlayer = exports['qb-core']:GetPlayer(controller)
+                print('Found Nearby Player: ', targetPlayer)
+                players[#players + 1] = {
+                    name = targetPlayer.PlayerData.charinfo.firstname .. ' ' .. targetPlayer.PlayerData.charinfo.lastname,
+                    citizenid = targetPlayer.PlayerData.citizenid,
+                }
+            end
         end
     end
+
     table.sort(players, function(a, b)
         return a.name < b.name
     end)
+
     return players
 end)

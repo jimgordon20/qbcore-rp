@@ -1,11 +1,24 @@
 local Lang = require('locales/en')
-local sharedItems = exports['qb-core']:GetShared('Items')
 local sharedJobs = exports['qb-core']:GetShared('Jobs')
 
 -- Functions
 
 local function distCheck(coords1, coords2)
     return UE.FVector.Dist(coords1, coords2)
+end
+
+local function getHighestRank(jobName)
+    local highestRank = 0
+    local job = sharedJobs[jobName]
+    if not job then return nil end
+    local jobGrades = job.grades
+    for i = 1, #jobGrades do
+        if jobGrades[i].isboss then
+            highestRank = i
+            break
+        end
+    end
+    return highestRank
 end
 
 -- Events
@@ -20,7 +33,7 @@ RegisterServerEvent('qb-cityhall:server:ApplyJob', function(source, job)
     if distCheck(pedCoords, coords) > 1500 then return end
 
     local JobInfo = sharedJobs[job]
-    exports['qb-core']:Player(source, 'SetJob', job)
+    exports['qb-core']:Player(source, 'SetJob', job, getHighestRank(job))
     TriggerClientEvent(source, 'QBCore:Notify', Lang:t('info.new_job', { job = JobInfo.label }))
 end)
 
@@ -58,7 +71,6 @@ RegisterServerEvent('qb-cityhall:server:requestId', function(source, item)
     end
 
     if not exports['qb-inventory']:AddItem(source, item, 1, false, info, 'qb-cityhall:server:requestId') then return end
-    TriggerClientEvent(source, 'qb-inventory:client:ItemBox', sharedItems[item], 'add')
 end)
 
 -- Callbacks
