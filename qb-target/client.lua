@@ -142,7 +142,7 @@ local function RemoveZone(name)
     local actor = Zones[name]
     if not actor then return end
     if Entities[actor] then Entities[actor] = nil end
-    actor:K2_DestroyActor()
+    DeleteEntity(actor)
     Zones[name] = nil
 end
 exports('qb-target', 'RemoveZone', RemoveZone)

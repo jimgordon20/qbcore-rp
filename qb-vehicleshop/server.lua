@@ -9,19 +9,7 @@ function onShutdown()
         for i = 1, #vehicles do
             local vehicleData = vehicles[i]
             local location = vehicleData['coords'].location
-            cleanupArea(location)
-        end
-    end
-end
-
-local function cleanupArea(coords)
-    local ObjectTypes = UE.TArray(0)
-    ObjectTypes:Add(UE.ECollisionChannel.ECC_Vehicle)
-    local hits = UE.TArray(UE.AActor)
-    UE.UKismetSystemLibrary.SphereOverlapActors(HWorld, coords, 1000, ObjectTypes, nil, nil, hits)
-    for _, hit in pairs(hits) do
-        if hit:IsA(UE.AMMVehiclePawn) then
-            hit:K2_DestroyActor()
+            ClearAreaOfVehicles(location)
         end
     end
 end
@@ -61,7 +49,7 @@ RegisterServerEvent('qb-vehicleshop:server:swapVehicle', function(source, data)
     local location     = Config.Shops[shop]['ShowroomVehicles'][index]['coords'].location
     local rotation     = Config.Shops[shop]['ShowroomVehicles'][index]['coords'].rotation
 
-    cleanupArea(location)
+    ClearAreaOfVehicles(location)
 
     local vehicle = HVehicle(location, rotation, vehicleClass)
     vehicle:SetSimulationEnabledForHelixEntity(false)

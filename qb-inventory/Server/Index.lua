@@ -42,42 +42,49 @@ end)
 
 RegisterServerEvent('qb-inventory:server:openInventory', function(source)
     local Player = exports['qb-core']:GetPlayer(source)
-    if not Player or Player.PlayerData.metadata['isdead'] or Player.PlayerData.metadata['inlaststand'] or Player.PlayerData.metadata['ishandcuffed'] then return end
-    local player_ped = source:K2_GetPawn()
-    if not player_ped then return end
-    local InsideTag = UE.UHelixResourceUtility.RequestGameplayTag('Status.Vehicle.Inside')
-    local IsInVehicle = player_ped:HasMatchingGameplayTag(InsideTag)
-
-    if IsInVehicle then
-        local in_vehicle = player_ped.VehicleInteractionComponent:GetCurrentVehicle()
-        local plate = in_vehicle.plate
-        if not plate then
-            plate = tostring(math.random(111111, 9999999))
-            rawset(getmetatable(in_vehicle), 'plate', plate)
-        end
-        OpenInventory(source, 'glovebox-' .. plate)
+    if not Player or Player.PlayerData.metadata['isdead'] or
+        Player.PlayerData.metadata['inlaststand'] or
+        Player.PlayerData.metadata['ishandcuffed'] then
         return
     end
 
-    local ClosestVehicle, ClosestDistance = exports['qb-core']:GetClosestVehicle(source)
-    if ClosestVehicle and ClosestDistance < 450 then
+    local player_ped = GetPlayerPawn(source)
+    if not player_ped then return end
+
+    if IsPedInAnyVehicle(player_ped) then
+        local in_vehicle = GetVehiclePedIsIn(player_ped)
+        if in_vehicle then
+            local plate = in_vehicle.plate
+            if not plate then
+                plate = tostring(math.random(111111, 9999999))
+                rawset(getmetatable(in_vehicle), 'plate', plate)
+            end
+            OpenInventory(source, 'glovebox-' .. plate)
+            return
+        end
+    end
+
+    local player_coords = GetEntityCoords(player_ped)
+    if not player_coords then
+        OpenInventory(source)
+        return
+    end
+
+    local ClosestVehicle, ClosestDistance = GetClosestVehicle(player_coords, 500)
+    if ClosestVehicle and ClosestDistance then
         local plate = ClosestVehicle.plate
         if not plate then
             plate = tostring(math.random(111111, 9999999))
             rawset(getmetatable(ClosestVehicle), 'plate', plate)
         end
-
         local Comps = ClosestVehicle:K2_GetComponentsByClass(UE.UClass.Load('/Game/SimpleVehicle/Blueprints/Components/Attachments/Trunk.Trunk_C'))
         if Comps:ToTable()[1] then
-            -- @TODO Trunk component detection
             local Trunk = Comps[1]
             Trunk['Animate Trunk'](Trunk, UE.EOpenableState.Open)
         end
-
         OpenInventory(source, 'trunk-' .. plate)
         return
     end
-
     OpenInventory(source)
 end)
 
@@ -92,7 +99,7 @@ RegisterServerEvent('qb-inventory:server:toggleHotbar', function(source)
         Player.PlayerData.items[4],
         Player.PlayerData.items[5],
     }
-    TriggerClientEvent(source, 'qb-inventory:client:hotbar', hotbarItems)    
+    TriggerClientEvent(source, 'qb-inventory:client:hotbar', hotbarItems)
 end)
 
 RegisterServerEvent('qb-inventory:server:openVending', function(source)
@@ -111,8 +118,8 @@ end)
 RegisterServerEvent('qb-inventory:server:closeInventory', function(source, inventory)
     local QBPlayer = exports['qb-core']:GetPlayer(source)
     if not QBPlayer then return end
-    local player_ped = source:K2_GetPawn()
---[[     player_ped:SetInputEnabled(true)
+    local player_ped = GetPlayerPawn(source)
+    --[[     player_ped:SetInputEnabled(true)
     source:SetValue('inv_busy', false, true) ]]
     if not inventory then return end
     if inventory:find('shop-') then return end
@@ -123,8 +130,8 @@ RegisterServerEvent('qb-inventory:server:closeInventory', function(source, inven
     end
     if Drops[inventory] then
         if #Drops[inventory].items == 0 then
-            if Drops[inventory].entity:IsValid() then Drops[inventory].entity:K2_DestroyActor() end
-            if Drops[inventory].interactable:IsValid() then Drops[inventory].interactable:K2_DestroyActor() end
+            if Drops[inventory].entity then DeleteEntity(Drops[inventory].entity) end
+            if Drops[inventory].interactable then DeleteEntity(Drops[inventory].interactable) end
         end
         Drops[inventory].isOpen = false
         return
@@ -152,12 +159,11 @@ end)
 RegisterServerEvent('qb-inventory:server:openDrop', function(source, dropId)
     local Player = exports['qb-core']:GetPlayer(source)
     if not Player then return end
-    local playerPed = source:K2_GetPawn()
-    local playerCoords = playerPed:K2_GetActorLocation()
+    local playerPed = GetPlayerPawn(source)
+    local playerCoords = GetEntityCoords(playerPed)
     local drop = Drops[dropId]
     if not drop or drop.isOpen then return end
-    local distance = UE.FVector.Dist(playerCoords, drop.coords)
-    if distance > 250 then return end
+    if GetDistanceBetweenCoords(playerCoords, drop.coords) > 250 then return end
 
     local formattedInventory = {
         name = dropId,
@@ -171,8 +177,8 @@ RegisterServerEvent('qb-inventory:server:openDrop', function(source, dropId)
 end)
 
 RegisterServerEvent('qb-inventory:server:updateDrop', function(source, dropId)
-    local playerPed = source:K2_GetPawn()
-    local playerCoords = playerPed:K2_GetActorLocation()
+    local playerPed = GetPlayerPawn(source)
+    local playerCoords = GetEntityCoords(playerPed)
     local DropData = Drops[dropId]
     DropData.coords = playerCoords
     DropData.isHeld = nil
@@ -192,12 +198,12 @@ RegisterCallback('server.createDrop', function(source, item)
     if not Player then
         return false
     end
-    local playerPed = source:K2_GetPawn()
-    local playerCoords = playerPed:K2_GetActorLocation()
+    local playerPed = GetPlayerPawn(source)
+    local playerCoords = GetEntityCoords(playerPed)
     if RemoveItem(source, item.name, item.amount, item.fromSlot) then
         --if item.type == 'weapon' then SetCurrentPedWeapon(playerPed, `WEAPON_UNARMED`, true) end
         --TaskPlayAnim(playerPed, 'pickup_object', 'pickup_low', 8.0, -8.0, 2000, 0, 0, false, false, false)
-        local PawnRotation = playerPed:K2_GetActorRotation()
+        local PawnRotation = GetEntityRotation(playerPed)
         local ForwardVec = playerPed:GetActorForwardVector()
         local SpawnPosition = playerCoords + (ForwardVec * 200)
         PawnRotation.Yaw = PawnRotation.Yaw
@@ -212,7 +218,7 @@ RegisterCallback('server.createDrop', function(source, item)
                 Action = function(Drop, Instigator)
                     local Controller = Instigator and Instigator:GetController()
                     if Controller then
-                        TriggerClientEvent(Controller, 'qb-inventory:client:openDrop', {dropId = newDropId})
+                        TriggerClientEvent(Controller, 'qb-inventory:client:openDrop', { dropId = newDropId })
                     end
                 end,
             },
@@ -273,11 +279,11 @@ RegisterCallback('server.attemptPurchase', function(source, data)
     local shopInfo = RegisteredShops[shop]
     if not shopInfo then return false end
 
-    local playerPed = source:K2_GetPawn()
-    local playerCoords = playerPed:K2_GetActorLocation()
+    local playerPed = GetPlayerPawn(source)
+    local playerCoords = GetEntityCoords(playerPed)
     if shopInfo.coords then
         local shopCoords = Vector(shopInfo.coords.X, shopInfo.coords.Y, shopInfo.coords.Z)
-        if UE.FVector.Dist(playerCoords, shopCoords) > 650 then return false end
+        if GetDistanceBetweenCoords(playerCoords, shopCoords) > 650 then return false end
     end
 
     if shopInfo.items[itemInfo.slot].name ~= itemInfo.name then return false end -- check item name in slot passed
@@ -311,17 +317,17 @@ RegisterCallback('server.giveItem', function(source, target, item, amount)
     if not player or player.PlayerData.metadata['isdead'] or player.PlayerData.metadata['inlaststand'] or player.PlayerData.metadata['ishandcuffed'] then
         return false
     end
-    local playerPed = source:K2_GetPawn()
+    local playerPed = GetPlayerPawn(source)
 
     local Target = exports['qb-core']:GetPlayer(target)
     if not Target or Target.PlayerData.metadata['isdead'] or Target.PlayerData.metadata['inlaststand'] or Target.PlayerData.metadata['ishandcuffed'] then
         return false
     end
-    local targetPed = target:K2_GetPawn()
+    local targetPed = GetPlayerPawn(target)
 
-    local pCoords = playerPed:K2_GetActorLocation()
-    local tCoords = targetPed:K2_GetActorLocation()
-    if UE.FVector.Dist(pCoords, tCoords) > 100 then
+    local pCoords = GetEntityCoords(playerPed)
+    local tCoords = GetEntityCoords(targetPed)
+    if GetDistanceBetweenCoords(pCoords, tCoords) > 1000 then
         return false
     end
 

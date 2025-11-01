@@ -92,8 +92,8 @@ RegisterServerEvent('qb-multicharacter:server:loadUserData', function(source, cD
                         end
                     else
                         local coords = JSON.parse(cData.position)
-                        local pawn = source:K2_GetPawn()
-                        if pawn then pawn:K2_SetActorLocation(Vector(coords.x, coords.y, coords.z), false, nil, true) end
+                        local pawn = GetPlayerPawn(source)
+                        if pawn then SetEntityCoords(pawn, Vector(coords.x, coords.y, coords.z)) end
                     end
                 else
                     local Apartments = exports['qb-apartments']:Apartments()

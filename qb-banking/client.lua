@@ -102,9 +102,9 @@ local function OpenATM()
 end
 
 local function NearATM()
-    local ped = HPlayer:K2_GetPawn()
+    local ped = GetPlayerPawn()
     if not ped then return end
-    local playerCoords = ped:K2_GetActorLocation()
+    local playerCoords = GetEntityCoords(ped)
     for _, v in pairs(Config.atmModels) do
         local hash = joaat(v)
         local atm = IsObjectNearPoint(hash, playerCoords.x, playerCoords.y, playerCoords.z, 1.5)

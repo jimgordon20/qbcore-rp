@@ -342,8 +342,8 @@ end
 
 function QBCore.Player.Save(source)
     local pcoords = QBCore.Config.DefaultSpawn
-    local ped = source:K2_GetPawn()
-    if ped then pcoords = ped:K2_GetActorLocation() end
+    local ped = GetPlayerPawn(source)
+    if ped then pcoords = GetEntityCoords(ped) end
     local PlayerState = source:GetLyraPlayerState()
     local PlayerData = QBCore.Players[source].PlayerData
     if not PlayerData then

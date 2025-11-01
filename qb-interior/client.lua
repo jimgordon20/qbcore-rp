@@ -5,8 +5,10 @@ local nextId = 1
 
 exports('qb-interior', 'DespawnInterior', function(id)
     if interiors[id] and interiors[id].object then
-        interiors[id].object:K2_DestroyActor()
-        interiors[id] = nil
+        if DoesEntityExist(interiors[id].object) then
+            DeleteEntity(interiors[id].object)
+            interiors[id] = nil
+        end
     end
 end)
 

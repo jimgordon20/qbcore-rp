@@ -114,12 +114,7 @@ RegisterClientEvent('HEvent:ExitedVehicle', function(seat)
 end)
 
 RegisterClientEvent('HEvent:PlayerPossessed', function()
-    if HPlayer then
-        playerPawn = HPlayer:K2_GetPawn()
-    elseif not HPlayer then
-        HPlayer = UE.UGameplayStatics.GetPlayerController(HWorld, 0)
-        playerPawn = HPlayer:K2_GetPawn()
-    end
+    playerPawn = GetPlayerPawn()
 end)
 
 RegisterClientEvent('HEvent:PlayerUnPossessed', function()

@@ -111,10 +111,9 @@ local function LeaveApartment(source, apartmentId, aptName)
 	insideMeta.house = nil
 	exports['qb-core']:Player(source, 'SetMetaData', 'inside', insideMeta)
 
-	local ped = source:K2_GetPawn()
+	local ped = GetPlayerPawn(source)
 	if not ped then return end
-	ped:K2_SetActorLocationAndRotation(Vector(exitCoords[1], exitCoords[2], exitCoords[3]), Rotator(0, 0, 0), false, _, true)
-
+	SetEntityCoords(ped, Vector(exitCoords[1], exitCoords[2], exitCoords[3]))
 	TriggerClientEvent(source, 'qb-apartments:client:LeaveApartment')
 end
 

@@ -4,9 +4,9 @@ local nextId = 1
 -- Functions
 
 local function TeleportToInterior(player, x, y, z, h)
-	local ped = player:K2_GetPawn()
+	local ped = GetPlayerPawn(player)
 	if not ped then return end
-	ped:K2_SetActorLocationAndRotation(Vector(x, y, z), Rotator(0, h, 0), false, _, true)
+	SetEntityCoords(ped, Vector(x, y, z))
 end
 
 RegisterServerEvent('qb-interior:server:teleportPlayer', function(player, x, y, z, h)
@@ -15,8 +15,10 @@ end)
 
 exports('qb-interior', 'DespawnInterior', function(id)
 	if interiors[id] and interiors[id].object then
-		interiors[id].object:K2_DestroyActor()
-		interiors[id] = nil
+		if DoesEntityExist(interiors[id].object) then
+			DeleteEntity(interiors[id].object)
+			interiors[id] = nil
+		end
 	end
 end)
 
@@ -65,7 +67,7 @@ exports('qb-interior', 'CreateApartmentFurnished', function(player, spawn, isNew
 	if isNew then
 		Timer.SetTimeout(function()
 			local characterCreatorComponentClass = UE.UClass.Load('/AdvancedCharacterCreator/Blueprints/BPC_CharacterCreator.BPC_CharacterCreator_C')
-			local pawn = player:K2_GetPawn()
+			local pawn = GetPlayerPawn(player)
 			local characterCreatorComponent = pawn:GetComponentByClass(characterCreatorComponentClass)
 			characterCreatorComponent:ShowCharacterCustomizationUI()
 			isNew = false

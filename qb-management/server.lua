@@ -2,10 +2,6 @@ local Lang = require('locales/en')
 
 -- Functions
 
-local function distCheck(coords1, coords2)
-    return UE.FVector.Dist(coords1, coords2)
-end
-
 -- Events
 
 RegisterServerEvent('qb-management:server:jobStash', function(source)
@@ -13,14 +9,14 @@ RegisterServerEvent('qb-management:server:jobStash', function(source)
     if not Player then return end
     local playerJob = Player.PlayerData.job
     if not playerJob.isboss then return end
-    local ped = source:K2_GetPawn()
+    local ped = GetPlayerPawn(source)
     if not ped then return end
-    local playerCoords = ped:K2_GetActorLocation()
+    local playerCoords = GetEntityCoords(ped)
     if not Config.BossMenus[playerJob.name] then return end
     local bossCoords = Config.BossMenus[playerJob.name]
     for i = 1, #bossCoords do
         local coords = bossCoords[i]
-        if distCheck(playerCoords, coords) < 1000 then
+        if GetDistanceBetweenCoords(playerCoords, coords) < 1000 then
             local stashName = 'boss_' .. playerJob.name
             exports['qb-inventory']:OpenInventory(source, stashName, {
                 maxweight = 4000000,
@@ -36,14 +32,14 @@ RegisterServerEvent('qb-management:server:gangStash', function(source)
     if not Player then return end
     local playerGang = Player.PlayerData.gang
     if not playerGang.isboss then return end
-    local ped = source:K2_GetPawn()
+    local ped = GetPlayerPawn(source)
     if not ped then return end
-    local playerCoords = ped:K2_GetActorLocation()
+    local playerCoords = GetEntityCoords(ped)
     if not Config.GangMenus[playerGang.name] then return end
     local bossCoords = Config.GangMenus[playerGang.name]
     for i = 1, #bossCoords do
         local coords = bossCoords[i]
-        if distCheck(playerCoords, coords) < 1000 then
+        if GetDistanceBetweenCoords(playerCoords, coords) < 1000 then
             local stashName = 'gang_' .. playerGang.name
             exports['qb-inventory']:OpenInventory(source, stashName, {
                 maxweight = 4000000,
@@ -281,39 +277,21 @@ RegisterCallback('GetMembers', function(source, gangname)
     return members
 end)
 
-local function getPlayers()
-    local actors = UE.TArray(UE.AActor)
-    -- local class = UE.UClass.Load('/Game/Helix/Blueprints/Player/BP_HelixPlayerController.BP_HelixPlayerController_C')
-    local class = UE.UClass.Load('/SandboxGameplay/Character/BP_Helix_Character_Player.BP_Helix_Character_Player_C')
-    UE.UGameplayStatics.GetAllActorsOfClass(HWorld, class, actors)
-    return actors:ToTable()
-end
-
 RegisterCallback('GetPlayers', function(source)
     local players = {}
-    local PlayerPed = source:K2_GetPawn()
-    print('Source Ped: ', PlayerPed)
+    local PlayerPed = GetPlayerPawn(source)
     if not PlayerPed then return end
-    local pCoords = PlayerPed:K2_GetActorLocation()
-    print('Source Coords: ', pCoords)
-    local worldPawns = getPlayers()
+    local pCoords = GetEntityCoords(PlayerPed)
+    local worldPawns = GetPawnsInArea(pCoords, 1000)
     for _, pawn in pairs(worldPawns) do
         if PlayerPed ~= pawn then
-            print('Checking Pawn: ', pawn)
-            local tCoords = pawn:K2_GetActorLocation()
-            print('Target Coords: ', tCoords)
-            local dist = distCheck(pCoords, tCoords)
-            print('Distance: ', dist)
-            if dist < 1000 then
-                local controller = pawn:GetController()
-                if not controller then return end
-                local targetPlayer = exports['qb-core']:GetPlayer(controller)
-                print('Found Nearby Player: ', targetPlayer)
-                players[#players + 1] = {
-                    name = targetPlayer.PlayerData.charinfo.firstname .. ' ' .. targetPlayer.PlayerData.charinfo.lastname,
-                    citizenid = targetPlayer.PlayerData.citizenid,
-                }
-            end
+            local controller = pawn:GetController()
+            if not controller then return end
+            local targetPlayer = exports['qb-core']:GetPlayer(controller)
+            players[#players + 1] = {
+                name = targetPlayer.PlayerData.charinfo.firstname .. ' ' .. targetPlayer.PlayerData.charinfo.lastname,
+                citizenid = targetPlayer.PlayerData.citizenid,
+            }
         end
     end
 

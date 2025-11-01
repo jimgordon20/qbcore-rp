@@ -3,10 +3,6 @@ local sharedJobs = exports['qb-core']:GetShared('Jobs')
 
 -- Functions
 
-local function distCheck(coords1, coords2)
-    return UE.FVector.Dist(coords1, coords2)
-end
-
 local function getHighestRank(jobName)
     local highestRank = 0
     local job = sharedJobs[jobName]
@@ -26,11 +22,11 @@ end
 RegisterServerEvent('qb-cityhall:server:ApplyJob', function(source, job)
     local Player = exports['qb-core']:GetPlayer(source)
     if not Player then return end
-    local ped = source:K2_GetPawn()
+    local ped = GetPlayerPawn(source)
     if not ped then return end
-    local pedCoords = ped:K2_GetActorLocation()
+    local pedCoords = GetEntityCoords(ped)
     local coords = Config.Cityhalls[1].coords
-    if distCheck(pedCoords, coords) > 1500 then return end
+    if GetDistanceBetweenCoords(pedCoords, coords) > 1500 then return end
 
     local JobInfo = sharedJobs[job]
     exports['qb-core']:Player(source, 'SetJob', job, getHighestRank(job))
@@ -40,11 +36,11 @@ end)
 RegisterServerEvent('qb-cityhall:server:requestId', function(source, item)
     local Player = exports['qb-core']:GetPlayer(source)
     if not Player then return end
-    local ped = source:K2_GetPawn()
+    local ped = GetPlayerPawn(source)
     if not ped then return end
-    local pedCoords = ped:K2_GetActorLocation()
+    local pedCoords = GetEntityCoords(ped)
     local coords = Config.Cityhalls[1].coords
-    if distCheck(pedCoords, coords) > 1500 then return end
+    if GetDistanceBetweenCoords(pedCoords, coords) > 1500 then return end
 
     local itemInfo = Config.Cityhalls[1].licenses[item]
     if not exports['qb-core']:Player(source, 'RemoveMoney', itemInfo.cost) then

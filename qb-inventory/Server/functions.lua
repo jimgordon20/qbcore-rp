@@ -269,7 +269,7 @@ end
 exports('qb-inventory', 'UseItem', UseItem)
 
 function CloseInventory(source, identifier)
-    local player_ped = source:K2_GetPawn()
+    local player_ped = GetPlayerPawn(source)
     --player_ped:SetInputEnabled(true)
     --source:SetValue('inv_busy', false, true)
     if identifier and Inventories[identifier] then
@@ -334,13 +334,12 @@ local function OpenShop(source, name)
     local Player = exports['qb-core']:GetPlayer(source)
     if not Player then return end
     if not RegisteredShops[name] then return end
-    local player = source:K2_GetPawn()
-    local playerCoords = player:K2_GetActorLocation()
+    local player = GetPlayerPawn(source)
+    local playerCoords = GetEntityCoords(player)
     if RegisteredShops[name].coords then
         local shopDistance = RegisteredShops[name].coords
         if shopDistance then
-            local distance = UE.FVector.Dist(playerCoords, shopDistance)
-            if distance > 1000.0 then return end
+            if GetDistanceBetweenCoords(playerCoords, shopDistance) > 1000.0 then return end
         end
     end
     local formattedInventory = {
@@ -358,7 +357,7 @@ exports('qb-inventory', 'OpenShop', OpenShop)
 function OpenInventory(source, identifier, data)
     local QBPlayer = exports['qb-core']:GetPlayer(source)
     if not QBPlayer then return end
-    local player_ped = source:K2_GetPawn()
+    local player_ped = GetPlayerPawn(source)
 
     if not identifier then
         TriggerClientEvent(source, 'qb-inventory:client:openInventory', QBPlayer.PlayerData.items)

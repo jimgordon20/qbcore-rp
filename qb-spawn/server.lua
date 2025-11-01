@@ -7,7 +7,7 @@ RegisterServerEvent('qb-spawn:server:spawnPlayer', function(source, coords)
         local position = Player.PlayerData.position
         coords = Vector(position.x, position.y, position.z)
     end
-    local ped = source:K2_GetPawn()
+    local ped = GetPlayerPawn(source)
     if not ped then return end
-    ped:K2_SetActorLocationAndRotation(Vector(coords.X, coords.Y, coords.Z), Rotator(0, 0, 0), false, _, true)
+    SetEntityCoords(ped, Vector(coords.X, coords.Y, coords.Z))
 end)

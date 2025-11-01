@@ -172,7 +172,7 @@ local function SetClosestApartment()
 	if not playerPawn then return end
 	local ped = playerPawn
 	if not ped then return end
-	local pos = ped:K2_GetActorLocation()
+	local pos = GetEntityCoords(ped)
 	local current = nil
 	local dist = 1000
 	for id in pairs(Apartments.Locations) do
@@ -181,8 +181,7 @@ local function SetClosestApartment()
 			Apartments.Locations[id].coords[2],
 			Apartments.Locations[id].coords[3]
 		)
-		local distcheck = UE.FVector.Dist(pos, apartmentPos)
-		if distcheck < dist then
+		if GetDistanceBetweenCoords(pos, apartmentPos) < dist then
 			current = id
 		end
 	end
@@ -209,12 +208,7 @@ end
 
 RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
 	isLoggedIn = true
-	if HPlayer then
-		playerPawn = HPlayer:K2_GetPawn()
-	elseif not HPlayer then
-		local PC = UE.UGameplayStatics.GetPlayerController(HWorld, 0)
-		playerPawn = PC:K2_GetPawn()
-	end
+	playerPawn = GetPlayerPawn()
 end)
 
 RegisterClientEvent('QBCore:Client:OnPlayerUnload', function()
