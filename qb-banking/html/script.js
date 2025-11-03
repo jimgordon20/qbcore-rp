@@ -1,4 +1,7 @@
 const bankingApp = Vue.createApp({
+    components: {
+        vSelect: window["vue-select"],
+    },
     data() {
         return {
             isBankOpen: false,

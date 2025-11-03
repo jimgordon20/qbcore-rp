@@ -128,6 +128,36 @@ input:focus {
     border-color: transparent;
 }
 
+.v-select {
+    width: 52%;
+    padding: 0;
+    margin: 0;
+    border-radius: 0;
+}
+
+.v-select .vs__dropdown-toggle {
+    border-radius: 0;
+    background-color: var(--accent-color);
+    color: var(--text-color);
+    font-weight: var(--font-weight-medium);
+    font-family: var(--font);
+    border: 1px solid var(--md-outline-variant);
+    box-shadow: var(--box-shadow);
+    text-align: center;
+}
+
+.v-select .vs__dropdown-menu {
+    background-color: var(--accent-color);
+    color: var(--text-color);
+    border-radius: 0;
+}
+
+.v-select .vs__selected,
+.v-select .vs__selected-options {
+    color: var(--text-color);
+    text-align: center;
+}
+
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
     display: none;

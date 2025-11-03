@@ -6,7 +6,9 @@
         <title>qb-banking</title>
         <link rel="stylesheet" href="style.css" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&display=swap" />
+        <link rel="stylesheet" href="vue-select.css" />
         <script src="vue.global.prod.js"></script>
+        <script src="vue-select.umd.js"></script>
         <script src="script.js" defer></script>
     </head>
     <body>
@@ -49,9 +51,7 @@
                         <div class="manage-money">
                             <div class="money-title">Money Management</div>
                             <label for="fromAccount">Account:</label>
-                            <select id="fromAccount" v-model="selectedMoneyAccount">
-                                <option v-for="account in accounts" :key="account.name" :value="account">{{ account.name }}</option>
-                            </select>
+                            <v-select :options="accounts" label="name" :searchable="false" v-model="selectedMoneyAccount" placeholder="Choose account"></v-select>
                             <label for="amount">Amount:</label>
                             <input type="number" id="amount" v-model="selectedMoneyAmount" />
                             <label for="money-reason">Reason:</label>
@@ -70,13 +70,9 @@
                         </div>
                         <div v-if="transferType === 'internal'" class="transfer-options">
                             <label for="internalFrom">Account:</label>
-                            <select id="internalFrom" v-model="internalFromAccount">
-                                <option v-for="account in accounts" :key="account.name" :value="account">{{ account.name }}</option>
-                            </select>
+                            <v-select :options="accounts" label="name" v-model="internalFromAccount" :searchable="false" placeholder="Account"></v-select>
                             <label for="internalTo">Account:</label>
-                            <select id="internalTo" v-model="internalToAccount">
-                                <option v-for="account in accounts" :key="account.name" :value="account">{{ account.name }}</option>
-                            </select>
+                            <v-select :options="accounts" label="name" v-model="internalToAccount" :searchable="false" placeholder="Account"></v-select>
                             <label for="internalAmount">Amount:</label>
                             <input type="number" id="internalAmount" v-model="internalTransferAmount" />
                             <label for="transfer-reason">Reason:</label>
@@ -87,9 +83,7 @@
                             <label for="externalAccountNumber">Account Number:</label>
                             <input type="text" id="externalAccountNumber" v-model="externalAccountNumber" />
                             <label for="externalFrom">Account:</label>
-                            <select id="externalFrom" v-model="externalFromAccount">
-                                <option v-for="account in accounts" :key="account.name" :value="account">{{ account.name }}</option>
-                            </select>
+                            <v-select :options="accounts" label="name" v-model="externalFromAccount" :searchable="false" placeholder="Account"></v-select>
                             <label for="externalAmount">Amount:</label>
                             <input type="number" id="externalAmount" v-model="externalTransferAmount" />
                             <label for="transfer-reason">Reason:</label>
@@ -127,9 +121,7 @@
                                 <label for="editAccountName">Name:</label>
                             </div>
                             <div class="options-inputs">
-                                <select id="editAccount" v-model="editAccount">
-                                    <option v-for="account in accounts.filter(a => a.type === 'shared')" :key="account.name" :value="account">{{ account.name }}</option>
-                                </select>
+                                <v-select :options="accounts.filter(a => a.type === 'shared')" label="name" v-model="editAccount" :searchable="false" placeholder="Choose shared account"></v-select>
                                 <input type="text" id="editAccountName" v-model="editAccountName" />
                             </div>
                             <div class="card-buttons">
@@ -144,9 +136,7 @@
                                 <label for="manageUserName">Citizen ID:</label>
                             </div>
                             <div class="options-inputs">
-                                <select id="manageAccountName" v-model="manageAccountName">
-                                    <option v-for="account in accounts.filter(a => a.type === 'shared')" :key="account.name" :value="account">{{ account.name }}</option>
-                                </select>
+                                <v-select :options="accounts.filter(a => a.type === 'shared')" label="name" v-model="manageAccountName" :searchable="false" placeholder="Choose shared account"></v-select>
                                 <div class="combo-input">
                                     <input type="text" id="manageUserName" v-model="manageUserName" @input="filterUsers" @focus="showUsersDropdown = true" @blur="hideDropdown" />
                                     <div class="dropdown-container" v-if="showUsersDropdown">
@@ -185,9 +175,7 @@
                         <div class="manage-money">
                             <div class="money-title">Withdraw</div>
                             <label for="fromAccount">Account:</label>
-                            <select id="fromAccount" v-model="selectedMoneyAccount">
-                                <option v-for="account in accounts" :key="account.name" :value="account">{{ account.name }}</option>
-                            </select>
+                            <v-select :options="accounts" label="name" v-model="selectedMoneyAccount" :searchable="false" placeholder="Choose account"></v-select>
                             <label for="amount">Amount:</label>
                             <input type="number" id="amount" v-model="selectedMoneyAmount" />
                             <label for="money-reason">Reason:</label>
