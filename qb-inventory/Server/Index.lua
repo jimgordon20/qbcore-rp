@@ -255,7 +255,7 @@ RegisterCallback('server.createDrop', function(source, item)
                 coords = playerCoords,
                 maxweight = Config.DropSize.maxweight,
                 slots = Config.DropSize.slots,
-                isOpen = false
+                isOpen = true
             }
             --BroadcastRemote('qb-inventory:client:setupDropTarget', bag.Object)
         else
