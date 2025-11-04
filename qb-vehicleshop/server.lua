@@ -82,8 +82,8 @@ RegisterServerEvent('qb-vehicleshop:server:purchaseVehicle', function(source, da
     local plate = exports['qb-core']:GeneratePlate()
     exports['qb-core']:Player(source, 'RemoveMoney', moneyType, price, 'vehicle-purchase')
     exports['qb-core']:Database('Execute', 'INSERT INTO player_vehicles (license, citizenid, vehicle, mods, plate, garage, state) VALUES (?, ?, ?, ?, ?, ?, ?)', {
-        pData.PlayerData.license,
-        cid,
+        Player.PlayerData.license,
+        Player.PlayerData.citizenid,
         vehicle,
         '{}',
         plate,
