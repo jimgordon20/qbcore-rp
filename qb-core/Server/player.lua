@@ -6,6 +6,14 @@ RegisterServerEvent('HEvent:PlayerUnloaded', function(source)
     QBCore.Player.Logout(source)
 end)
 
+-- Cache location on UnPossess
+local PositionCache = {}
+RegisterServerEvent('HEvent:PlayerUnPossessed', function(source, Pawn)
+    if Pawn then
+        PositionCache[source] = Pawn:K2_GetActorLocation()
+    end
+end)
+
 -- Logout
 
 function QBCore.Player.Logout(source)
@@ -343,7 +351,11 @@ end
 function QBCore.Player.Save(source)
     local pcoords = QBCore.Config.DefaultSpawn
     local ped = GetPlayerPawn(source)
-    if ped then pcoords = GetEntityCoords(ped) end
+    if ped then 
+        pcoords = GetEntityCoords(ped) 
+    else
+        pcoords = PositionCache[source] or pcoords
+    end
     local PlayerState = source:GetLyraPlayerState()
     local PlayerData = QBCore.Players[source].PlayerData
     if not PlayerData then
