@@ -140,6 +140,7 @@ end)
 inputTimer = Timer.SetInterval(function()
     if not isLoggedIn then return end
     if not playerPawn then return end
+    if not player_data then return end
     local armor  = player_data.metadata['armor']
     local hunger = player_data.metadata['hunger']
     local thirst = player_data.metadata['thirst']

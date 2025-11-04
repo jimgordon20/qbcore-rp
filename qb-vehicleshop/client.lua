@@ -1,6 +1,6 @@
 local Lang = require('locales/en')
 local Vehicles = exports['qb-core']:GetShared('Vehicles')
-local PlayerData = {}
+local player_data = {}
 local testDriveVeh, inTestDrive = 0, false
 
 -- Handlers
@@ -59,9 +59,9 @@ local function setupTargets()
 end
 
 RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
-    PlayerData = exports['qb-core']:GetPlayerData()
+    player_data = exports['qb-core']:GetPlayerData()
     setupTargets()
-    -- local citizenid = PlayerData.citizenid
+    -- local citizenid = player_data.citizenid
     -- TriggerServerEvent('qb-vehicleshop:server:addPlayer', citizenid)
     -- TriggerServerEvent('qb-vehicleshop:server:checkFinance')
 end)

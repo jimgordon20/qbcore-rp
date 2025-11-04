@@ -71,8 +71,8 @@ end)
 my_webui:RegisterEventHandler('qb-spawn:spawnplayer', function(data)
     local location = tostring(data.spawnloc)
     local type = tostring(data.typeLoc)
-    local PlayerData = exports['qb-core']:GetPlayerData()
-    local insideMeta = PlayerData.metadata['inside']
+    local player_data = exports['qb-core']:GetPlayerData()
+    local insideMeta = player_data.metadata['inside']
     if type == 'current' then
         if insideMeta.house ~= nil then
             local houseId = insideMeta.house

@@ -1,7 +1,7 @@
 local Lang = require('locales/en')
 local my_webui = WebUI('qb-radio', 'qb-radio/html/index.html')
 local isLoggedIn = false
-local PlayerData
+local player_data = {}
 local onRadio = false
 local RadioChannel = 0
 --local RadioVolume = 50
@@ -24,7 +24,7 @@ local function connecttoradio(channel)
     if channel <= 0 then return false end
 
     -- if Config.RestrictedChannels[channel] ~= nil then
-    --     if not Config.RestrictedChannels[channel][PlayerData.job.name] or not PlayerData.job.onduty then
+    --     if not Config.RestrictedChannels[channel][player_data.job.name] or not player_data.job.onduty then
     --         exports['qb-core']:Notify(Lang:t('restricted_channel_error'), 'error')
     --         return false
     --     end
@@ -48,12 +48,12 @@ end
 
 RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
     isLoggedIn = true
-    PlayerData = exports['qb-core']:GetPlayerData()
+    player_data = exports['qb-core']:GetPlayerData()
 end)
 
 RegisterClientEvent('QBCore:Client:OnPlayerUnload', function()
     isLoggedIn = false
-    PlayerData = nil
+    player_data = nil
 end)
 
 -- UI

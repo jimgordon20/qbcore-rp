@@ -1,5 +1,5 @@
 local Lang = require('Shared/locales/en')
-Player_data = exports['qb-core']:GetPlayerData()
+local player_data = {}
 local hotbarShown = false
 local inv_open = false
 local my_webui = WebUI('Inventory', 'qb-inventory/Client/html/index.html', 0)
@@ -10,20 +10,15 @@ require('Client/vehicles')
 -- Handlers
 
 RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
-	--LocalPlayer.state:set('inv_busy', false, true)
-	Player_data = exports['qb-core']:GetPlayerData()
-	--[[ 	exports['qb-core']:TriggerCallback('qb-inventory:server:GetCurrentDrops', function(theDrops)
-		Drops = theDrops
-	end) ]]
+	player_data = exports['qb-core']:GetPlayerData()
 end)
 
 RegisterClientEvent('QBCore:Client:OnPlayerUnload', function()
-	-- LocalPlayer.state:set('inv_busy', true, true)
-	Player_data = {}
+	player_data = {}
 end)
 
 RegisterClientEvent('QBCore:Player:SetPlayerData', function(val)
-	Player_data = val
+	player_data = val
 end)
 
 -- Functions
@@ -258,7 +253,7 @@ Input.Subscribe('KeyPress', function(key_name)
 	end
 
 	if index then
-		local itemData = Player_data.items[index]
+		local itemData = player_data.items[index]
 		if not itemData then
 			return false
 		end
