@@ -3,22 +3,6 @@ local ApartmentObjects = {}
 
 -- Functions
 
-local function CreateApartmentId(aptName)
-	local MAX_ATTEMPTS = 50
-	local attempts = 0
-	local id, name, result
-	repeat
-		attempts = attempts + 1
-		id = tostring(math.random(100000, 999999))
-		name = tostring(aptName .. id)
-		result = exports['qb-core']:DatabaseAction('Select', 'SELECT COUNT(*) as count FROM apartments WHERE name = ?', { name })
-		if attempts >= MAX_ATTEMPTS then
-			error(('[apartments] could not find unique id after %d attempts'):format(MAX_ATTEMPTS))
-		end
-	until (result and result[1] and tonumber(result[1].count) == 0)
-	return id
-end
-
 local function AddPlayerToApartment(source, apartmentId)
 	local Player = exports['qb-core']:GetPlayer(source)
 	if not Player then return end
@@ -122,8 +106,7 @@ end
 RegisterServerEvent('qb-apartments:server:CreateApartment', function(source, aptName)
 	local Player = exports['qb-core']:GetPlayer(source)
 	if not Player then return end
-	local num = CreateApartmentId(aptName)
-	local apartmentId = tostring(aptName .. num)
+	local apartmentId = exports['qb-core']:CreateApartmentId(aptName)
 	local label = Apartments.Locations[aptName].label
 	exports['qb-core']:DatabaseAction('Execute', 'INSERT INTO apartments (name, type, label, citizenid) VALUES (?, ?, ?, ?)', {
 		apartmentId,
