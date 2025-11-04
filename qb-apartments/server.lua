@@ -106,7 +106,7 @@ end
 RegisterServerEvent('qb-apartments:server:CreateApartment', function(source, aptName)
 	local Player = exports['qb-core']:GetPlayer(source)
 	if not Player then return end
-	local apartmentId = exports['qb-core']:CreateApartmentId(aptName)
+	local apartmentId = exports['qb-core']:CreateApartmentId()
 	local label = Apartments.Locations[aptName].label
 	exports['qb-core']:DatabaseAction('Execute', 'INSERT INTO apartments (name, type, label, citizenid) VALUES (?, ?, ?, ?)', {
 		apartmentId,
