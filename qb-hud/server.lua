@@ -1,5 +1,19 @@
 -- Commands
 
+RegisterCommand('cash', function(source)
+    local Player = exports['qb-core']:GetPlayer(source)
+    if not Player then return end
+    local cashAmount = Player.PlayerData.money['cash']
+    TriggerClientEvent(source, 'qb-hud:client:ShowAccounts', 'cash', cashAmount)
+end)
+
+RegisterCommand('bank', function(source)
+    local Player = exports['qb-core']:GetPlayer(source)
+    if not Player then return end
+    local bankAmount = Player.PlayerData.money['bank']
+    TriggerClientEvent(source, 'qb-hud:client:ShowAccounts', 'bank', bankAmount)
+end)
+
 -- Events
 
 RegisterServerEvent('qb-hud:server:GainStress', function(source, amount)

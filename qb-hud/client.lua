@@ -73,6 +73,15 @@ RegisterClientEvent('qb-hud:client:OnMoneyChange', function(type, amount, isMinu
     })
 end)
 
+RegisterClientEvent('qb-hud:client:ShowAccounts', function(type, amount)
+    if not my_webui then return end
+    if type == 'cash' then
+        my_webui:SendEvent('ShowCashAmount', round(amount))
+    else
+        my_webui:SendEvent('ShowBankAmount', round(amount))
+    end
+end)
+
 -- Game Events
 
 RegisterClientEvent('HEvent:PlayerLoggedIn', function()
