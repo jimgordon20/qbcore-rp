@@ -1,4 +1,4 @@
-local Lang = require('../Shared/locales/' .. QBCore.Config.Language .. '.lua')
+local Lang = require('Shared/locales/en')
 
 -- Commands
 
@@ -32,7 +32,8 @@ RegisterCommand('dm', 'DM Player', function(source, args)
 end)
 
 RegisterCommand('id', 'Check ID', {}, function(source)
-    local player_id = source:GetPlayerId()
+    local PlayerState = source:GetLyraPlayerState()
+    local player_id = PlayerState:GetPlayerId()
     TriggerClientEvent('QBCore:Notify', source, 'Your ID is: ' .. player_id)
 end)
 
