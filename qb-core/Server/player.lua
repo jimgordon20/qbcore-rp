@@ -77,6 +77,7 @@ function QBCore.Player.Login(source, citizenid, newData)
         QBCore.Player.CheckPlayerData(source, newData)
     end
     TriggerClientEvent(source, 'QBCore:Client:OnPlayerLoaded')
+    TriggerLocalServerEvent('QBCore:Server:OnPlayerLoaded', source)
     return true
 end
 
