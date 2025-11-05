@@ -24,12 +24,11 @@ end
 local function OpenGarageMenu()
     print('Opening Garage Menu', zone.indexgarage)
     TriggerCallback('server.GetGarageVehicles', function(result)
-        print('Result:', result)
         if result == nil then return exports['qb-core']:Notify(Lang:t('error.no_vehicles'), 'error', 5000) end
         local formattedVehicles = {}
         for _, v in pairs(result) do
-            local enginePercent = exports['qb-core']:Shared('Round', v.engine, 0)
-            local bodyPercent = exports['qb-core']:Shared('Round', v.body, 0)
+            local enginePercent = math.floor(v.engine + 0.5)
+            local bodyPercent = math.floor(v.body + 0.5)
             local vname = nil
             pcall(function()
                 vname = SharedVehicles[v.vehicle].name

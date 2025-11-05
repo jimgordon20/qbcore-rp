@@ -94,7 +94,7 @@ function populateVehicleList(garageLabel, vehicles) {
         // Drive Button
         let status;
         let isDepotPrice = false;
-        console.log(`State: ${v.state}`);
+        v.state = Number(v.state)
 
         if (v.state === 0) {
             if (v.depotPrice && v.depotPrice > 0) {
@@ -190,8 +190,8 @@ function populateVehicleList(garageLabel, vehicles) {
 
         const maxValues = {
             fuel: 100,
-            engine: 1000,
-            body: 1000,
+            engine: 1,
+            body: 1,
         };
 
         ["fuel", "engine", "body"].forEach((statLabel) => {

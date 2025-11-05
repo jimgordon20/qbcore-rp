@@ -52,9 +52,9 @@ RegisterCallback('server.GetGarageVehicles', function(source, garage)
     local citizenId = Player.PlayerData.citizenid
 
     local vehicles
-    local type = Config.Garages[garage].type
+    local garageType = Config.Garages[garage].type
 
-    if type == 'depot' then
+    if garageType == 'depot' then
         vehicles = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM player_vehicles WHERE citizenid = ? AND depotprice > 0', { citizenId })
     elseif Config.SharedGarages then
         vehicles = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM player_vehicles WHERE citizenid = ?', { citizenId })
