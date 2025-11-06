@@ -39,6 +39,32 @@ local function filterVehiclesByCategory(vehicles, category)
     return filtered
 end
 
+local function GetSpawnPoint(garageIndex)
+    local location = nil
+    local garage = Config.Garages[garageIndex]
+    if not garage then return end
+    if #garage.spawnPoint > 1 then
+        local maxTries = #garage.spawnPoint
+        for _ = 1, maxTries do
+            local randomIndex = math.random(1, #garage.spawnPoint)
+            local chosenSpawnPoint = garage.spawnPoint[randomIndex]
+            local isOccupied = IsAreaClearOfVehicles(chosenSpawnPoint.coords, 500)
+            if not isOccupied then
+                location = chosenSpawnPoint
+                break
+            end
+        end
+    elseif #garage.spawnPoint == 1 then
+        location = garage.spawnPoint[1]
+    end
+
+    return location
+end
+
+local function updateVehicleState(state, plate, citizenid)
+    exports['qb-core']:DatabaseAction('Execute', 'UPDATE player_vehicles SET state = ?, depotprice = ? WHERE plate = ? AND citizenid = ?', {state, 0, plate, citizenid})
+end
+
 -- Callbacks
 
 --[[ QBCore.Functions.CreateCallback('qb-garages:server:getHouseGarage', function(_, cb, house)
