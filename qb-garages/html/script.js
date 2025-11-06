@@ -19,21 +19,7 @@ function closeGarageMenu() {
     const container = document.querySelector(".container");
     container.style.display = "none";
 
-    fetch("https://qb-garages/closeGarage", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json; charset=UTF-8",
-        },
-        body: JSON.stringify({}),
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data === "ok") {
-                return;
-            } else {
-                console.error("Failed to close Garage UI");
-            }
-        });
+    hEvent("closeGarage", {});
 }
 
 function displayUI() {
