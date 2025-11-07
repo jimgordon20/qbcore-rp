@@ -148,19 +148,19 @@ function populateVehicleList(garageLabel, vehicles) {
 
             if (status === "Out") {
                 hEvent("trackVehicle", { plate: v.plate }, (response) => {
-                    if (response == 'ok') {
+                    if (response) {
                         closeGarageMenu();
                     }
                 })
             } else if (isDepotPrice) {
                 hEvent("takeOutDepo", vehicleData, (response) => {
-                    if (response == 'ok') {
+                    if (response) {
                         closeGarageMenu();
                     }
                 })
             } else {
                 hEvent("takeOutVehicle", vehicleData, (response) => {
-                    if (response == 'ok') {
+                    if (response) {
                         closeGarageMenu()
                     }
                 })

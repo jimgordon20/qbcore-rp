@@ -249,29 +249,27 @@ RegisterNetEvent('qb-garages:server:trackVehicle', function(plate)
     else
         TriggerClientEvent('QBCore:Notify', src, Lang:t('error.vehicle_not_tracked'), 'error')
     end
-end)
+end)]]
 
-RegisterNetEvent('qb-garages:server:PayDepotPrice', function(data)
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-    local cashBalance = Player.PlayerData.money['cash']
-    local bankBalance = Player.PlayerData.money['bank']
-    MySQL.scalar('SELECT depotprice FROM player_vehicles WHERE plate = ?', { data.plate }, function(result)
-        if result then
-            local depotPrice = result
-
-            if cashBalance >= depotPrice then
-                Player.Functions.RemoveMoney('cash', depotPrice, 'paid-depot')
-                TriggerClientEvent('qb-garages:client:takeOutGarage', src, data)
-            elseif bankBalance >= depotPrice then
-                Player.Functions.RemoveMoney('bank', depotPrice, 'paid-depot')
-                TriggerClientEvent('qb-garages:client:takeOutGarage', src, data)
-            else
-                TriggerClientEvent('QBCore:Notify', src, Lang:t('error.not_enough'), 'error')
-            end
+RegisterServerEvent('qb-garages:server:PayDepotPrice', function(source, data)
+    local Player = exports['qb-core']:GetPlayer(source)
+    local cashBalance = Player.PlayerData.money.cash
+    local bankBalance = Player.PlayerData.money.bank
+    local results = exports['qb-core']:DatabaseAction('Select', 'SELECT depotprice FROM player_vehicles WHERE plate = ?', { data.plate })
+    
+    if results[1] then
+        local depotPrice = tonumber(results[1].depotprice)
+        local moneyType = (cashBalance >= depotPrice and 'cash') or (bankBalance >= depotPrice and 'bank')
+        if not moneyType then
+            TriggerClientEvent(source, 'QBCore:Notify', Lang:t('error.not_enough'), 'error')
+            return
         end
-    end)
-end) ]]
+
+        local success = exports['qb-core']:Player(source, 'RemoveMoney', moneyType, depotPrice, 'paid-depot')
+        if not success then return end
+        TriggerLocalServerEvent('qb-garages:server:SpawnVehicle', source, data.plate, data.index, data.vehicle, data.stats.fuel)
+    end
+end)
 
 -- House Garages
 

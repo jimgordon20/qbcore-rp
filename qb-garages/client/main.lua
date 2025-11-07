@@ -155,37 +155,21 @@ RegisterNUICallback('trackVehicle', function(plate, cb)
     cb('ok')
 end)]]
 
-RegisterNUICallback('takeOutDepo', function(data, cb)
+my_webui:RegisterEventHandler('takeOutDepo', function(data, cb)
     local depotPrice = data.depotPrice
     if depotPrice ~= 0 then
         TriggerServerEvent('qb-garages:server:PayDepotPrice', data)
     else
-        TriggerEvent('qb-garages:client:takeOutGarage', data)
+        TriggerServerEvent('qb-garages:server:SpawnVehicle', data.plate, data.index, data.vehicle, data.stats.fuel)
     end
-    cb('ok')
-end) ]]
+    cb(true)
+end)
 
 -- Events
 
 --[[ RegisterNetEvent('qb-garages:client:trackVehicle', function(coords)
     SetNewWaypoint(coords.x, coords.y)
 end) ]]
-
-local function CheckPlate(vehicle, plateToSet)
-    local vehiclePlate = promise.new()
-    CreateThread(function()
-        while true do
-            Wait(500)
-            if GetVehicleNumberPlateText(vehicle) == plateToSet then
-                vehiclePlate:resolve(true)
-                return
-            else
-                SetVehicleNumberPlateText(vehicle, plateToSet)
-            end
-        end
-    end)
-    return vehiclePlate
-end
 
 -- Housing calls
 
