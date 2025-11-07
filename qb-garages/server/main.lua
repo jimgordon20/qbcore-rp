@@ -1,4 +1,4 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+local SharedVehicles = exports['qb-core']:GetShared('Vehicles')
 local OutsideVehicles = {}
 
 -- Handler
@@ -27,7 +27,7 @@ local function filterVehiclesByCategory(vehicles, category)
     local categorySet = arrayToSet(category)
 
     for _, vehicle in pairs(vehicles) do
-        local vehicleData = QBCore.Shared.Vehicles[vehicle.vehicle]
+        local vehicleData = SharedVehicles[vehicle.vehicle]
         local vehicleCategoryString = vehicleData and vehicleData.category or 'compacts'
         local vehicleCategoryNumber = vehicleClasses[vehicleCategoryString]
 
@@ -101,7 +101,7 @@ RegisterCallback('server.GetGarageVehicles', function(source, garage)
 end)
 
 local function GetVehicleTypeByModel(model)
-    local vehicleData = QBCore.Shared.Vehicles[model]
+    local vehicleData = SharedVehicles[model]
     if not vehicleData then return 'automobile' end
     local category = vehicleData.category
     local vehicleType = vehicleTypes[category]
@@ -268,7 +268,7 @@ RegisterCallback('GetPlayerVehicles', function(source)
     MySQL.rawExecute('SELECT * FROM player_vehicles WHERE citizenid = ?', { Player.PlayerData.citizenid }, function(result)
         if result[1] then
             for _, v in pairs(result) do
-                local VehicleData = QBCore.Shared.Vehicles[v.vehicle]
+                local VehicleData = SharedVehicles[v.vehicle]
 
                 local VehicleGarage = Lang:t('error.no_garage')
                 if v.garage ~= nil then
