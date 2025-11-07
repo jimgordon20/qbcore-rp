@@ -99,6 +99,7 @@ function populateVehicleList(garageLabel, vehicles) {
         } else if (v.state === 1) {
             if (v.depotPrice && v.depotPrice > 0) {
                 isDepotPrice = true;
+                v.depotPrice = Number(v.depotPrice) || 0;
 
                 if (v.type === "depot") {
                     status = "$" + v.depotPrice.toFixed(0);
