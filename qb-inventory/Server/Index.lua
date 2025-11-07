@@ -54,10 +54,10 @@ RegisterServerEvent('qb-inventory:server:openInventory', function(source)
     if IsPedInAnyVehicle(player_ped) then
         local in_vehicle = GetVehiclePedIsIn(player_ped)
         if in_vehicle then
-            local plate = in_vehicle.plate
+            local plate = in_vehicle.Plate
             if not plate then
                 plate = tostring(math.random(111111, 9999999))
-                rawset(getmetatable(in_vehicle), 'plate', plate)
+                rawset(getmetatable(in_vehicle), 'Plate', plate)
             end
             OpenInventory(source, 'glovebox-' .. plate)
             return
@@ -72,10 +72,10 @@ RegisterServerEvent('qb-inventory:server:openInventory', function(source)
 
     local ClosestVehicle, ClosestDistance = GetClosestVehicle(player_coords, 500)
     if ClosestVehicle and ClosestDistance then
-        local plate = ClosestVehicle.plate
+        local plate = ClosestVehicle.Plate
         if not plate then
             plate = tostring(math.random(111111, 9999999))
-            rawset(getmetatable(ClosestVehicle), 'plate', plate)
+            rawset(getmetatable(ClosestVehicle), 'Plate', plate)
         end
         local Comps = ClosestVehicle:K2_GetComponentsByClass(UE.UClass.Load('/Game/SimpleVehicle/Blueprints/Components/Attachments/Trunk.Trunk_C'))
         if Comps:ToTable()[1] then
