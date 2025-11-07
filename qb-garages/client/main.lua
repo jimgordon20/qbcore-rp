@@ -10,17 +10,6 @@ require('locales/en')
 
 -- Functions
 
-local function CheckPlayers(vehicle)
-    for i = -1, 5, 1 do
-        local seat = GetPedInVehicleSeat(vehicle, i)
-        if seat then
-            TaskLeaveVehicle(seat, vehicle, 0)
-        end
-    end
-    Wait(1500)
-    QBCore.Functions.DeleteVehicle(vehicle)
-end
-
 local function OpenGarageMenu()
     TriggerCallback('server.GetGarageVehicles', function(result)
         if result == nil then return exports['qb-core']:Notify(Lang:t('error.no_vehicles'), 'error', 5000) end
@@ -68,18 +57,6 @@ local function IsVehicleAllowed(class, vehicle)
     end
     return false
 end
-
---[[ local function CreateBlips(setloc)
-    local Garage = AddBlipForCoord(setloc.takeVehicle.x, setloc.takeVehicle.y, setloc.takeVehicle.z)
-    SetBlipSprite(Garage, setloc.blipNumber)
-    SetBlipDisplay(Garage, 4)
-    SetBlipScale(Garage, 0.60)
-    SetBlipAsShortRange(Garage, true)
-    SetBlipColour(Garage, setloc.blipColor)
-    BeginTextCommandSetBlipName('STRING')
-    AddTextComponentSubstringPlayerName(setloc.blipName)
-    EndTextCommandSetBlipName(Garage)
-end ]]
 
 local function CreateZone(index, garage, zoneType)
     local ZoneData = {
@@ -161,29 +138,6 @@ Input.BindKey('E', function()
     end
 end)
 
---[[ local function doCarDamage(currentVehicle, stats, props)
-    local engine = stats.engine + 0.0
-    local body = stats.body + 0.0
-    SetVehicleEngineHealth(currentVehicle, engine)
-    SetVehicleBodyHealth(currentVehicle, body)
-    if not next(props) then return end
-    if props.doorStatus then
-        for k, v in pairs(props.doorStatus) do
-            if v then SetVehicleDoorBroken(currentVehicle, tonumber(k), true) end
-        end
-    end
-    if props.tireBurstState then
-        for k, v in pairs(props.tireBurstState) do
-            if v then SetVehicleTyreBurst(currentVehicle, tonumber(k), true) end
-        end
-    end
-    if props.windowStatus then
-        for k, v in pairs(props.windowStatus) do
-            if not v then SmashVehicleWindow(currentVehicle, tonumber(k)) end
-        end
-    end
-end ]]
-
 -- NUI Callbacks
 
 my_webui:RegisterEventHandler('closeGarage', function(_, cb)
@@ -199,7 +153,7 @@ end)
 RegisterNUICallback('trackVehicle', function(plate, cb)
     TriggerServerEvent('qb-garages:server:trackVehicle', plate)
     cb('ok')
-end)
+end)]]
 
 RegisterNUICallback('takeOutDepo', function(data, cb)
     local depotPrice = data.depotPrice
