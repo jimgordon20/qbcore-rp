@@ -57,22 +57,8 @@ local function OpenGarageMenu()
     end, zone.indexgarage)
 end
 
-local function DepositVehicle(veh, data)
-    local plate = veh.Plate
-    QBCore.Functions.TriggerCallback('qb-garages:server:canDeposit', function(canDeposit)
-        if canDeposit then
-            local bodyDamage = math.ceil(GetVehicleBodyHealth(veh))
-            local engineDamage = math.ceil(GetVehicleEngineHealth(veh))
-            local totalFuel = exports[Config.FuelResource]:GetFuel(veh)
-            TriggerServerEvent('qb-mechanicjob:server:SaveVehicleProps', QBCore.Functions.GetVehicleProperties(veh))
-            TriggerServerEvent('qb-garages:server:updateVehicleStats', plate, totalFuel, engineDamage, bodyDamage)
-            CheckPlayers(veh)
-            if plate then TriggerServerEvent('qb-garages:server:UpdateOutsideVehicle', plate, nil) end
-            QBCore.Functions.Notify(Lang:t('success.vehicle_parked'), 'primary', 4500)
-        else
-            QBCore.Functions.Notify(Lang:t('error.not_owned'), 'error', 3500)
-        end
-    end, plate, data.type, data.indexgarage, 1)
+local function DepositVehicle(vehicle)
+    TriggerServerEvent('qb-garages:server:DepositVehicle', vehicle.Plate, zone.indexgarage, 1)
 end
 
 local function IsVehicleAllowed(class, vehicle)
@@ -163,8 +149,8 @@ Input.BindKey('E', function()
 
     local Vehicle = GetVehiclePedIsIn(HPlayer:K2_GetPawn())
     if Vehicle then
-        if zone.data.type == 'depot' then return end
-        if not IsVehicleAllowed(zone.data.category, Vehicle) then
+        if zone.type == 'depot' then return end
+        if not IsVehicleAllowed(zone.category, Vehicle) then
             QBCore.Functions.Notify(Lang:t('error.not_correct_type'), 'error', 3500)
             return
         end

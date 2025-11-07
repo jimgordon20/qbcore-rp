@@ -169,24 +169,38 @@ RegisterServerEvent('qb-garages:server:SpawnVehicle', function(source, plate, in
     return true
 end)
 
---[[ RegisterCallback('qb-garages:server:canDeposit', function(source, cb, plate, type, garage, state)
-    local Player = QBCore.Functions.GetPlayer(source)
-    local isOwned = MySQL.scalar.await('SELECT citizenid FROM player_vehicles WHERE plate = ? LIMIT 1', { plate })
-    if isOwned ~= Player.PlayerData.citizenid then
-        cb(false)
+RegisterServerEvent('qb-garages:server:DepositVehicle', function(source, plate, garage)
+    local playerVehicle = GetVehiclePedIsIn(GetPlayerPawn(source))
+    if not playerVehicle then return end
+
+    local Player = exports['qb-core']:GetPlayer(source)
+    local results = exports['qb-core']:DatabaseAction('Select', 'SELECT citizenid, plate, state FROM player_vehicles WHERE plate = ? LIMIT 1', { playerVehicle.Plate })
+    if not results or #results <= 0 then return end
+
+    local vehResult = results[1]
+    if vehResult.citizenid ~= Player.PlayerData.citizenid then return end
+    if state == 1 then return end
+
+    if Config.Garages[garage].type == 'house' and not exports['qb-houses']:hasKey(Player.PlayerData.license, Player.PlayerData.citizenid, Config.Garages[garage].houseName) then
         return
     end
-    if type == 'house' and not exports['qb-houses']:hasKey(Player.PlayerData.license, Player.PlayerData.citizenid, Config.Garages[garage].houseName) then
-        cb(false)
-        return
-    end
-    if state == 1 then
-        MySQL.update('UPDATE player_vehicles SET state = ?, garage = ? WHERE plate = ?', { state, garage, plate })
-        cb(true)
-    else
-        cb(false)
-    end
-end) ]]
+
+    -- @TODO Get Vehicle Mod Properties. Get Body Health
+    local fuel = playerVehicle:GetFuelRatio() or 1.0
+    local engine = playerVehicle:GetEngineHealth() or 1.0
+    local body = 1.0
+
+    -- @TODO Force Players to leave Vehicle before deletion
+
+    local success = DeleteVehicle(playerVehicle)
+    if not success then return end
+
+    OutsideVehicles[playerVehicle.Plate] = nil
+    exports['qb-core']:DatabaseAction('Execute', 
+        'UPDATE player_vehicles SET fuel = ?, engine = ?, body = ?, state = ?, garage = ? WHERE plate = ? and citizenid = ?', 
+        { fuel, engine, body, 1, garage, playerVehicle.Plate, Player.PlayerData.citizenid }
+    )
+end)
 
 -- Events
 
