@@ -83,9 +83,9 @@ RegisterCallback('server.GetGarageVehicles', function(source, garage)
     if garageType == 'depot' then
         vehicles = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM player_vehicles WHERE citizenid = ? AND depotprice > 0', { citizenId })
     elseif Config.SharedGarages then
-        vehicles = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM player_vehicles WHERE citizenid = ?', { citizenId })
+        vehicles = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM player_vehicles WHERE citizenid = ? AND depotprice <= 0', { citizenId })
     else
-        vehicles = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM player_vehicles WHERE citizenid = ? AND garage = ?', { citizenId, garage })
+        vehicles = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM player_vehicles WHERE citizenid = ? AND garage = ? AND depotprice <= 0', { citizenId, garage })
     end
 
     if not vehicles or #vehicles == 0 then
@@ -99,17 +99,6 @@ RegisterCallback('server.GetGarageVehicles', function(source, garage)
         return vehicles
     end
 end)
-
--- Backwards Compat
-local vehicleTypes = {
-    motorcycles = 'bike',
-    boats = 'boat',
-    helicopters = 'heli',
-    planes = 'plane',
-    submarines = 'submarine',
-    trailer = 'trailer',
-    train = 'train'
-}
 
 local function GetVehicleTypeByModel(model)
     local vehicleData = QBCore.Shared.Vehicles[model]
@@ -233,13 +222,6 @@ RegisterServerEvent('qb-garages:server:updateVehicleState', function(source, sta
 end)
 
 --[[
-RegisterNetEvent('qb-garages:server:UpdateOutsideVehicle', function(plate, vehicleNetID)
-    OutsideVehicles[plate] = {
-        netID = vehicleNetID,
-        entity = NetworkGetEntityFromNetworkId(vehicleNetID)
-    }
-end)
-
 RegisterNetEvent('qb-garages:server:trackVehicle', function(plate)
     local src = source
     local vehicleData = OutsideVehicles[plate]
