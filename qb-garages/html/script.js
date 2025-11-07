@@ -1,6 +1,5 @@
 window.addEventListener("message", function (event) {
     const data = event.data;
-    console.log(JSON.stringify(event.data.vehicles));
     if (data.name === "VehicleList") {
         const garageLabel = data.args[0].garageLabel;
         const vehicles = data.args[0].vehicles;
