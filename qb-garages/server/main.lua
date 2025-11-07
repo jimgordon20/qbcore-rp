@@ -142,6 +142,7 @@ RegisterServerEvent('qb-garages:server:SpawnVehicle', function(source, plate, in
 
     -- @TODO Set Vehicle Mods, Plate
     local vehicle = exports['qb-core']:CreateVehicle(vehicleName, SpawnPoint.coords, Rotator(0, SpawnPoint.heading, 0), plate, tonumber(fuel) or 1.0)
+    rawset(getmetatable(vehicle.Object), 'Plate', plate)
     updateVehicleState(0, plate, Player.PlayerData.citizenid)
     OutsideVehicles[plate] = { entity = vehicle }
 
@@ -190,7 +191,21 @@ RegisterServerEvent('qb-garages:server:DepositVehicle', function(source, plate, 
     local engine = playerVehicle:GetEngineHealth() or 1.0
     local body = 1.0
 
-    -- @TODO Force Players to leave Vehicle before deletion
+    local VehInteractionComp = playerVehicle.Door_FL:GetInteractionComponent()
+    local Seats = playerVehicle:K2_GetComponentsByClass(UE.UClass.Load('/Game/SimpleVehicle/Blueprints/Components/SimpleVehicleSeat.SimpleVehicleSeat_C'))
+    for k, v in pairs(Seats) do
+        local Occupier = v:GetSeatOccupancy()
+        if Occupier then
+            local AS = Occupier:GetLyraAbilitySystemComponent()
+            local Abilities = AS.ActivatableAbilities
+            for k, v in pairs(Abilities.Items) do
+                if v.Ability:GetName() == 'Default__GA_Vehicle_Exit_C' then
+                    AS:ServerTryActivateAbilityWithEventData(v.Handle, true, UE.FPredictionKey(), UE.FGameplayEventData())
+                    break
+                end
+            end
+        end
+    end
 
     local success = DeleteVehicle(playerVehicle)
     if not success then return end
