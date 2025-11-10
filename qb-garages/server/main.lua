@@ -131,7 +131,7 @@ RegisterServerEvent('qb-garages:server:SpawnVehicle', function(source, plate, in
 
     -- @TODO Set Vehicle Mods, Plate
     local vehicle = exports['qb-core']:CreateVehicle(vehicleName, SpawnPoint.coords, Rotator(0, SpawnPoint.heading, 0), plate, tonumber(fuel) or 1.0)
-    rawset(getmetatable(vehicle.Object), 'Plate', plate)
+    vehicle:SetPlate(plate)
     updateVehicleState(0, plate, Player.PlayerData.citizenid)
     OutsideVehicles[plate] = { entity = vehicle }
 
@@ -159,12 +159,13 @@ RegisterServerEvent('qb-garages:server:SpawnVehicle', function(source, plate, in
     return true
 end)
 
-RegisterServerEvent('qb-garages:server:DepositVehicle', function(source, plate, garage)
+RegisterServerEvent('qb-garages:server:DepositVehicle', function(source, garage)
     local playerVehicle = GetVehiclePedIsIn(GetPlayerPawn(source))
     if not playerVehicle then return end
 
     local Player = exports['qb-core']:GetPlayer(source)
-    local results = exports['qb-core']:DatabaseAction('Select', 'SELECT citizenid, plate, state FROM player_vehicles WHERE plate = ? LIMIT 1', { playerVehicle.Plate })
+    local plate = playerVehicle:GetPlate()
+    local results = exports['qb-core']:DatabaseAction('Select', 'SELECT citizenid, plate, state FROM player_vehicles WHERE plate = ? LIMIT 1', { plate })
     if not results or #results <= 0 then return end
 
     local vehResult = results[1]
@@ -199,10 +200,10 @@ RegisterServerEvent('qb-garages:server:DepositVehicle', function(source, plate, 
     local success = DeleteVehicle(playerVehicle)
     if not success then return end
 
-    OutsideVehicles[playerVehicle.Plate] = nil
+    OutsideVehicles[plate] = nil
     exports['qb-core']:DatabaseAction('Execute', 
         'UPDATE player_vehicles SET fuel = ?, engine = ?, body = ?, state = ?, garage = ? WHERE plate = ? and citizenid = ?', 
-        { fuel, engine, body, 1, garage, playerVehicle.Plate, Player.PlayerData.citizenid }
+        { fuel, engine, body, 1, garage, plate, Player.PlayerData.citizenid }
     )
 end)
 
