@@ -124,14 +124,15 @@ RegisterServerEvent('qb-garages:server:SpawnVehicle', function(source, plate, in
     -- @TODO Amend to support vehicle mods
     local Player = exports['qb-core']:GetPlayer(source)
     local results = exports['qb-core']:DatabaseAction('Select', 
-        'SELECT citizenid FROM player_vehicles WHERE plate = ? and citizenid = ? LIMIT 1', 
+        'SELECT citizenid, fuel FROM player_vehicles WHERE plate = ? and citizenid = ? LIMIT 1', 
         { plate,  Player.PlayerData.citizenid}
     )
     if not results or #results <= 0 then return end
 
     -- @TODO Set Vehicle Mods, Plate
-    local vehicle = exports['qb-core']:CreateVehicle(vehicleName, SpawnPoint.coords, Rotator(0, SpawnPoint.heading, 0), plate, tonumber(fuel) or 1.0)
+    local vehicle = HVehicle(SpawnPoint.coords, Rotator(0, SpawnPoint.heading, 0), SharedVehicles[vehicleName].asset_name)
     vehicle:SetPlate(plate)
+    vehicle:SetFuel(tonumber(results[1].fuel) or 1.0)
     updateVehicleState(0, plate, Player.PlayerData.citizenid)
     OutsideVehicles[plate] = { entity = vehicle }
 
