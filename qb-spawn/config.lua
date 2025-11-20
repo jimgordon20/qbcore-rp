@@ -2,34 +2,46 @@ Config = {
     Spawns = {
 
         gas = {
-            coords = { -2431.417130, 14675.314118, -299.850009 },
+            coords = { -348810, -113207, -2882 },
             location = 'gas',
             label = 'Gas Station',
         },
 
-        -- hospital = {
-        --     coords = { 42724.710378, 38470.335952, 547.711786 },
-        --     location = 'hospital',
-        --     label = 'Hospital',
-        -- },
+        hospital = {
+            coords = { -344065, -139431, -2883 },
+            location = 'hospital',
+            label = 'Hospital',
+        },
 
-        -- firedept = {
-        --     coords = { 47466.083097, 79845.345592, 538.201812 },
-        --     location = 'firedept',
-        --     label = 'Fire Department',
-        -- },
+        cityhall = {
+            coords = { -341373, -155785, -2882 },
+            location = 'cityhall',
+            label = 'City Hall',
+        },
 
-        -- bank = {
-        --     coords = { 28348.597337, 30850.565477, 551.375390 },
-        --     location = 'bank',
-        --     label = 'Bank',
-        -- },
+        bank = {
+            coords = { -340738, -141419, -2885 },
+            location = 'bank',
+            label = 'Bank',
+        },
 
-        -- cardealer = {
-        --     coords = { 4886.664003, 95375.505303, 548.341051 },
-        --     location = 'cardealer',
-        --     label = 'Car Dealer',
-        -- },
+        police = {
+            coords = { -341401, -147206, -2882 },
+            location = 'police',
+            label = 'Police Dept',
+        },
+
+        cardealer = {
+            coords = { -303614, -213535, -2882 },
+            location = 'cardealer',
+            label = 'Car Dealer',
+        },
+
+        mall = {
+            coords = { -371882, -147464, -2892 },
+            location = 'mall',
+            label = 'Pacific Horizon Mall',
+        },
 
         -- Apartments w/ interiors
         -- Vector(-32293.6, -89116.4, 207.9),

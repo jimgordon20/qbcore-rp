@@ -9,6 +9,7 @@ local CurrentOffset = 0
 local ApartmentObj = 0
 local POIOffsets = nil
 local InApartmentTargets = {}
+local intervalTimer
 
 -- Functions
 
@@ -197,6 +198,10 @@ local function SetClosestApartment()
 end
 
 function onShutdown()
+	if intervalTimer then
+		Timer.ClearInterval(intervalTimer)
+		intervalTimer = nil
+	end
 	if ApartmentObj and ApartmentObj ~= 0 then
 		exports['qb-interior']:DespawnInterior(ApartmentObj)
 		ApartmentObj = 0
@@ -360,7 +365,7 @@ end)
 
 -- Loop
 
-Timer.SetInterval(function()
+intervalTimer = Timer.SetInterval(function()
 	if isLoggedIn then
 		if not InApartment then
 			SetClosestApartment()
