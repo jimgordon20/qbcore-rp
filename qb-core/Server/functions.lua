@@ -21,10 +21,22 @@ end
 
 function QBCore.Functions.GetPlayer(source)
 	if not source then return end
+	if type(source) == number then
+		local player = GetPlayerById(source)
+		if not player then return nil end
+		return QBCore.Players[player]
+	end
 	return QBCore.Players[source]
 end
 
 function QBCore.Functions.GetPlayerName(source)
+	if not source then return end
+	if type(source) == number then
+		local player = GetPlayerById(source)
+		if not player then return nil end
+		local PlayerState = player:GetLyraPlayerState()
+		return PlayerState:GetPlayerName()
+	end
 	local PlayerState = source:GetLyraPlayerState()
 	return PlayerState:GetPlayerName()
 end
