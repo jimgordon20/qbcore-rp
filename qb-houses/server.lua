@@ -35,20 +35,17 @@ Timer.CreateThread(function()
 end)
 
 Timer.CreateThread(function()
-    while true do
-        if not housesLoaded then
-            exports['qb-core']:DatabaseAction('SelectAsync', 'SELECT * FROM player_houses', {}, function(houses)
-                if houses then
-                    for _, house in pairs(houses) do
-                        houseowneridentifier[house.house] = house.identifier
-                        houseownercid[house.house] = house.citizenid
-                        housekeyholders[house.house] = json.decode(house.keyholders)
-                    end
+    if not housesLoaded then
+        exports['qb-core']:DatabaseAction('SelectAsync', 'SELECT * FROM player_houses', {}, function(houses)
+            if houses then
+                for _, house in pairs(houses) do
+                    houseowneridentifier[house.house] = house.identifier
+                    houseownercid[house.house] = house.citizenid
+                    housekeyholders[house.house] = json.decode(house.keyholders)
                 end
-            end)
-            housesLoaded = true
-        end
-        Wait(7)
+            end
+        end)
+        housesLoaded = true
     end
 end)
 
