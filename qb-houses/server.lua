@@ -388,7 +388,7 @@ end)
 
 -- Callbacks
 
-CreateCallback('buyFurniture', function(source, cb, price)
+RegisterCallback('buyFurniture', function(source, cb, price)
     local pData = exports['qb-core']:GetPlayer(source)
     local bankBalance = pData.PlayerData.money['bank']
 
@@ -401,7 +401,7 @@ CreateCallback('buyFurniture', function(source, cb, price)
     end
 end)
 
-CreateCallback('ProximityKO', function(source, cb, house)
+RegisterCallback('ProximityKO', function(source, cb, house)
     local Player = exports['qb-core']:GetPlayer(source)
     local retvalK = false
     local retvalO
@@ -427,7 +427,7 @@ CreateCallback('ProximityKO', function(source, cb, house)
     cb(retvalK, retvalO)
 end)
 
-CreateCallback('hasKey', function(source, cb, house)
+RegisterCallback('hasKey', function(source, cb, house)
     local Player = exports['qb-core']:GetPlayer(source)
     local retval = false
     if Player then
@@ -445,7 +445,7 @@ CreateCallback('hasKey', function(source, cb, house)
     cb(retval)
 end)
 
-CreateCallback('isOwned', function(source, cb, house)
+RegisterCallback('isOwned', function(source, cb, house)
     local Player = exports['qb-core']:GetPlayer(source)
     if Player and Player.PlayerData and Player.PlayerData.job and Player.PlayerData.job.name == 'realestate' then
         cb(true)
@@ -456,11 +456,11 @@ CreateCallback('isOwned', function(source, cb, house)
     end
 end)
 
-CreateCallback('getHouseOwner', function(_, cb, house)
+RegisterCallback('getHouseOwner', function(_, cb, house)
     cb(houseownercid[house])
 end)
 
-CreateCallback('getHouseKeyHolders', function(source, cb, house)
+RegisterCallback('getHouseKeyHolders', function(source, cb, house)
     local retval = {}
     local Player = exports['qb-core']:GetPlayer(source)
     if housekeyholders[house] then
@@ -483,7 +483,7 @@ CreateCallback('getHouseKeyHolders', function(source, cb, house)
     end
 end)
 
-CreateCallback('getHouseDecorations', function(_, cb, house)
+RegisterCallback('getHouseDecorations', function(_, cb, house)
     local retval = nil
     local result = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM player_houses WHERE house = ?', { house })
     if result[1] then
@@ -494,7 +494,7 @@ CreateCallback('getHouseDecorations', function(_, cb, house)
     cb(retval)
 end)
 
-CreateCallback('getHouseLocations', function(_, cb, house)
+RegisterCallback('getHouseLocations', function(_, cb, house)
     local retval = nil
     local result = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM player_houses WHERE house = ?', { house })
     if result[1] then
@@ -503,7 +503,7 @@ CreateCallback('getHouseLocations', function(_, cb, house)
     cb(retval)
 end)
 
-CreateCallback('getOwnedHouses', function(source, cb)
+RegisterCallback('getOwnedHouses', function(source, cb)
     local pData = exports['qb-core']:GetPlayer(source)
     if pData then
         exports['qb-core']:DatabaseAction('SelectAsync', 'SELECT * FROM player_houses WHERE identifier = ? AND citizenid = ?', { pData.PlayerData.license, pData.PlayerData.citizenid }, function(houses)
@@ -520,7 +520,7 @@ CreateCallback('getOwnedHouses', function(source, cb)
     end
 end)
 
-CreateCallback('getSavedOutfits', function(source, cb)
+RegisterCallback('getSavedOutfits', function(source, cb)
     local pData = exports['qb-core']:GetPlayer(source)
     if pData then
         exports['qb-core']:DatabaseAction('SelectAsync', 'SELECT * FROM player_outfits WHERE citizenid = ?', { pData.PlayerData.citizenid }, function(result)
@@ -533,7 +533,7 @@ CreateCallback('getSavedOutfits', function(source, cb)
     end
 end)
 
--- CreateCallback('qb-phone:server:TransferCid', function(_, cb, NewCid, house)
+-- RegisterCallback('qb-phone:server:TransferCid', function(_, cb, NewCid, house)
 --     local result = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM players WHERE citizenid = ?', { NewCid })
 --     if result[1] then
 --         local HouseName = house.name
@@ -550,7 +550,7 @@ end)
 --     end
 -- end)
 
--- CreateCallback('qb-phone:server:GetPlayerHouses', function(source, cb)
+-- RegisterCallback('qb-phone:server:GetPlayerHouses', function(source, cb)
 --     local Player = exports['qb-core']:GetPlayer(source)
 --     local MyHouses = {}
 --     local result = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM player_houses WHERE citizenid = ?', { Player.PlayerData.citizenid })
@@ -614,7 +614,7 @@ end)
 --     end
 -- end)
 
--- CreateCallback('qb-phone:server:GetHouseKeys', function(source, cb)
+-- RegisterCallback('qb-phone:server:GetHouseKeys', function(source, cb)
 --     local Player = exports['qb-core']:GetPlayer(source)
 --     local MyKeys = {}
 --     local result = exports['qb-core']:DatabaseAction('Select', 'SELECT * FROM player_houses', {})
@@ -638,7 +638,7 @@ end)
 --     cb(MyKeys)
 -- end)
 
--- CreateCallback('qb-phone:server:MeosGetPlayerHouses', function(_, cb, input)
+-- RegisterCallback('qb-phone:server:MeosGetPlayerHouses', function(_, cb, input)
 --     if input then
 --         local search = escape_sqli(input)
 --         local searchData = {}
