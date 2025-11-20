@@ -406,7 +406,7 @@ function DatabaseAction(ActionType, ...)
             ResultSet[k] = v.Columns:ToTable()
         end
     end
-    return #ResultSet ~= 0 and ResultSet or result:ToTable()
+    return (#ResultSet ~= 0 and ResultSet) or result
 end
 exports('qb-core', 'DatabaseAction', DatabaseAction)
 
