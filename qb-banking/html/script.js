@@ -85,7 +85,6 @@ const bankingApp = Vue.createApp({
         },
         openATM(bankData) {
             this.tempBankData = bankData;
-            this.showPinPrompt = true;
             const playerData = bankData.playerData;
             this.playerName = playerData.charinfo.firstname;
             this.accountNumber = playerData.citizenid;

@@ -4,7 +4,6 @@ local OutsideVehicles = {}
 -- Handler
 
 Timer.CreateThread(function()
-    Wait(100)
     if Config['AutoRespawn'] then
         exports['qb-core']:DatabaseAction('Execute', 'UPDATE player_vehicles SET state = 1 WHERE state = 0', {})
     else
@@ -135,6 +134,14 @@ RegisterServerEvent('qb-garages:server:SpawnVehicle', function(source, plate, in
     vehicle:SetFuel(tonumber(results[1].fuel) or 1.0)
     updateVehicleState(0, plate, Player.PlayerData.citizenid)
     OutsideVehicles[plate] = { entity = vehicle }
+    Timer.SetTimeout(function()
+        local charInfo = Player.PlayerData.charinfo
+        TriggerClientEvent(source, 'qb-garages:client:bindToXray', vehicle.Object, {
+            owner = string.format('%s %s', charInfo.firstname, charInfo.lastname),
+            plate = plate,
+            model = SharedVehicles[vehicleName].label,
+        })
+    end, 500)
 
     if Config.Warp then
         -- @TODO Vehicle Warping

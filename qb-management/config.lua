@@ -2,22 +2,22 @@ Config = Config or {}
 
 Config.BossMenus = {
     police = {
-        Vector(-4117.481799, 2874.994460, -299.875906),
+        Vector(-340758, -147778, -2882),
     },
     ambulance = {
-        Vector(0, 0, 0),
+        Vector(-344086, -141574, -2883),
     },
     cardealer = {
-        Vector(0, 0, 0),
+        Vector(-302322, -215151, -2882),
     },
     mechanic = {
-        Vector(0, 0, 0),
+        Vector(-351003, -115278, -2878),
     },
 }
 
 Config.GangMenus = {
     lostmc = {
-        Vector(-4113.607536, 3416.397127, -299.875906),
+        Vector(0, 0, 0),
     },
     ballas = {
         Vector(0, 0, 0),

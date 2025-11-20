@@ -16,31 +16,31 @@ Config.Shops = {
         ['TestDriveTimeLimit'] = 0.5,
         --['ReturnLocation'] = Vector(-44.74, -1082.58, 26.68),
         ['VehicleSpawn'] = {
-            location = Vector(-127.491244, 14050.276126, -400),
-            rotation = Rotator(0, 179, 0)
+            location = Vector(-301169, -213000, -2989),
+            rotation = Rotator(0, 180, 0)
         },
         ['TestDriveSpawn'] = {
-            location = Vector(-127.491244, 14050.276126, -400),
-            rotation = Rotator(0, 179, 0)
+            location = Vector(-301169, -213000, -2989),
+            rotation = Rotator(0, 180, 0)
         },
-        ['FinanceZone'] = Vector(-29.53, -1103.67, 26.42),
+        ['FinanceZone'] = Vector(-303228, -214848, -2882),
         ['ShowroomVehicles'] = {
             {
                 coords = {
-                    location = Vector(-1769.242054, 15374.785969, -400),
-                    rotation = Rotator(0, 268, 0)
+                    location = Vector(-304469, -215200, -2966),
+                    rotation = Rotator(0, 90, 0)
                 },
                 defaultVehicle = 'bp_police',
                 chosenVehicle = 'bp_police',
             },
-            {
-                coords = {
-                    location = Vector(-3590, 13306, -400),
-                    rotation = Rotator(0, 1, 0)
-                },
-                defaultVehicle = 'bp_police',
-                chosenVehicle = 'bp_police',
-            },
+            -- {
+            --     coords = {
+            --         location = Vector(-3590, 13306, -400),
+            --         rotation = Rotator(0, 1, 0)
+            --     },
+            --     defaultVehicle = 'bp_police',
+            --     chosenVehicle = 'bp_police',
+            -- },
         },
     },
 }

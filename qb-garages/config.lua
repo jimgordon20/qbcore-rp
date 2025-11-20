@@ -9,21 +9,71 @@ Config.VehicleClass = UE.EHelixVehicleType
 
 Config.Garages = {
     apartments = {
-        label = 'Test Garage',
-        takeVehicle = Vector(-1099, 14916, -300),
+        label = 'Apartments',
+        takeVehicle = Vector(-355960, -118643, -2897),
         spawnPoint = {
             {
-                coords = Vector(-127.491244, 14050.276126, -400),
-                heading = 179,
+                coords = Vector(-356544, -118992, -2897),
+                heading = 268,
             }
         },
-        showBlip = true,             -- Unused
-        blipName = 'Public Parking', -- Unused
-        blipNumber = 357,            -- Unused
-        blipColor = 3,               -- Unused
-        type = 'public',             -- public, gang, job, depot
+        -- showBlip = true,             -- Unused
+        -- blipName = 'Public Parking', -- Unused
+        -- blipNumber = 357,            -- Unused
+        -- blipColor = 3,               -- Unused
+        type = 'public', -- public, gang, job, depot
         -- job = ''
         -- jobType = ''
         category = Config.VehicleClass.Car
+    },
+    cardealer = {
+        label = 'Car Dealer',
+        takeVehicle = Vector(-301186, -213380, -2882),
+        spawnPoint = {
+            {
+                coords = Vector(-301169, -213000, -2989),
+                heading = 180,
+            }
+        },
+        -- showBlip = true,             -- Unused
+        -- blipName = 'Public Parking', -- Unused
+        -- blipNumber = 357,            -- Unused
+        -- blipColor = 3,               -- Unused
+        type = 'public', -- public, gang, job, depot
+        -- job = ''
+        -- jobType = ''
+        category = Config.VehicleClass.Car
+    },
+    hospital = {
+        label = 'Hospital',
+        takeVehicle = Vector(-345356, -139671, -2883),
+        spawnPoint = {
+            coords = Vector(-345374, -139326, -2883),
+            heading = 358,
+        },
+        showBlip = false,
+        blipName = 'Police',
+        blipNumber = 357,
+        blipColor = 3,
+        type = 'job',
+        category = Config.VehicleClass['car'], --car, air, sea, rig
+        job = 'ambulance',
+        jobType = 'ems'
+    },
+    police = {
+        label = 'Police',
+        takeVehicle = Vector(-340755, -145572, -2885),
+        spawnPoint = {
+            coords = Vector(-340842, -145021, -2885),
+            heading = 180,
+        },
+        showBlip = false,
+        blipName = 'Police',
+        blipNumber = 357,
+        blipColor = 3,
+        type = 'job',
+        category = Config.VehicleClass['car'], --car, air, sea, rig
+        job = 'police',
+        jobType = 'leo'
     },
 }

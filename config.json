@@ -5,6 +5,7 @@
     "qb-multicharacter",
     "qb-spawn",
     "qb-target",
+    "qb-radialmenu",
     "qb-inventory",
     "qb-apartments",
     "qb-hud",
@@ -16,6 +17,7 @@
     "qb-management",
     "qb-radio",
     "qb-vehicleshop",
-    "qb-garages"
+    "qb-garages",
+    "qb-houses"
   ]
 }
