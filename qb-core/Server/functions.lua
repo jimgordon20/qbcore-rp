@@ -139,7 +139,7 @@ end
 
 function QBCore.Functions.Notify(source, message, type, length, icon)
 	if HPlayer then return end
-	TriggerClientEvent('QBCore:Notify', source, message, type, length, icon)
+	TriggerClientEvent(source, 'QBCore:Notify', message, type, length, icon)
 end
 
 function QBCore.Functions.CreateCitizenId()
