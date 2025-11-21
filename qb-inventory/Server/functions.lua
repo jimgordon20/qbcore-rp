@@ -298,7 +298,7 @@ end
 
 exports('qb-inventory', 'OpenInventoryById', OpenInventoryById)
 
-local function CreateShop(shopData)
+function CreateShop(shopData)
     if shopData.name then
         RegisteredShops[shopData.name] = {
             name = shopData.name,
@@ -329,7 +329,7 @@ end
 
 exports('qb-inventory', 'CreateShop', CreateShop)
 
-local function OpenShop(source, name)
+function OpenShop(source, name)
     if not name then return end
     local Player = exports['qb-core']:GetPlayer(source)
     if not Player then return end

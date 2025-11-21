@@ -102,13 +102,13 @@ RegisterServerEvent('qb-inventory:server:toggleHotbar', function(source)
     TriggerClientEvent(source, 'qb-inventory:client:hotbar', hotbarItems)
 end)
 
-RegisterServerEvent('qb-inventory:server:openVending', function(source)
+RegisterServerEvent('qb-inventory:server:openVending', function(source, data)
     local Player = exports['qb-core']:GetPlayer(source)
     if not Player then return end
     CreateShop({
         name = 'vending',
         label = 'Vending Machine',
-        coords = vendingMachineCoords,
+        coords = data.coords,
         slots = #Config.VendingItems,
         items = Config.VendingItems
     })

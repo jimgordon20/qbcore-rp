@@ -209,6 +209,22 @@ RegisterClientEvent('qb-inventory:client:openInventory', function(items, other)
 	my_webui:SendEvent('openInventory', { inventory = items, slots = Config.MaxSlots, maxweight = Config.MaxWeight, other = other })
 end)
 
+-- Vending
+
+for _, model in pairs(Config.VendingObjects) do
+	exports['qb-target']:AddTargetModel(model, {
+		options = {
+			{
+				type = 'server',
+				event = 'qb-inventory:server:openVending',
+				icon = 'fa-solid fa-cash-register',
+				label = Lang:t('menu.vending'),
+			},
+		},
+		distance = 1000
+	})
+end
+
 -- Open UI
 Input.BindKey(Config.Keybinds.Open, function()
 	if inv_open then
