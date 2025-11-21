@@ -49,17 +49,17 @@ end
 -- UI
 
 my_webui:RegisterEventHandler('qb-spawn:setCam', function(data)
-    local location = tostring(data.posname)
-    local type = tostring(data.type)
-    if type == 'current' then
+    -- local location = tostring(data.posname)
+    -- local type = tostring(data.type)
+    -- if type == 'current' then
 
-    elseif type == 'house' then
-        SetCam(Houses[location].coords.enter)
-    elseif type == 'normal' then
-        SetCam(Config.Spawns[location].coords)
-    elseif type == 'appartment' then
-        SetCam(Apartments.Locations[location].coords.enter)
-    end
+    -- elseif type == 'house' then
+    --     SetCam(Houses[location].coords.enter)
+    -- elseif type == 'normal' then
+    --     SetCam(Config.Spawns[location].coords)
+    -- elseif type == 'appartment' then
+    --     SetCam(Apartments.Locations[location].coords.enter)
+    -- end
 end)
 
 my_webui:RegisterEventHandler('qb-spawn:chooseAppa', function(data)

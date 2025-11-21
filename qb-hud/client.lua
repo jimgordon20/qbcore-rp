@@ -4,6 +4,8 @@ local my_webui = WebUI('qb-hud', 'qb-hud/html/index.html')
 local player_data = {}
 local playerPawn = nil
 local health = 100
+local hunger = 100
+local thirst = 100
 local playerDead = false
 local round = math.floor
 
@@ -82,6 +84,11 @@ RegisterClientEvent('qb-hud:client:ShowAccounts', function(type, amount)
     end
 end)
 
+RegisterClientEvent('qb-hud:client:UpdateNeeds', function(newHunger, newThirst)
+    hunger = newHunger
+    thirst = newThirst
+end)
+
 -- Game Events
 
 RegisterClientEvent('HEvent:HealthChanged', function(_, newHealth)
@@ -131,11 +138,11 @@ end)
 
 inputTimer = Timer.SetInterval(function()
     if not isLoggedIn then return end
-    if not playerPawn then return end
+    if not GetPlayerPawn() then return end
     if not player_data then return end
     local armor  = player_data.metadata['armor']
-    local hunger = player_data.metadata['hunger']
-    local thirst = player_data.metadata['thirst']
+    hunger       = player_data.metadata['hunger']
+    thirst       = player_data.metadata['thirst']
     local stress = player_data.metadata['stress']
     --local playerDead = player_data.metadata['inlaststand'] or player_data.metadata['isdead'] or false
 

@@ -1,5 +1,5 @@
 Config = {
-	OpenKey = 'G',                    -- enable target
+	OpenKey = 'LeftAlt',              -- enable target
 	MenuControlKey = 'RightMouseButton', -- enable mouse control
 	MaxDistance = 1000,               -- max distance for raycast
 }

@@ -22,7 +22,7 @@ Config = {
 
     ItemDropObject = '/Game/QBCore/Meshes/SM_DuffelBag.SM_DuffelBag',
 
-    VendingObjects = { 'soda_machine', 'snack_machine', 'SM_Coffee_Machine' },
+    VendingObjects = { 'SM_Soda_Machine', 'SM_Snack_Machine', 'SM_Coffee_Machine' },
     VendingItems = {
         { name = 'kurkakola',    price = 4, amount = 50 },
         { name = 'water_bottle', price = 4, amount = 50 },
