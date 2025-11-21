@@ -946,17 +946,17 @@ RegisterClientEvent('qb-houses:client:RequestRing', function()
     end
 end)
 
-RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
-    isLoggedIn = true
-    TriggerServerEvent('qb-houses:server:setHouses')
-    SetClosestHouse()
-    TriggerEvent('qb-houses:client:setupHouseBlips')
-    if Config.UnownedBlips then TriggerEvent('qb-houses:client:setupHouseBlips2') end
-    Wait(100)
-    TriggerServerEvent('qb-houses:server:setHouses')
-    if ClosestHouse and next(Config.Houses[ClosestHouse].garage) == nil then return end
-    TriggerEvent('qb-garages:client:setHouseGarage', ClosestHouse, HasHouseKey)
-end)
+-- RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
+--     isLoggedIn = true
+--     TriggerServerEvent('qb-houses:server:setHouses')
+--     SetClosestHouse()
+--     TriggerEvent('qb-houses:client:setupHouseBlips')
+--     if Config.UnownedBlips then TriggerEvent('qb-houses:client:setupHouseBlips2') end
+--     Wait(100)
+--     TriggerServerEvent('qb-houses:server:setHouses')
+--     if ClosestHouse and next(Config.Houses[ClosestHouse].garage) == nil then return end
+--     TriggerEvent('qb-garages:client:setHouseGarage', ClosestHouse, HasHouseKey)
+-- end)
 
 RegisterClientEvent('QBCore:Client:OnPlayerUnload', function()
     isLoggedIn = false
