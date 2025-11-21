@@ -84,14 +84,6 @@ end)
 
 -- Game Events
 
-RegisterClientEvent('HEvent:PlayerLoggedIn', function()
-    print('HEvent:PlayerLoggedIn - K2_PostLogin')
-end)
-
-RegisterClientEvent('HEvent:PlayerLoaded', function()
-    print('HEvent:PlayerLoaded - Controller Ready')
-end)
-
 RegisterClientEvent('HEvent:HealthChanged', function(_, newHealth)
     if not my_webui then return end
     health = newHealth

@@ -1360,24 +1360,24 @@ end)
 
 -- NUI Callbacks
 
-RegisterNUICallback('HasEnoughMoney', function(cData, cb)
-    TriggerCallback('HasEnoughMoney', function(_)
-        cb('ok')
-    end, cData.objectData)
-end)
+-- RegisterNUICallback('HasEnoughMoney', function(cData, cb)
+--     TriggerCallback('HasEnoughMoney', function(_)
+--         cb('ok')
+--     end, cData.objectData)
+-- end)
 
-RegisterNUICallback('buy', function()
-    openContract(false)
-    disableViewCam()
-    Config.Houses[ClosestHouse].owned = true
-    if Config.UnownedBlips then TriggerEvent('qb-houses:client:refreshBlips') end
-    TriggerServerEvent('qb-houses:server:buyHouse', ClosestHouse)
-end)
+-- RegisterNUICallback('buy', function()
+--     openContract(false)
+--     disableViewCam()
+--     Config.Houses[ClosestHouse].owned = true
+--     if Config.UnownedBlips then TriggerEvent('qb-houses:client:refreshBlips') end
+--     TriggerServerEvent('qb-houses:server:buyHouse', ClosestHouse)
+-- end)
 
-RegisterNUICallback('exit', function()
-    openContract(false)
-    disableViewCam()
-end)
+-- RegisterNUICallback('exit', function()
+--     openContract(false)
+--     disableViewCam()
+-- end)
 
 -- Threads
 
