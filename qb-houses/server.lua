@@ -34,20 +34,20 @@ Timer.CreateThread(function()
     BroadcastEvent('qb-houses:client:setHouseConfig', Config.Houses)
 end)
 
-Timer.CreateThread(function()
-    if not housesLoaded then
-        exports['qb-core']:DatabaseAction('SelectAsync', 'SELECT * FROM player_houses', {}, function(houses)
-            if houses then
-                for _, house in pairs(houses) do
-                    houseowneridentifier[house.house] = house.identifier
-                    houseownercid[house.house] = house.citizenid
-                    housekeyholders[house.house] = json.decode(house.keyholders)
-                end
-            end
-        end)
-        housesLoaded = true
-    end
-end)
+-- Timer.CreateThread(function()
+--     if not housesLoaded then
+--         exports['qb-core']:DatabaseAction('SelectAsync', 'SELECT * FROM player_houses', {}, function(houses)
+--             if houses then
+--                 for _, house in pairs(houses) do
+--                     houseowneridentifier[house.house] = house.identifier
+--                     houseownercid[house.house] = house.citizenid
+--                     housekeyholders[house.house] = json.decode(house.keyholders)
+--                 end
+--             end
+--         end)
+--         housesLoaded = true
+--     end
+-- end)
 
 -- Item
 
