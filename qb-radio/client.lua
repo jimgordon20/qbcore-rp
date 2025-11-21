@@ -118,7 +118,7 @@ end)
 
 -- Input
 
-Input.BindKey('R', function()
+Input.BindKey(Config.KeyBind, function()
     if not isLoggedIn then return end
     if HPlayer:GetInputMode() == 1 and not radioOpen then return end
     radioOpen = not radioOpen
