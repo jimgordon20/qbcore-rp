@@ -116,6 +116,12 @@ my_webui:RegisterEventHandler('poweredOff', function()
     radioOpen = false
 end)
 
+my_webui:RegisterEventHandler('closeRadio', function()
+    my_webui:SetInputMode(0)
+    my_webui:SendEvent('close')
+    radioOpen = false
+end)
+
 -- Input
 
 Input.BindKey(Config.KeyBind, function()
