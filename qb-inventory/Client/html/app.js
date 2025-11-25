@@ -910,10 +910,16 @@ const InventoryContainer = Vue.createApp({
     mounted() {
         window.addEventListener("keydown", (event) => {
             const key = event.key;
-            if (key === "Escape" || key === "Tab") {
-                if (this.isInventoryOpen) {
-                    this.closeInventory();
-                }
+
+            if (key === "Escape" && this.isInventoryOpen) {
+                if (event.cancelable) {     //
+                    event.preventDefault(); // added to prevent default ESC from opening Helix menu.
+                }                           //
+                this.closeInventory();
+            }
+
+            if (key === "Tab" && this.isInventoryOpen) {
+                this.closeInventory();
             }
         });
 
