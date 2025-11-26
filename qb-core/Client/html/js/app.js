@@ -3,8 +3,8 @@ const { useQuasar } = Quasar;
 const defaultConfig = {
     NotificationStyling: {
         group: true,
-        position: "top-right",
-        progress: true,
+        position: "bottom",
+        progress: false,
     },
     VariantDefinitions: {
         success: {
@@ -33,8 +33,8 @@ const defaultConfig = {
 const app = Vue.createApp({
     mounted() {
         window.showNotif = this.showNotif;
-        window.addEventListener('message', function(event) {
-            switch(event.data.name) {
+        window.addEventListener("message", function (event) {
+            switch (event.data.name) {
                 case "showNotif":
                     this.showNotif(...event.data.args);
                     break;
@@ -51,13 +51,13 @@ const app = Vue.createApp({
                     keyPressed();
                     break;
             }
-        })
+        });
     },
     methods: {
         async showNotif(data) {
             const { text, length, type, caption, icon: dataIcon } = data;
             let { classes, icon } = defaultConfig.VariantDefinitions[type];
-
+            console.log("classes", classes);
             if (dataIcon) {
                 icon = dataIcon;
             }

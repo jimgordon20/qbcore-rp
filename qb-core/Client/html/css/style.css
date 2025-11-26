@@ -18,17 +18,17 @@
     --md-on-error-container: #410002;
 
     --md-success: #006e1c;
-    --md-on-success: #ffffff;
+    --md-on-success: #193800;
     --md-success-container: #9df996;
     --md-on-success-container: #002106;
 
     --md-warning: #7d5800;
-    --md-on-warning: #ffffff;
+    --md-on-warning: #422b00;
     --md-warning-container: #ffdf93;
     --md-on-warning-container: #271900;
 
     --md-info: #0062a1;
-    --md-on-info: #ffffff;
+    --md-on-info: #002a77;
     --md-info-container: #d0e4ff;
     --md-on-info-container: #001d35;
 
@@ -55,94 +55,44 @@ html::-webkit-scrollbar {
     display: none;
 }
 
-@media (width: 3840px) and (height: 2160px) {
-    .success {
-        background-color: rgba(23, 23, 23, 90%);
-        color: var(--md-on-surface);
-        box-shadow: var(--md-elevation-1);
-        border-left: 0.5rem solid var(--md-success);
-        font-size: 1.5vh;
-    }
-
-    .primary {
-        background-color: rgba(23, 23, 23, 90%);
-        color: var(--md-on-surface);
-        box-shadow: var(--md-elevation-1);
-        border-left: 5px solid var(--md-primary);
-        font-size: 1.5vh;
-    }
-
-    .error {
-        background-color: rgba(23, 23, 23, 90%);
-        color: var(--md-on-surface);
-        box-shadow: var(--md-elevation-1);
-        border-left: 5px solid var(--md-error);
-        font-size: 1.5vh;
-    }
-
-    .warning {
-        background-color: rgba(23, 23, 23, 90%);
-        color: var(--md-on-surface);
-        box-shadow: var(--md-elevation-1);
-        border-left: 5px solid var(--md-warning);
-        font-size: 1.5vh;
-    }
-
-    .police {
-        background-color: rgba(23, 23, 23, 90%);
-        color: var(--md-on-surface);
-        box-shadow: var(--md-elevation-1);
-        border-left: 5px solid var(--md-info);
-        font-size: 1.5vh;
-    }
-
-    .ambulance {
-        background-color: rgba(23, 23, 23, 90%);
-        color: var(--md-on-surface);
-        box-shadow: var(--md-elevation-1);
-        border-left: 5px solid var(--md-error);
-        font-size: 1.5vh;
-    }
-}
-
 .success {
     background-color: var(--md-success-container);
-    color: var(--md-on-success-container);
+    color: var(--md-on-success) !important;
     padding: 12px 16px;
     font-weight: var(--font-weight-medium);
 }
 
 .primary {
     background-color: var(--md-primary-container);
-    color: var(--md-on-primary-container);
+    color: var(--md-on-primary-container) !important;
     padding: 12px 16px;
     font-weight: var(--font-weight-medium);
 }
 
 .warning {
     background-color: var(--md-warning-container);
-    color: var(--md-on-warning-container);
+    color: var(--md-on-warning) !important;
     padding: 12px 16px;
     font-weight: var(--font-weight-medium);
 }
 
 .error {
     background-color: var(--md-error-container);
-    color: var(--md-on-error-container);
+    color: var(--md-on-error) !important;
     padding: 12px 16px;
     font-weight: var(--font-weight-medium);
 }
 
 .police {
     background-color: var(--md-info-container);
-    color: var(--md-on-info-container);
+    color: var(--md-on-info) !important;
     padding: 12px 16px;
     font-weight: var(--font-weight-medium);
 }
 
 .ambulance {
     background-color: var(--md-error-container);
-    color: var(--md-on-error-container);
+    color: var(--md-on-error) !important;
     padding: 12px 16px;
     font-weight: var(--font-weight-medium);
 }

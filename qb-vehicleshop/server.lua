@@ -25,7 +25,7 @@ for _, shopData in pairs(Config.Shops) do
         local location     = vehicleData['coords'].location
         local rotation     = vehicleData['coords'].rotation
         local vehicle      = HVehicle(location, rotation, vehicleClass)
-        vehicle:SetSimulationEnabledForHelixEntity(false)
+        vehicle:SetInteractionEnabled(false)
     end
 end
 
@@ -54,7 +54,7 @@ RegisterServerEvent('qb-vehicleshop:server:swapVehicle', function(_, data)
     local rotation     = Config.Shops[shop]['ShowroomVehicles'][index]['coords'].rotation
     ClearAreaOfVehicles(location)
     local vehicle = HVehicle(location, rotation, vehicleClass)
-    vehicle:SetSimulationEnabledForHelixEntity(false)
+    vehicle:SetInteractionEnabled(false)
     Config.Shops[shop]['ShowroomVehicles'][index]['chosenVehicle'] = vehicleName
 end)
 

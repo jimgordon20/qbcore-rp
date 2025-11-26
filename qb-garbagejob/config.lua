@@ -1,13 +1,12 @@
 Config = {
     Vehicle = '/abcca-qbcore-veh/QBCoreVehicles/BP_Garbage_Truck.BP_Garbage_Truck_C',
     MinStops = 3,
-    MinBagsPerStop = 2,
-    MaxBagsPerStop = 5,
+    MaxStops = 10,
     BagLowerWorth = 300,
     BagUpperWorth = 1000,
 
     Locations = {
-        ['Depots'] = {
+        Depots = {
             {
                 label = 'West Garbage Depot',
                 pedSpawn = { coords = Vector(-355218, -133170, -2882), heading = 176 },
@@ -15,7 +14,7 @@ Config = {
             },
         },
 
-        ['Dumpsters'] = {
+        Dumpsters = {
             { coords = Vector(-360370, -132920, -2980), heading = 180 },
             { coords = Vector(-360650, -130620, -2980), heading = 0 },
             { coords = Vector(-358560, -129890, -2980), heading = 180 },

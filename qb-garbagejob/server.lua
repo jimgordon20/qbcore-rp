@@ -7,23 +7,28 @@ RegisterServerEvent('HEvent:PlayerUnloaded', function(source)
     local route = routes[GetPlayerId(source)]
     if route then
         if route.vehicle and route.vehicle:IsValid() then
-            DestroyVehicle(route.vehicle)
+            DeleteVehicle(route.vehicle)
         end
         if route.holdingBag and route.holdingBag:IsValid() then
-            DestroyEntity(route.holdingBag)
+            DeleteEntity(route.holdingBag)
         end
         routes[GetPlayerId(source)] = nil
     end
 end)
 
 function OnShutdown()
-    for i = 1, #dumpsters do
-        DestroyEntity(dumpsters[i])
+    for _, v in pairs(dumpsters) do
+        if v and v:IsValid() then
+            DeleteEntity(v)
+        end
     end
     dumpsters = {}
 
     for i = 1, #jobPeds do
-        DestroyEntity(jobPeds[i].npc)
+        local ped = jobPeds[i].npc
+        if ped and ped:IsValid() then
+            DeleteEntity(ped)
+        end
     end
     jobPeds = {}
 end
@@ -34,7 +39,7 @@ for i = 1, #Config.Locations['Dumpsters'] do
         Rotator(0, Config.Locations['Dumpsters'][i].heading, 0),
         '/Game/QBCore/Meshes/SM_Dumpster.SM_Dumpster'
     )
-    dumpsters[#dumpsters + 1] = dumpster
+    dumpsters[dumpster.Object] = dumpster.Object
 end
 
 for i = 1, #Config.Locations['Depots'] do
@@ -79,11 +84,11 @@ local function CompleteJob(source, returnedTruck)
 
     if route.vehicle and route.vehicle:IsValid() then
         TriggerClientEvent(source, 'qb-garbagejob:client:removeTargets', route.vehicle)
-        DestroyVehicle(route.vehicle)
+        DeleteVehicle(route.vehicle)
     end
 
     if route.holdingBag and route.holdingBag:IsValid() then
-        DestroyEntity(route.holdingBag)
+        DeleteEntity(route.holdingBag)
     end
 
     routes[GetPlayerId(source)] = nil
@@ -93,7 +98,10 @@ end
 
 RegisterServerEvent('qb-garbagejob:server:startJob', function(source, args)
     local Player = exports['qb-core']:GetPlayer(source)
-    if not Player or Player.PlayerData.job.name ~= 'garbage' then return end
+    if not Player or Player.PlayerData.job.name ~= 'garbage' then
+        print('qb-garbagejob:server:grabBag - Player job is not garbage')
+        return
+    end
     if routes[GetPlayerId(source)] then
         TriggerClientEvent(source, 'QBCore:Notify', Lang:t('error.route_busy'), 'error')
         return
@@ -104,13 +112,14 @@ RegisterServerEvent('qb-garbagejob:server:startJob', function(source, args)
     local vehicle = HVehicle(depot.vehicleSpawn.coords, Rotator(0, depot.vehicleSpawn.heading, 0), Config.Vehicle)
     routes[GetPlayerId(source)].vehicle = vehicle
     TriggerClientEvent(source, 'QBCore:Notify', Lang:t('success.new_route', { stops = routes[GetPlayerId(source)].maxStops }), 'success')
-    TriggerClientEvent(source, 'qb-garbagejob:client:addTargets', vehicle)
 end)
 
 RegisterServerEvent('qb-garbagejob:server:completeJob', function(source)
     local Player = exports['qb-core']:GetPlayer(source)
-    if not Player then return end
-    if Player.PlayerData.job.name ~= 'garbage' then return end
+    if not Player or Player.PlayerData.job.name ~= 'garbage' then
+        print('qb-garbagejob:server:grabBag - Player job is not garbage')
+        return
+    end
     local route = routes[GetPlayerId(source)]
     if not route then
         TriggerClientEvent(source, 'QBCore:Notify', Lang:t('error.no_route'), 'error')
@@ -138,10 +147,16 @@ end)
 
 RegisterServerEvent('qb-garbagejob:server:grabBag', function(source, data)
     local Player = exports['qb-core']:GetPlayer(source)
-    if not Player or Player.PlayerData.job.name ~= 'garbage' then return end
+    if not Player or Player.PlayerData.job.name ~= 'garbage' then
+        print('qb-garbagejob:server:grabBag - Player job is not garbage')
+        return
+    end
 
     local route = routes[GetPlayerId(source)]
-    if not route then return end
+    if not route then
+        print(source, 'QBCore:Notify', Lang:t('error.no_route'), 'error')
+        return
+    end
 
     if not data.entity or not dumpsters[data.entity] then
         print('qb-garbagejob:server:grabBag - Invalid dumpster entity')
@@ -161,10 +176,9 @@ RegisterServerEvent('qb-garbagejob:server:grabBag', function(source, data)
     local ped = GetPlayerPawn(source)
     if not ped then return end
     local mesh = ped:GetCharacterBaseMesh()
-    local coords = GetEntityCoords(ped)
-    local rotation = GetEntityRotation(ped)
-    local garbageBag = StaticMesh(coords, rotation, '/Game/QBCore/Meshes/SM_Trash.SM_Trash', CollisionType.NoCollision)
-    AttachActorToComponent(garbageBag, mesh, Vector(-35, 0, 10), Rotator(-95, 0, 0), 'hand_r', nil, true)
+    local coords = GetEntityCoords(data.entity)
+    local garbageBag = StaticMesh(Vector(coords.X + 130, coords.Y, coords.Z), Rotator(), '/Game/QBCore/Meshes/SM_Trash.SM_Trash')
+    AttachActorToComponent(garbageBag.Object, mesh, Vector(-90, 5, 10), Rotator(-95, 0, 0), 'hand_r', nil, true)
 
     routes[GetPlayerId(source)].holdingBag = garbageBag
     routes[GetPlayerId(source)].collectedDumpsters[data.entity] = true
@@ -174,9 +188,15 @@ end)
 
 RegisterServerEvent('qb-garbagejob:server:loadBag', function(source)
     local Player = exports['qb-core']:GetPlayer(source)
-    if not Player or Player.PlayerData.job.name ~= 'garbage' then return end
+    if not Player or Player.PlayerData.job.name ~= 'garbage' then
+        print('qb-garbagejob:server:grabBag - Player job is not garbage')
+        return
+    end
     local route = routes[GetPlayerId(source)]
-    if not route then return end
+    if not route then
+        print('qb-garbagejob:server:loadBag - No active route for player')
+        return
+    end
 
     if not route.holdingBag or not route.holdingBag:IsValid() then
         TriggerClientEvent(source, 'QBCore:Notify', Lang:t('error.no_bag'), 'error')
@@ -184,7 +204,7 @@ RegisterServerEvent('qb-garbagejob:server:loadBag', function(source)
     end
 
     DetachActor(route.holdingBag)
-    DestroyEntity(route.holdingBag)
+    DeleteEntity(route.holdingBag)
     routes[GetPlayerId(source)].holdingBag = nil
 
     routes[GetPlayerId(source)].stopsCompleted = route.stopsCompleted + 1

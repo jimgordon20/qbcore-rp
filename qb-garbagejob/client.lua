@@ -13,6 +13,19 @@ exports['qb-target']:AddTargetModel('SM_Dumpster', {
     distance = 1000
 })
 
+exports['qb-target']:AddTargetModel('GarbageTruck', {
+    options = {
+        {
+            label = Lang:t('target.deposit_garbage'),
+            icon = 'fas fa-truck-ramp-box',
+            type = 'server',
+            event = 'qb-garbagejob:server:loadBag',
+            job = 'garbage',
+        }
+    },
+    distance = 1000
+})
+
 local function setupPeds()
     TriggerCallback('getPeds', function(jobPeds)
         for i = 1, #jobPeds do
@@ -49,23 +62,6 @@ end
 
 RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
     setupPeds()
-end)
-
-RegisterClientEvent('qb-garbagejob:client:addTargets', function(vehicle)
-    if vehicle then
-        exports['qb-target']:AddTargetEntity(vehicle, {
-            options = {
-                {
-                    label = Lang:t('target.deposit_garbage'),
-                    icon = 'fas fa-truck-ramp-box',
-                    type = 'server',
-                    event = 'qb-garbagejob:server:loadBag',
-                    job = 'garbage',
-                }
-            },
-            distance = 1000
-        })
-    end
 end)
 
 RegisterClientEvent('qb-garbagejob:client:removeTargets', function(vehicle)
