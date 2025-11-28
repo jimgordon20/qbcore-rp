@@ -77,4 +77,13 @@ document.addEventListener("DOMContentLoaded", function () {
     window.addEventListener("unload", function () {
         window.removeEventListener("mousedown", handleMouseDown);
     });
+
+    window.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            if (event.cancelable) {
+                event.preventDefault();
+            }
+            cancelMenu();
+        }
+    });
 });

@@ -1,0 +1,38 @@
+Config = {
+    Vehicle = '/abcca-qbcore-veh/QBCoreVehicles/BP_Garbage_Truck.BP_Garbage_Truck_C',
+    MinStops = 3,
+    MaxStops = 10,
+    BagLowerWorth = 300,
+    BagUpperWorth = 1000,
+
+    Locations = {
+        Depots = {
+            {
+                label = 'West Garbage Depot',
+                pedSpawn = { coords = Vector(-355218, -133170, -2882), heading = 176 },
+                vehicleSpawn = { coords = Vector(-356090, -133100, -2981), heading = 180 },
+            },
+        },
+
+        Dumpsters = {
+            { coords = Vector(-360370, -132920, -2980), heading = 180 },
+            { coords = Vector(-360650, -130620, -2980), heading = 0 },
+            { coords = Vector(-358560, -129890, -2980), heading = 180 },
+            { coords = Vector(-358560, -124520, -2980), heading = 0 },
+            { coords = Vector(-360510, -123860, -2980), heading = 180 },
+            { coords = Vector(-358860, -119520, -2980), heading = 0 },
+            { coords = Vector(-360520, -119000, -2980), heading = 180 },
+            { coords = Vector(-358560, -116230, -2980), heading = 180 },
+            { coords = Vector(-360660, -116690, -2980), heading = 0 },
+            { coords = Vector(-357900, -114010, -2980), heading = -90 },
+            { coords = Vector(-358560, -110860, -2980), heading = 0 },
+            { coords = Vector(-361350, -113540, -2980), heading = 90 },
+            { coords = Vector(-365830, -114480, -2980), heading = 0 },
+            { coords = Vector(-365840, -117110, -2980), heading = 180 },
+            { coords = Vector(-363770, -117900, -2980), heading = 0 },
+            { coords = Vector(-363780, -122530, -2980), heading = 180 },
+            { coords = Vector(-365830, -123200, -2980), heading = 0 },
+            { coords = Vector(-361340, -127200, -2980), heading = 90 },
+        },
+    },
+}

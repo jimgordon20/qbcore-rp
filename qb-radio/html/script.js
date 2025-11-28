@@ -90,18 +90,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // document.onkeyup = function (data) {
-    //     if (data.key == "Escape") {
-    //         // Escape key
-    //         postData("https://qb-radio/escape", {});
-    //     } else if (data.key == "Enter") {
-    //         // Enter key
-    //         const channel = document.getElementById("channel").value;
-    //         postData("https://qb-radio/joinRadio", { channel: channel }).then((data) => {
-    //             if (data.canaccess) {
-    //                 document.getElementById("channel").value = data.channel;
-    //             }
-    //         });
-    //     }
-    // };
+    window.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            if (event.cancelable) {
+                event.preventDefault();
+            }
+            SlideDown();
+            hEvent("closeRadio");
+        }
+    });
 });

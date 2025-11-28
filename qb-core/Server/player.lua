@@ -21,6 +21,7 @@ function QBCore.Player.Logout(source)
     local Player = QBCore.Players[source]
     Player.Functions.Save()
     TriggerClientEvent(source, 'QBCore:Client:OnPlayerUnload')
+    TriggerLocalServerEvent('QBCore:Server:OnPlayerUnload', source)
     QBCore.Player_Buckets[Player.PlayerData.license] = nil
     QBCore.Players[source] = nil
 end
