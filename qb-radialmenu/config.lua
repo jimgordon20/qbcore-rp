@@ -521,21 +521,21 @@ Config.JobInteractions = {
             title = 'Show/Hide Meter',
             icon = 'eye-slash',
             type = 'client',
-            event = 'qb-taxi:client:toggleMeter',
+            event = 'qb-taxijob:client:toggleMeter',
             shouldClose = false
         }, {
         id = 'togglemouse',
         title = 'Start/Stop Meter',
         icon = 'hourglass-start',
         type = 'client',
-        event = 'qb-taxi:client:enableMeter',
+        event = 'qb-taxijob:client:enableMeter',
         shouldClose = true
     }, {
         id = 'npc_mission',
         title = 'NPC Mission',
         icon = 'taxi',
-        type = 'client',
-        event = 'qb-taxi:client:DoTaxiNpc',
+        type = 'server',
+        event = 'qb-taxijob:server:startWork',
         shouldClose = true
     }
     },
