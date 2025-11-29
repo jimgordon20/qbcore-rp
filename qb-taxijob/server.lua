@@ -4,7 +4,7 @@ local benches = {}
 local jobPeds = {}
 local pickupNPCs = {}
 
-function OnShutdown()
+function onShutdown()
     for _, v in pairs(benches) do
         if v and v:IsValid() then
             DeleteEntity(v)

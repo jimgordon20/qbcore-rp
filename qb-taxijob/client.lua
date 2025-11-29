@@ -80,14 +80,11 @@ RegisterClientEvent('qb-taxijob:client:pickupSpot', function(coords, benchIndex)
         inZone = true
         exports['qb-core']:DrawText('[E] - Pickup NPC', 'left')
     end)
-
-    local Shapes = CurrentZone:K2_GetComponentsByClass(UE.UShapeComponent)
-    if Shapes[1] then
-        Shapes[1].OnComponentEndOverlap:Add(HWorld, function(_)
-            inZone = false
-            exports['qb-core']:HideText()
-        end)
-    end
+    local Shape = CurrentZone:K2_GetComponentByClass(UE.UShapeComponent)
+    Shape.OnComponentEndOverlap:Add(HWorld, function(_)
+        inZone = false
+        exports['qb-core']:HideText()
+    end)
 end)
 
 -- Input
