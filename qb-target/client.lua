@@ -150,6 +150,12 @@ local function RemoveTargetEntity(entity)
 end
 exports('qb-target', 'RemoveTargetEntity', RemoveTargetEntity)
 
+local function RemoveTargetModel(modelName)
+    if not modelName then return end
+    Models[modelName] = nil
+end
+exports('qb-target', 'RemoveTargetModel', RemoveTargetModel)
+
 local function RemoveZone(name)
     local actor = Zones[name]
     if not actor then return end
