@@ -1,14 +1,35 @@
 @import url("https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&display=swap");
 
 :root {
-    --meter-size-width: 45vh;
-    --meter-size-height: 22.3vh;
+    --g5-scale: 1;
+
+    --meter-base-width: 22vh;
+    --meter-base-height: 11vh;
+
+    --meter-size-width: calc(var(--meter-base-width) * var(--g5-scale));
+    --meter-size-height: calc(var(--meter-base-height) * var(--g5-scale));
+
+    --meter-pos-bottom: 5vh;
+    --meter-pos-right: 40vh;
+
+    --panel-padding: calc(var(--meter-size-height) * 0.09);
+    --panel-gap: calc(var(--meter-size-height) * 0.06);
+    --panel-radius: calc(var(--meter-size-height) * 0.09);
+    --box-radius: calc(var(--meter-size-height) * 0.06);
+    --box-padding: calc(var(--meter-size-height) * 0.04);
+
+    --font-scale: 1;
+
+    --font-xs: calc(var(--meter-size-width) * 0.035 * var(--font-scale));
+    --font-sm: calc(var(--meter-size-width) * 0.045 * var(--font-scale));
+    --font-lg: calc(var(--meter-size-width) * 0.075 * var(--font-scale));
 }
 
 * {
     margin: 0;
     padding: 0;
     font-family: "Exo 2", sans-serif;
+    box-sizing: border-box;
 }
 
 .container {
@@ -18,58 +39,60 @@
 
 .g5-meter {
     position: absolute;
-    bottom: 5vh;
-    right: 5vh;
+    bottom: var(--meter-pos-bottom);
+    right: var(--meter-pos-right);
     width: var(--meter-size-width);
     height: var(--meter-size-height);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .panel {
-    width: 45vh;
-    height: 22.3vh;
+    width: 100%;
+    height: 100%;
     background: #1c1b1f;
-    border-radius: 10px;
-    padding: 10px;
+    border-radius: var(--panel-radius);
+    padding: var(--panel-padding);
     display: grid;
     grid-template-columns: 1fr 2fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 6px;
-    box-sizing: border-box;
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--panel-gap);
+    overflow: hidden;
 }
 
 .box {
     background: #36343b;
-    border-radius: 5px;
-    width: 100%;
-    height: 100%;
+    border-radius: var(--box-radius);
+    padding: var(--box-padding);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    box-sizing: border-box;
-    padding: 0.5vh;
+    min-height: 0;
 }
 
 .box span {
-    position: static;
-    font-size: 1.1vh;
+    font-size: var(--font-xs);
     color: rgba(255, 255, 255, 0.85);
-    line-height: 1.3;
+    text-align: center;
 }
 
 .bottom-row {
     grid-column: 1 / 3;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 6px;
+    gap: var(--panel-gap);
+    min-height: 0;
 }
 
 #total-price,
 #total-price-per-100m,
 #total-distance {
+    font-size: var(--font-lg);
     font-weight: bold;
-    font-size: 4.1vh;
-    letter-spacing: 0.1vh;
+    line-height: 1;
+    text-align: center;
 }
 
 #total-price {
@@ -87,18 +110,17 @@
 #total-price-label,
 #total-price-per-100m-label,
 #total-distance-label {
-    font-size: 1.1vh;
-    letter-spacing: 0.1vh;
+    font-size: var(--font-xs);
+    margin-top: 0.1vh;
     color: rgba(255, 255, 255, 0.75);
-    font-weight: lighter;
-    margin-top: 0.3vh;
+    text-align: center;
 }
 
 .toggle-meter-btn {
     width: 100%;
     height: 100%;
     background: rgba(46, 46, 46, 0.534);
-    border-radius: 5px;
+    border-radius: var(--box-radius);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -107,11 +129,9 @@
 }
 
 .toggle-meter-btn p {
-    font-size: 1.4vh;
-    color: rgb(231, 30, 37);
-    letter-spacing: 0.1vh;
+    font-size: var(--font-sm);
     font-weight: bold;
-    font-family: "Exo 2", sans-serif;
+    color: rgb(231, 30, 37);
 }
 
 .toggle-meter-btn:hover {
