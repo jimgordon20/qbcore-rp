@@ -99,15 +99,20 @@ end
 
 function Job:Payout()
     local amount = math.random(Config.Payout.Minimum, Config.Payout.Maximum)
-    local completedRoute = self.CurrentStop >= self.MaxStops
-    if not completedRoute then 
-        amount = math.floor(amount / 1.5)
+    local completedRoute = self.CurrentStop > self.MaxStops
+    -- Decrease amount if route is incomplete
+    if not completedRoute and self.CurrentStop == 1 then 
+        amount = 0
+    elseif not completedRoute then
+        amount = math.floor(amount * 0.3)
     end
 
     local Success = exports['qb-core']:Player(self.Courier, 'AddMoney', 'bank', amount, 'delivery-job-payout')
     if not Success then return end
 
-    exports['qb-core']:Notify(self.Courier, completedRoute and Lang:t('success.paid', amount) or Lang:t('success.incomplete_paid', amount), 'success')
+    exports['qb-core']:Notify(self.Courier, completedRoute and Lang:t('success.paid', {Amount = amount}) or Lang:t('success.incomplete_paid', {Amount = amount}), 'success')
+
+    return true
 end
 
 function Job:Cleanup()
