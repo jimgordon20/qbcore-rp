@@ -7,6 +7,12 @@ local CurrentLocation = {
 }
 require('locales/en')
 
+function onShutdown()
+    if CurrentLocation.TimerId then
+        Timer.ClearInterval(CurrentLocation.TimerId)
+    end
+end
+
 local function setupPeds(peds)
     for i = 1, #peds do
         exports['qb-target']:AddTargetEntity(peds[i].Ped, {
