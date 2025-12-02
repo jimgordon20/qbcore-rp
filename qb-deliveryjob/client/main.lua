@@ -45,22 +45,13 @@ local function deliverPackage()
         exports['qb-core']:Notify(Lang:t('error.too_far'), 'error')
         return
     end
-    TriggerServerEvent('qb-deliveryjob:server:deliverPackage', CurrentLocation.jobId)
+    TriggerCallback('deliverPackage', function(success)
+        if not success then return end
+        HoldingPackage = false
+    end, CurrentLocation.jobId)
 end
 
 RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
-    local Console = GetActorByTag('HConsole')
-    local Delegate = {
-        HWorld,
-        function(_, Inst, Args)
-            local VehicleName = Args[1]
-            if not VehicleName then return end
-
-            TriggerServerEvent('qb-deliveryjob:server:spawnVehicle', VehicleName)
-        end,
-    }
-    Console:RegisterCommand('car', 'Spawns a Car', nil, Delegate)
-
     --@TODO Revert to one time registration
     TriggerCallback('getJobPeds', function(peds)
         setupPeds(peds)

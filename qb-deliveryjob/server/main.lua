@@ -70,7 +70,7 @@ RegisterServerEvent('qb-deliveryjob:server:deliverPackage', function(source, job
     return true
 end)
 
-RegisterServerEvent('qb-deliveryjob:server:finishDelivering', function(source, jobId)
+RegisterCallback('finishDelivering', function(source, jobId)
     local CurrentJob = Jobs[jobId]
     if not CurrentJob or CurrentJob.Courier ~= source then return end
 
