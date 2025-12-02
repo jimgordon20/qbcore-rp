@@ -6,6 +6,7 @@ Job.__index = Job
 function Job.new(Courier, DepotInfo)
     local self = setmetatable({}, Job)
 
+    -- Setup Job instance
     self.DeliveryId = GenerateId(6, 'mixed')
     self.Courier = Courier
     self.Depot = DepotInfo
@@ -36,10 +37,12 @@ end
 function Job:CreateDeliveryProp()
     local Pawn = GetPlayerPawn(self.Courier)
     if not Pawn then return end
+    if self.Prop and self.Prop:IsValid() then DeleteEntity(self.Prop) end
 
     local PawnCoords = GetEntityCoords(Pawn)
     self.Prop = StaticMesh(PawnCoords, Rotator(), Config.Prop.Mesh)
 
+    -- Attach box to hand
     local Mesh = Pawn:GetCharacterBaseMesh()
     local Attached = AttachActorToComponent(self.Prop.Object, Mesh, Vector(0, -50, 0), Rotator(), 'hand_r')
     self.Prop:SetActorScale3D(Vector(0.3, 0.3, 0.3))
