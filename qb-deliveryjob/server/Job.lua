@@ -70,8 +70,8 @@ function Job:CreateRoute()
         end
         if #Route == self.MaxStops then break end
     end
-    -- Regenerate if Route is small
-    if #Route < Config.Stops.Minimum then return self:CreateRoute() end
+    -- Regenerate if Route isn't big enough
+    if #Route < Config.Stops.Minimum or #Route < self.MaxStops then return self:CreateRoute() end
 
     -- Sort route by closest from closest start point
     table.sort(Route, function(a, b)
@@ -88,7 +88,7 @@ end
 function Job:DeliverPackage()
     local Pawn = GetPlayerPawn(self.Courier)
     local PawnCoords = GetEntityCoords(Pawn)
-    if self.CurrentStop >= self.MaxStops then return false end
+    if self.CurrentStop > self.MaxStops then return false end
     if PawnCoords:Dist(self.Route[self.CurrentStop]) > 1000 then return false end
     self.CurrentStop = self.CurrentStop + 1
 
