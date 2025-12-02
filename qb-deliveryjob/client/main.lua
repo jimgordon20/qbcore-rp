@@ -86,11 +86,14 @@ end)
 RegisterClientEvent('qb-deliveryjob:client:setCurrentLocation', function(Location, Vehicle, CurrentStop, MaxStops)
     -- Reset states
     if CurrentLocation.TimerId then Timer.ClearInterval(CurrentLocation.TimerId) end
-    if CurrentLocation.Cone and CurrentLocation.Cone:IsValid() then DestroyEntity(CurrentLocation.Cone) end
+    if CurrentLocation.Cone and CurrentLocation.Cone:IsValid() then DeleteEntity(CurrentLocation.Cone) end
     if not Location then
         exports['qb-core']:HideText()
         if CurrentLocation.TimerId then Timer.ClearInterval(CurrentLocation.TimerId) end
-        CurrentLocation = {}
+        CurrentLocation.TimerId = nil
+        CurrentLocation.Cone = nil
+        CurrentLocation.Coords = nil
+        exports['qb-target']:RemoveTargetEntity(Vehicle)
         return
     end
 
@@ -99,16 +102,11 @@ RegisterClientEvent('qb-deliveryjob:client:setCurrentLocation', function(Locatio
     local Pawn = GetPlayerPawn(HPlayer)
     local Cone = StaticMesh(GetEntityCoords(Pawn), Rotator(), '/QuietRuntimeEditor/UserContent/StaticMeshes/Primitives/SM_Cone.SM_Cone')
     CurrentLocation.Cone = Cone
-    local Root = Cone:K2_GetRootComponent()
-    Root:SetSimulatePhysics(false)
-    Root:SetCollisionEnabled(UE.ECollisionEnabled.NoCollision)
-    Root:SetCollisionResponseToAllChannels(UE.ECollisionResponse.ECR_Ignore)
-    AttachActorToComponent(Cone.Object, Vehicle:GetComponentByClass(UE.UStaticMeshComponent), Vector(0, 0, 500), nil, '', {
-        Location = AttachmentRule.SnapToTarget,
-        Rotation = AttachmentRule.KeepWorld
+    AttachActorToActor(Cone.Object, Pawn, Vector(0, 0, 0), nil, '', {
+        Location = AttachmentRule.KeepWorld,
+        Rotation = AttachmentRule.KeepRelative
     }, true)
-    Cone:GetComponentByClass(UE.UStaticMeshComponent):K2_SetRelativeLocation(Vector(0, 0, 500), false, nil, true)
-    print(Cone:K2_GetRootComponent():GetRelativeTransform().Translation)
+    Cone:SetActorScale3D(Vector(0.2, 0.2, 0.2))
     CurrentLocation.TimerId = Timer.SetInterval(function()
         local targetRotation = FindRotation(GetEntityCoords(Pawn), Location)
         targetRotation.Roll = 0
