@@ -22,13 +22,16 @@ end
 function Job:CreateDeliveryVehicle()
     local Vehicle = Config.Vehicles[math.random(1, #Config.Vehicles)] or 'bp_deliverytruck'
     local VehicleAsset = SharedVehicles[Vehicle].asset_name
-    local newVehicle = HVehicle(self.Depot.vehicleSpawn.coords, self.Depot.vehicleSpawn.heading, VehicleAsset)
-    newVehicle:SetFuel(1.0)
+    local vehicleCoords = self.Depot.vehicleSpawn.coords
+    vehicleCoords.Z = vehicleCoords.Z - 20
+    local newVehicle = HVehicle(vehicleCoords, Rotator(0, self.Depot.vehicleSpawn.heading, 0), VehicleAsset)
+    newVehicle:SetFuel(100.0)
     newVehicle:SetPlate('D-' .. self.DeliveryId)
     if not newVehicle then return end
 
     self.Vehicle = newVehicle
 
+    -- Add pickup box target option
     TriggerClientEvent(self.Courier, 'qb-deliveryjob:client:setupVehicleTarget', newVehicle, self.DeliveryId)
 
     return self.Vehicle
