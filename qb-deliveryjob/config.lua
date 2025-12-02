@@ -5,8 +5,8 @@ Config = {
     Depots = {
         {
             label = 'Test',
-            pedSpawn = { coords = Vector(-319910.87, -136179.79, -3387.52), heading = Rotator(0, 328.0, 0) },
-            vehicleSpawn = { coords = Vector(-319568.130, -136500.34, -3500.80), heading = Rotator(0.0, 61.24, 0) },
+            pedSpawn = { coords = Vector(-355239.42, -132407.13, -2882.44), heading = 176, },
+            vehicleSpawn = { coords = Vector(-355929.31, -132383.51, -2897.84), heading = 180, },
         }
     },
 
