@@ -15,12 +15,13 @@ local Locale = dofile(qbCorePath)
 
 local Translations = {
     error = {
-        already_working = 'You are already working a route!',
         too_far = 'You are too far away from the location.',
+        inside_vehicle = 'You cannot deliver packages when in a vehicle.',
+        no_packages = 'You don\'t have any more packages.',
     },
     success = {
-        paid = 'Route Completed! You were paid: %{Amount = d}',
-        incomplete_paid = 'You didn\'t complete your route. You were paid: %{Amount = d}'
+        paid = 'Route Completed! You were paid: %{Amount}',
+        incomplete_paid = 'You didn\'t complete your route. You were paid: %{Amount}'
     },
     status = {
         location_info = 'Stop: %{Current}/%{Max}'
