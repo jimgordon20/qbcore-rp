@@ -32,10 +32,29 @@ RegisterServerEvent('HEvent:PlayerPossessed', function()
     Initialised = true
 end)
 
+RegisterServerEvent('HEvent:PlayerUnloaded', function(Player)
+    -- Clear invalid jobs
+    for k, v in pairs(Jobs) do
+        if v.Courier == Player then
+            job:Cleanup()
+            Jobs[k] = nil
+            break
+        end
+    end
+end)
+
 RegisterServerEvent('qb-deliveryjob:server:startDelivering', function(source, targetData)
     local depotIndex = targetData.depot
     local depotInfo = Config.Depots[depotIndex]
     if not depotInfo then return end
+
+    -- Clear invalid jobs
+    for k, v in pairs(Jobs) do
+        if not v.Courier:IsValid() then
+            job:Cleanup()
+            Jobs[k] = nil
+        end
+    end
 
     local newJob = Job.new(source, depotInfo)
     TriggerClientEvent(source, 'qb-deliveryjob:client:setCurrentLocation', newJob.Route[1], newJob.Vehicle.Object, newJob.CurrentStop, newJob.MaxStops)
