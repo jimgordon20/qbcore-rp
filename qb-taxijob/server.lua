@@ -3,6 +3,7 @@ local playerVehicles = {}
 local benches = {}
 local jobPeds = {}
 local pickupNPCs = {}
+local activeJobs = {}
 
 function onShutdown()
     for _, v in pairs(benches) do
@@ -19,6 +20,13 @@ function onShutdown()
         end
     end
     jobPeds = {}
+
+    for _, npc in pairs(pickupNPCs) do
+        if npc and npc:IsValid() then
+            DeleteEntity(npc)
+        end
+    end
+    pickupNPCs = {}
 end
 
 for i = 1, #Config.Locations['Benches'] do
@@ -34,6 +42,17 @@ for i = 1, #Config.Locations['Depots'] do
     HPawn(Config.Locations['Depots'][i].pedSpawn.coords, Rotator(0, Config.Locations['Depots'][i].pedSpawn.heading, 0), function(npc)
         jobPeds[#jobPeds + 1] = { npc = npc, depot = i }
     end)
+end
+
+local function getRandomBench(excludeIndex)
+    local availableBenches = {}
+    for i = 1, #Config.Locations['Benches'] do
+        if i ~= excludeIndex then
+            table.insert(availableBenches, i)
+        end
+    end
+    if #availableBenches == 0 then return nil end
+    return availableBenches[math.random(#availableBenches)]
 end
 
 -- Callbacks
@@ -63,33 +82,120 @@ RegisterServerEvent('qb-taxijob:server:finishWork', function(source)
         DeleteVehicle(vehicle)
         playerVehicles[playerId] = nil
     end
+    if activeJobs[playerId] then
+        local npc = activeJobs[playerId].npc
+        if npc and npc:IsValid() then
+            DeleteEntity(npc)
+        end
+        activeJobs[playerId] = nil
+    end
 end)
 
 RegisterServerEvent('qb-taxijob:server:startWork', function(source)
+    local playerId = GetPlayerId(source)
     local vehicle = GetVehiclePedIsIn(GetPlayerPawn(source))
     local model = vehicle.Object
     local modelName = model:GetName()
     print(modelName)
+    local pickupBenchIndex = math.random(#Config.Locations['Benches'])
+    local pickupBench = Config.Locations['Benches'][pickupBenchIndex]
+    local coords = pickupBench.coords
+    coords.X = coords.X + 100
+    HPawn(coords, Rotator(0, 0, 0), function(npc)
+        table.insert(pickupNPCs, npc)
+        Config.Locations['Benches'][pickupBenchIndex].npc = npc
+        local dropoffBenchIndex = getRandomBench(pickupBenchIndex)
+        activeJobs[playerId] = {
+            npc = npc,
+            pickupBenchIndex = pickupBenchIndex,
+            dropoffBenchIndex = dropoffBenchIndex,
+            hasPickedUp = false
+        }
+        TriggerClientEvent(source, 'qb-taxijob:client:pickupSpot', coords, pickupBenchIndex)
+    end)
+end)
 
-    for i = 1, #Config.Locations['Benches'] do
-        if not Config.Locations['Benches'][i].npc then
-            local coords = Config.Locations['Benches'][i].coords
-            coords.X = coords.X + 100
-            HPawn(coords, Rotator(0, 0, 0), function(npc)
-                pickupNPCs[#pickupNPCs + 1] = npc
-                Config.Locations['Benches'][i].npc = npc
-            end)
-            TriggerClientEvent(source, 'qb-taxijob:client:pickupSpot', coords, i)
+RegisterServerEvent('qb-taxijob:server:pickupNPC', function(source, benchIndex)
+    local playerId = GetPlayerId(source)
+    local pawn = GetPlayerPawn(source)
+    local vehicle = pawn:GetCurrentVehicle()
+
+    if not activeJobs[playerId] then
+        print('No active job for player')
+        return
+    end
+
+    local job = activeJobs[playerId]
+
+    if benchIndex ~= job.pickupBenchIndex then
+        print('Wrong bench index')
+        return
+    end
+
+    if Config.Locations['Benches'][benchIndex] and Config.Locations['Benches'][benchIndex].npc then
+        local npc = Config.Locations['Benches'][benchIndex].npc
+
+        if npc and npc:IsValid() then
+            local params = UE.FHEnterVehicleParams()
+            params.bSkipAnimations = true
+            local success = UE.UHelixAbilitySystemGlobals.SendEnterVehicleEventToActor(
+                npc,
+                vehicle,
+                2,
+                params
+            )
+            if success then
+                job.hasPickedUp = true
+                Config.Locations['Benches'][benchIndex].npc = nil
+                local dropoffCoords = Config.Locations['Benches'][job.dropoffBenchIndex].coords
+                dropoffCoords.X = dropoffCoords.X + 300
+                TriggerClientEvent(source, 'qb-taxijob:client:dropoffSpot', dropoffCoords, job.dropoffBenchIndex)
+            end
         end
     end
 end)
 
-RegisterServerEvent('qb-taxijob:server:pickupNPC', function(source, benchIndex)
-    if Config.Locations['Benches'][benchIndex] and Config.Locations['Benches'][benchIndex].npc then
-        local npc = Config.Locations['Benches'][benchIndex].npc
-        if npc and npc:IsValid() then
-            DeleteEntity(npc)
-            Config.Locations['Benches'][benchIndex].npc = nil
+RegisterServerEvent('qb-taxijob:server:dropoffNPC', function(source, benchIndex)
+    local playerId = GetPlayerId(source)
+    local pawn = GetPlayerPawn(source)
+    local vehicle = pawn:GetCurrentVehicle()
+
+    if not activeJobs[playerId] then
+        print('No active job for player')
+        return
+    end
+
+    local job = activeJobs[playerId]
+
+    if not job.hasPickedUp then
+        print('NPC not picked up yet')
+        return
+    end
+
+    if benchIndex ~= job.dropoffBenchIndex then
+        print('Wrong drop-off bench')
+        return
+    end
+
+    local npc = job.npc
+
+    if npc and npc:IsValid() then
+        local Seats = vehicle:K2_GetComponentsByClass(UE.UClass.Load('/Game/SimpleVehicle/Blueprints/Components/SimpleVehicleSeat.SimpleVehicleSeat_C'))
+        for _, v in pairs(Seats) do
+            local Occupier = v:GetSeatOccupancy()
+            if Occupier and Occupier == npc then
+                UE.UHelixAbilitySystemGlobals.SendExitVehicleEventToActor(Occupier, UE.FHExitVehicleParams())
+                print('NPC exited vehicle')
+                break
+            end
         end
+        Timer.SetTimeout(function()
+            if npc and npc:IsValid() then
+                DeleteEntity(npc)
+                print('NPC deleted')
+            end
+        end, 10000)
+        activeJobs[playerId] = nil
+        TriggerClientEvent(source, 'qb-taxijob:client:jobComplete')
     end
 end)

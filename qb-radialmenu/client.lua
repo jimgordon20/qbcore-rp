@@ -224,8 +224,6 @@ my_webui:RegisterEventHandler('selectItem', function(inData)
     local itemData = inData.itemData
     local found, data = selectOption(FinalMenuItems, itemData)
     if found and data then
-        print(data.type)
-        print(data.event)
         if data.type == 'client' then
             TriggerLocalClientEvent(data.event, data)
         elseif data.type == 'server' then
