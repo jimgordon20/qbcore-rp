@@ -2,6 +2,7 @@ local Lang = require('locales/en')
 local jobPeds = {}
 local dumpsters = {}
 local routes = {}
+local Initialised = false
 
 RegisterServerEvent('HEvent:PlayerUnloaded', function(source)
     local route = routes[GetPlayerId(source)]
@@ -42,11 +43,16 @@ for i = 1, #Config.Locations['Dumpsters'] do
     dumpsters[dumpster.Object] = dumpster.Object
 end
 
-for i = 1, #Config.Locations['Depots'] do
-    HPawn(Config.Locations['Depots'][i].pedSpawn.coords, Rotator(0, Config.Locations['Depots'][i].pedSpawn.heading, 0), function(npc)
-        jobPeds[#jobPeds + 1] = { npc = npc, depot = i }
-    end)
-end
+RegisterServerEvent('HEvent:PlayerPossessed', function()
+    if Initialised then return end
+    for i = 1, #Config.Locations['Depots'] do
+        HPawn(Config.Locations['Depots'][i].pedSpawn.coords, Rotator(0, Config.Locations['Depots'][i].pedSpawn.heading, 0), function(npc)
+            jobPeds[#jobPeds + 1] = { npc = npc, depot = i }
+        end)
+    end
+
+    Initialised = true
+end)
 
 -- Callbacks
 
