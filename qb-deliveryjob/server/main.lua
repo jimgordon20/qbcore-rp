@@ -1,6 +1,7 @@
 SharedVehicles = exports['qb-core']:GetShared('Vehicles')
 local Peds = {}
 local Initialised = false
+require('locales/en')
 
 -- Cleanup
 function onShutdown()
@@ -20,7 +21,7 @@ end
 RegisterServerEvent('HEvent:PlayerPossessed', function()
     if Initialised then return end
     for index, depot in pairs(Config.Depots) do
-        HPawn(depot.pedSpawn.coords, depot.pedSpawn.heading, function(Pawn)
+        HPawn(depot.pedSpawn.coords, Rotator(0, depot.pedSpawn.heading, 0), function(Pawn)
             if not Pawn then return end
             Peds[#Peds + 1] = {
                 Ped = Pawn,
