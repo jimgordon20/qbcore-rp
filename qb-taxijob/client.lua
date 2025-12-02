@@ -8,11 +8,37 @@ local currentPickupBenchIndex = nil
 local currentDropoffBenchIndex = nil
 local pickupZone = nil
 local dropoffZone = nil
+local distanceUU = 0.0
+local lastVehiclePos = nil
+local CM_PER_MILE = 160934.4
+local distance_timer = nil
+local meterData = {
+    fareAmount = 6,
+    currentFare = 0,
+    distanceTraveled = 0,
+}
 
 -- UI Events
 
-my_webui:RegisterEventHandler('enableMeter', function()
-
+my_webui:RegisterEventHandler('enableMeter', function(bool)
+    if bool then
+        distanceUU = 0.0
+        lastVehiclePos = nil
+        meterData.distanceTraveled = 0
+        meterData.currentFare = 0
+        if distance_timer then
+            Timer.ClearInterval(distance_timer)
+            distance_timer = nil
+        end
+        distance_timer = Timer.SetInterval(function()
+            UpdateTaxiDistance()
+        end, 100)
+    else
+        if distance_timer then
+            Timer.ClearInterval(distance_timer)
+            distance_timer = nil
+        end
+    end
 end)
 
 -- Functions
@@ -22,9 +48,45 @@ function onShutdown()
         my_webui:Destroy()
         my_webui = nil
     end
+    if distance_timer then
+        Timer.ClearInterval(distance_timer)
+        distance_timer = nil
+    end
 end
 
 -- Events
+
+function UpdateTaxiDistance()
+    if not meterActive then return end
+
+    local vehicle = GetVehiclePedIsIn(GetPlayerPawn())
+    if not vehicle then
+        lastVehiclePos = nil
+        return
+    end
+
+    local pos = vehicle:K2_GetActorLocation()
+
+    if lastVehiclePos then
+        -- delta distance this frame in UU/cm
+        local delta = (pos - lastVehiclePos):Size()
+        distanceUU = distanceUU + delta
+
+        -- total miles traveled this fare
+        local miles = distanceUU / CM_PER_MILE
+
+        -- update meterData table
+        meterData.distanceTraveled = miles
+        meterData.currentFare = math.floor(meterData.distanceTraveled * meterData.fareAmount)
+
+        -- push to UI
+        my_webui:SendEvent('updateMeter', {
+            meterData = meterData
+        })
+    end
+
+    lastVehiclePos = pos
+end
 
 local function setupPeds()
     TriggerCallback('getPeds', function(jobPeds)

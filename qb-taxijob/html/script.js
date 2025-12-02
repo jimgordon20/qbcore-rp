@@ -23,11 +23,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const meterToggle = () => {
         if (!meterStarted) {
-            hEvent("enableMeter", JSON.stringify({ enabled: true }));
+            hEvent("enableMeter", true);
             toggleMeter(true);
             meterStarted = true;
         } else {
-            hEvent("enableMeter", JSON.stringify({ enabled: false }));
+            hEvent("enableMeter", false);
             toggleMeter(false);
             meterStarted = false;
         }
