@@ -12,7 +12,8 @@ Config = {
         'ambulance',
         'realestate',
         'cardealer',
-        'mechanic'
+        'mechanic',
+        'delivery'
     },
 
     Cityhalls = {
