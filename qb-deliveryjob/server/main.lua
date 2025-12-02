@@ -60,21 +60,24 @@ RegisterServerEvent('qb-deliveryjob:server:startDelivering', function(source, ta
     TriggerClientEvent(source, 'qb-deliveryjob:client:setCurrentLocation', newJob.Route[1], newJob.Vehicle.Object, newJob.CurrentStop, newJob.MaxStops)
 end)
 
-RegisterServerEvent('qb-deliveryjob:server:spawnVehicle', function(source, vehicle)
-    if not SharedVehicles[vehicle] then return end
-    local pawn = GetPlayerPawn(source)
-    if not pawn then return end
-
-    local pawnLocation = pawn:K2_GetActorLocation()
-    local forwardVec = pawn:GetActorForwardVector()
-    local spawnPos = pawnLocation + (forwardVec * 500)
-    spawnPos.Z = spawnPos.Z + 50
-
-    local SpawnedVehicle = HVehicle(spawnPos, Rotator(), SharedVehicles[vehicle].asset_name)
-    SpawnedVehicle:SetFuel(1.0)
+RegisterCallback('getJobPeds', function(source)
+    return Peds
 end)
 
-RegisterServerEvent('qb-deliveryjob:server:deliverPackage', function(source, jobId)
+RegisterCallback('server.pickupBox', function(source, jobId)
+    local CurrentJob = Jobs[jobId]
+    if not CurrentJob or CurrentJob.Courier ~= source then return end
+    if CurrentJob.CurrentStop > CurrentJob.MaxStops then
+        exports['qb-core']:Notify(Lang:t('error.no_packages'), 'error')
+        return
+    end
+
+    CurrentJob:CreateDeliveryProp()
+
+    return true
+end)
+
+RegisterCallback('deliverPackage', function(source, jobId)
     local CurrentJob = Jobs[jobId]
     if not CurrentJob or CurrentJob.Courier ~= source then return end
 
