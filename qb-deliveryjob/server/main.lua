@@ -80,6 +80,10 @@ end)
 RegisterCallback('deliverPackage', function(source, jobId)
     local CurrentJob = Jobs[jobId]
     if not CurrentJob or CurrentJob.Courier ~= source then return end
+    if IsPedInAnyVehicle(GetPlayerPawn(source)) then
+        exports['qb-core']:Notify(Lang:t('error.inside_vehicle'), 'error')
+        return
+    end
 
     local Delivered = CurrentJob:DeliverPackage()
     if not Delivered then return end
