@@ -10,6 +10,7 @@ QBCore.Shared.Jobs = {
 	garbage = { label = 'Garbage', defaultDuty = true, offDutyPay = false, grades = { { name = 'Collector', payment = 50 } } },
 	vineyard = { label = 'Vineyard', defaultDuty = true, offDutyPay = false, grades = { { name = 'Picker', payment = 50 } } },
 	hotdog = { label = 'Hotdog', defaultDuty = true, offDutyPay = false, grades = { { name = 'Sales', payment = 50 } } },
+	delivery = { label = 'Delivery Driver', defaultDuty = true, offDutyPay = false, grades = { { name = 'Courier', payment = 50 } } },
 
 	police = {
 		label = 'Law Enforcement',
