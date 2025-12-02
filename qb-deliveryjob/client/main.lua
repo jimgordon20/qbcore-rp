@@ -121,8 +121,11 @@ RegisterClientEvent('qb-deliveryjob:client:setCurrentLocation', function(Locatio
 end)
 
 RegisterClientEvent('qb-deliveryjob:client:finishDelivering', function()
-    TriggerServerEvent('qb-deliveryjob:server:finishDelivering', CurrentLocation.jobId)
-    HoldingPackage = false
+    TriggerCallback('finishDelivering', function(success)
+        if not success then return end
+        HoldingPackage = false
+        CurrentLocation = {}
+    end, CurrentLocation.jobId)
 end)
 
 Input.BindKey('E', function()
