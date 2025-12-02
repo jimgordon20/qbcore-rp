@@ -87,11 +87,12 @@ RegisterCallback('deliverPackage', function(source, jobId)
 
     local Delivered = CurrentJob:DeliverPackage()
     if not Delivered then return end
-    if CurrentJob.CurrentStop == CurrentJob.MaxStops then
+    -- Check if all stops completed
+    if CurrentJob.CurrentStop > CurrentJob.MaxStops then
         exports['qb-core']:Notify(source, 'That was your last stop. Return the truck for payment', 'success')
         TriggerClientEvent(source, 'qb-deliveryjob:client:setCurrentLocation', nil)
     else
-        TriggerClientEvent(source, 'qb-deliveryjob:client:setCurrentLocation', CurrentJob.Route[1], CurrentJob.Vehicle.Object, CurrentJob.CurrentStop, CurrentJob.MaxStops)
+        TriggerClientEvent(source, 'qb-deliveryjob:client:setCurrentLocation', CurrentJob.Route[CurrentJob.CurrentStop], CurrentJob.Vehicle.Object, CurrentJob.CurrentStop, CurrentJob.MaxStops)
     end
 
     return true
@@ -106,17 +107,7 @@ RegisterCallback('finishDelivering', function(source, jobId)
     
     CurrentJob:Cleanup()
     Jobs[CurrentJob.DeliveryId] = nil
-end)
-
-RegisterCallback('getJobPeds', function(source)
-    return Peds
-end)
-
-RegisterCallback('server.pickupBox', function(source, jobId)
-    local CurrentJob = Jobs[jobId]
-    if not CurrentJob or CurrentJob.Courier ~= source then return end
-
-    CurrentJob:CreateDeliveryProp()
+    TriggerClientEvent(source, 'qb-deliveryjob:client:setCurrentLocation', nil)
 
     return true
 end)
