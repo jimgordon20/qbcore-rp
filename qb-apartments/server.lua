@@ -56,6 +56,9 @@ local function EnterApartment(source, apartmentId, aptName)
 	)
 
 	local data = exports['qb-interior']:CreateApartmentFurnished(source, coords, false, false)
+	data[1].Object:SetReplicates(false)
+	data[1].Object:SetReplicateMovement(false)
+	data[1].Component:SetIsReplicated(false)
 	local apartmentData = { object = data[1], poiOffsets = data[2] }
 
 	if not ApartmentObjects[apartmentId] then
