@@ -130,18 +130,18 @@ end)
 
 for i = 1, #Config.Cityhalls do
     local coords = Config.Cityhalls[i].coords
-    exports['qb-target']:AddSphereZone('cityhall_' .. i, {
-        X = coords.X,
-        Y = coords.Y,
-        Z = coords.Z
-    }, 100.0, {
-        debug = true,
-        distance = 1000
-    }, {
+    local heading = Config.Cityhalls[i].heading
+    exports['qb-target']:AddMeshTarget(
+        'cityhall_' .. i,
+        coords,
+        Rotator(0, heading, 0),
+        '/Game/QBCore/Meshes/SM_Clipboard.SM_Clipboard', { collision = CollisionType.Normal, stationary = true, distance = 1000 },
         {
-            icon = 'fas fa-city',
-            label = 'City Hall',
-            event = 'qb-cityhall:client:openCityhallMenu',
+            {
+                icon = 'fas fa-city',
+                label = 'Open City Hall',
+                event = 'qb-cityhall:client:openCityhallMenu',
+            }
         }
-    })
+    )
 end

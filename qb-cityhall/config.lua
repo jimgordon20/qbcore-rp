@@ -18,7 +18,8 @@ Config = {
 
     Cityhalls = {
         {
-            coords = Vector(-338612, -156241, -2468),
+            coords = Vector(-338525, -155350, -2458),
+            heading = 90,
             -- showBlip = true,
             -- blipData = {
             --     sprite = 487,
@@ -45,7 +46,8 @@ Config = {
             }
         },
         {
-            coords = Vector(-338620, -155940, -2468),
+            coords = Vector(-338525, -155950, -2458),
+            heading = 90,
             -- showBlip = true,
             -- blipData = {
             --     sprite = 487,
@@ -72,7 +74,8 @@ Config = {
             }
         },
         {
-            coords = Vector(-338618, -155646, -2468),
+            coords = Vector(-338525, -155650, -2458),
+            heading = 90,
             -- showBlip = true,
             -- blipData = {
             --     sprite = 487,
@@ -99,7 +102,8 @@ Config = {
             }
         },
         {
-            coords = Vector(-338625, -155339, -2468),
+            coords = Vector(-338525, -156250, -2458),
+            heading = 90,
             -- showBlip = true,
             -- blipData = {
             --     sprite = 487,
