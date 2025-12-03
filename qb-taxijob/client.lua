@@ -10,10 +10,10 @@ local pickupZone = nil
 local dropoffZone = nil
 local distanceUU = 0.0
 local lastVehiclePos = nil
-local CM_PER_MILE = 160934.4
+local CM_PER_MILE = 160934
 local distance_timer = nil
 local meterData = {
-    fareAmount = 6,
+    fareAmount = Config.Rate,
     currentFare = 0,
     distanceTraveled = 0,
 }
@@ -21,6 +21,7 @@ local meterData = {
 -- UI Events
 
 my_webui:RegisterEventHandler('enableMeter', function(bool)
+    meterActive = bool
     if bool then
         distanceUU = 0.0
         lastVehiclePos = nil
@@ -64,27 +65,17 @@ function UpdateTaxiDistance()
         lastVehiclePos = nil
         return
     end
-
-    local pos = vehicle:K2_GetActorLocation()
-
+    local pos = GetEntityCoords(vehicle)
     if lastVehiclePos then
-        -- delta distance this frame in UU/cm
-        local delta = (pos - lastVehiclePos):Size()
+        local delta = GetDistanceBetweenCoords(pos, lastVehiclePos)
         distanceUU = distanceUU + delta
-
-        -- total miles traveled this fare
         local miles = distanceUU / CM_PER_MILE
-
-        -- update meterData table
         meterData.distanceTraveled = miles
         meterData.currentFare = math.floor(meterData.distanceTraveled * meterData.fareAmount)
-
-        -- push to UI
         my_webui:SendEvent('updateMeter', {
             meterData = meterData
         })
     end
-
     lastVehiclePos = pos
 end
 
@@ -110,8 +101,7 @@ local function setupPeds()
                     depot = jobPeds[i].depot
                 },
                 {
-                    type = 'server',
-                    event = 'qb-taxijob:server:finishWork',
+                    event = 'qb-taxijob:client:finishWork',
                     label = Lang:t('target.finish_work'),
                     icon = 'fas fa-circle-check',
                     job = 'taxi'
@@ -126,11 +116,26 @@ RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
     setupPeds()
 end)
 
+RegisterClientEvent('qb-taxijob:client:finishWork', function()
+    if meterOpen then
+        my_webui:SendEvent('openMeter', { toggle = false })
+        meterOpen = false
+    end
+    if meterActive then
+        meterActive = false
+        if distance_timer then
+            Timer.ClearInterval(distance_timer)
+            distance_timer = nil
+        end
+    end
+    TriggerServerEvent('qb-taxijob:server:finishWork')
+end)
+
 RegisterClientEvent('qb-taxijob:client:toggleMeter', function()
     local vehicle = GetVehiclePedIsIn(GetPlayerPawn())
     if not vehicle then return end
     if not meterOpen then
-        my_webui:SendEvent('openMeter', { toggle = true, meterData = Config.Meter })
+        my_webui:SendEvent('openMeter', { toggle = true, meterData = meterData })
         meterOpen = true
     else
         my_webui:SendEvent('openMeter', { toggle = false })
@@ -152,7 +157,7 @@ RegisterClientEvent('qb-taxijob:client:pickupSpot', function(coords, benchIndex)
         DeleteEntity(pickupZone)
     end
 
-    pickupZone = Trigger(coords, Rotator(), Vector(100), TriggerType.Sphere, true, function()
+    pickupZone = Trigger(Vector(coords.X, coords.Y, coords.Z), Rotator(), Vector(100), TriggerType.Sphere, true, function()
         inPickupZone = true
         currentPickupBenchIndex = benchIndex
         exports['qb-core']:DrawText('[E] - Pickup NPC', 'left')
@@ -174,7 +179,7 @@ RegisterClientEvent('qb-taxijob:client:dropoffSpot', function(coords, benchIndex
     inPickupZone = false
     currentPickupBenchIndex = nil
     exports['qb-core']:HideText()
-    dropoffZone = Trigger(coords, Rotator(), Vector(100), TriggerType.Sphere, true, function()
+    dropoffZone = Trigger(Vector(coords.X, coords.Y, coords.Z), Rotator(), Vector(100), TriggerType.Sphere, true, function()
         inDropoffZone = true
         currentDropoffBenchIndex = benchIndex
         exports['qb-core']:DrawText('[E] - Drop Off NPC', 'left')
@@ -188,7 +193,7 @@ RegisterClientEvent('qb-taxijob:client:dropoffSpot', function(coords, benchIndex
     end)
 end)
 
-RegisterClientEvent('qb-taxijob:client:jobComplete', function()
+RegisterClientEvent('qb-taxijob:client:jobComplete', function(payout)
     if dropoffZone then
         DeleteEntity(dropoffZone)
         dropoffZone = nil
@@ -197,17 +202,29 @@ RegisterClientEvent('qb-taxijob:client:jobComplete', function()
     currentDropoffBenchIndex = nil
     exports['qb-core']:HideText()
 
-    exports['qb-core']:Notify('Job complete! Great work!', 'success')
+    exports['qb-core']:Notify('Job complete! You earned $' .. payout, 'success')
 end)
 
 -- Input
 
 Input.BindKey('E', function()
     if inPickupZone and currentPickupBenchIndex then
+        if not meterOpen then
+            my_webui:SendEvent('openMeter', { toggle = true, meterData = meterData })
+            meterOpen = true
+        end
         my_webui:SendEvent('toggleMeter')
         TriggerServerEvent('qb-taxijob:server:pickupNPC', currentPickupBenchIndex)
     elseif inDropoffZone and currentDropoffBenchIndex then
-        my_webui:SendEvent('resetMeter')
-        TriggerServerEvent('qb-taxijob:server:dropoffNPC', currentDropoffBenchIndex)
+        if meterActive then
+            meterActive = false
+            if distance_timer then
+                Timer.ClearInterval(distance_timer)
+                distance_timer = nil
+            end
+            my_webui:SendEvent('toggleMeter')
+            my_webui:SendEvent('resetMeter')
+        end
+        TriggerServerEvent('qb-taxijob:server:dropoffNPC', currentDropoffBenchIndex, meterData.currentFare)
     end
 end)

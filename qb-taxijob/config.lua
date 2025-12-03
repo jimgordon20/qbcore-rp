@@ -1,9 +1,7 @@
 Config = {
     Vehicle = '/abcca-qbcore-veh/QBCoreVehicles/BP_Taxi.BP_Taxi_C',
-    Meter = {
-        defaultPrice = 125.0, -- price per mile
-        startingPrice = 0     -- static starting price
-    },
+    Rate = 125.0,       -- price per mile
+    MaxFarePadding = 2, -- adjust this as needed to account for turns, etc.
     Locations = {
         Depots = {
             {

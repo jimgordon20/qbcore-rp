@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const openMeter = (meterData) => {
         $(".container").fadeIn(150);
-        $("#total-price-per-100m").html("$ " + meterData.defaultPrice.toFixed(2));
+        $("#total-price-per-100m").html("$ " + meterData.fareAmount.toFixed(2));
     };
 
     const closeMeter = () => {
