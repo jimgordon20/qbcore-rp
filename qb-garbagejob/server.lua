@@ -48,7 +48,7 @@ RegisterServerEvent('HEvent:PlayerPossessed', function()
     for i = 1, #Config.Locations['Depots'] do
         HPawn(Config.Locations['Depots'][i].pedSpawn.coords, Rotator(0, Config.Locations['Depots'][i].pedSpawn.heading, 0), function(npc)
             jobPeds[#jobPeds + 1] = { npc = npc, depot = i }
-        end)
+        end, { CharacterName = 'Garbage Depot', bShowNameplate = true })
     end
 
     Initialised = true
