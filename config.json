@@ -21,6 +21,7 @@
     "qb-houses",
     "qb-garbagejob",
     "qb-taxijob",
-    "qb-deliveryjob"
+    "qb-deliveryjob",
+    "qb-ambulancejob"
   ]
 }
