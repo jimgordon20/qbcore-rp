@@ -66,7 +66,7 @@ exports('qb-interior', 'CreateApartmentFurnished', function(player, spawn, isNew
 
 	if isNew then
 		Timer.SetTimeout(function()
-			local characterCreatorComponentClass = UE.UClass.Load('/AdvancedCharacterCreator/Blueprints/BPC_CharacterCreator.BPC_CharacterCreator_C')
+			local characterCreatorComponentClass = LoadClass('/AdvancedCharacterCreator/Blueprints/BPC_CharacterCreator.BPC_CharacterCreator_C')
 			local pawn = GetPlayerPawn(player)
 			local characterCreatorComponent = pawn:GetComponentByClass(characterCreatorComponentClass)
 			characterCreatorComponent:ShowCharacterCustomizationUI()

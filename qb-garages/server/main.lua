@@ -61,7 +61,7 @@ local function GetSpawnPoint(garageIndex)
 end
 
 local function updateVehicleState(state, plate, citizenid)
-    exports['qb-core']:DatabaseAction('Execute', 'UPDATE player_vehicles SET state = ?, depotprice = ? WHERE plate = ? AND citizenid = ?', {state, 0, plate, citizenid})
+    exports['qb-core']:DatabaseAction('Execute', 'UPDATE player_vehicles SET state = ?, depotprice = ? WHERE plate = ? AND citizenid = ?', { state, 0, plate, citizenid })
 end
 
 -- Callbacks
@@ -122,9 +122,9 @@ RegisterServerEvent('qb-garages:server:SpawnVehicle', function(source, plate, in
 
     -- @TODO Amend to support vehicle mods
     local Player = exports['qb-core']:GetPlayer(source)
-    local results = exports['qb-core']:DatabaseAction('Select', 
-        'SELECT citizenid, fuel FROM player_vehicles WHERE plate = ? and citizenid = ? LIMIT 1', 
-        { plate,  Player.PlayerData.citizenid}
+    local results = exports['qb-core']:DatabaseAction('Select',
+        'SELECT citizenid, fuel FROM player_vehicles WHERE plate = ? and citizenid = ? LIMIT 1',
+        { plate, Player.PlayerData.citizenid }
     )
     if not results or #results <= 0 then return end
 
@@ -145,7 +145,7 @@ RegisterServerEvent('qb-garages:server:SpawnVehicle', function(source, plate, in
 
     if Config.Warp then
         -- @TODO Vehicle Warping
---[[         local Pawn = GetPlayerPawn(source)
+        --[[         local Pawn = GetPlayerPawn(source)
         if Pawn then
             local AS = Pawn:GetLyraAbilitySystemComponent()
 
@@ -154,7 +154,7 @@ RegisterServerEvent('qb-garages:server:SpawnVehicle', function(source, plate, in
             EventData.Instigator = Pawn
             EventData.Target = vehicle
 
-            local Ability = UE.UClass.Load('/Game/SimpleVehicle/Blueprints/Abilities/GA_Vehicle_Enter.GA_Vehicle_Enter_C')
+            local Ability = LoadClass('/Game/SimpleVehicle/Blueprints/Abilities/GA_Vehicle_Enter.GA_Vehicle_Enter_C')
             local Spec = AS:K2_GiveAbility(Ability, nil, nil)
             AS:ServerTryActivateAbilityWithEventData(Spec, false, UE.FPredictionKey(), EventData)
         end ]]
@@ -163,7 +163,7 @@ RegisterServerEvent('qb-garages:server:SpawnVehicle', function(source, plate, in
     if Config.VisuallyDamageCars then
         -- @TODO Visual Vehicle Damage
     end
-    
+
     return true
 end)
 
@@ -190,7 +190,8 @@ RegisterServerEvent('qb-garages:server:DepositVehicle', function(source, garage)
     local body = 1.0
 
     local VehInteractionComp = playerVehicle.Door_FL:GetInteractionComponent()
-    local Seats = playerVehicle:K2_GetComponentsByClass(UE.UClass.Load('/Game/SimpleVehicle/Blueprints/Components/SimpleVehicleSeat.SimpleVehicleSeat_C'))
+    local seatClass = LoadClass('/Game/SimpleVehicle/Blueprints/Components/SimpleVehicleSeat.SimpleVehicleSeat_C')
+    local Seats = GetComponentsByClass(playerVehicle, seatClass)
     for k, v in pairs(Seats) do
         local Occupier = v:GetSeatOccupancy()
         if Occupier then
@@ -202,8 +203,8 @@ RegisterServerEvent('qb-garages:server:DepositVehicle', function(source, garage)
     if not success then return end
 
     OutsideVehicles[plate] = nil
-    exports['qb-core']:DatabaseAction('Execute', 
-        'UPDATE player_vehicles SET fuel = ?, engine = ?, body = ?, state = ?, garage = ? WHERE plate = ? and citizenid = ?', 
+    exports['qb-core']:DatabaseAction('Execute',
+        'UPDATE player_vehicles SET fuel = ?, engine = ?, body = ?, state = ?, garage = ? WHERE plate = ? and citizenid = ?',
         { fuel, engine, body, 1, garage, plate, Player.PlayerData.citizenid }
     )
 end)
@@ -240,7 +241,7 @@ RegisterServerEvent('qb-garages:server:PayDepotPrice', function(source, data)
     local cashBalance = Player.PlayerData.money.cash
     local bankBalance = Player.PlayerData.money.bank
     local results = exports['qb-core']:DatabaseAction('Select', 'SELECT depotprice FROM player_vehicles WHERE plate = ?', { data.plate })
-    
+
     if results[1] then
         local depotPrice = tonumber(results[1].depotprice)
         local moneyType = (cashBalance >= depotPrice and 'cash') or (bankBalance >= depotPrice and 'bank')

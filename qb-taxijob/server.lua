@@ -201,7 +201,8 @@ RegisterServerEvent('qb-taxijob:server:dropoffNPC', function(source, benchIndex,
     local npc = job.npc
 
     if npc and npc:IsValid() then
-        local Seats = vehicle:K2_GetComponentsByClass(UE.UClass.Load('/Game/SimpleVehicle/Blueprints/Components/SimpleVehicleSeat.SimpleVehicleSeat_C'))
+        local seatClass = LoadClass('/Game/SimpleVehicle/Blueprints/Components/SimpleVehicleSeat.SimpleVehicleSeat_C')
+        local Seats = GetComponentsByClass(vehicle, seatClass)
         for _, v in pairs(Seats) do
             local Occupier = v:GetSeatOccupancy()
             if Occupier and Occupier == npc then
@@ -214,7 +215,7 @@ RegisterServerEvent('qb-taxijob:server:dropoffNPC', function(source, benchIndex,
             if npc and npc:IsValid() then
                 DeleteEntity(npc)
             end
-        end, 10000)
+        end, 7500)
 
         local rawFare = tonumber(meterFare) or 0
         if rawFare < 0 then rawFare = 0 end

@@ -77,7 +77,8 @@ RegisterServerEvent('qb-inventory:server:openInventory', function(source)
             plate = tostring(math.random(111111, 9999999))
             rawset(getmetatable(ClosestVehicle), 'Plate', plate)
         end
-        local Comps = ClosestVehicle:K2_GetComponentsByClass(UE.UClass.Load('/Game/SimpleVehicle/Blueprints/Components/Attachments/Trunk.Trunk_C'))
+        local trunkClass = LoadClass('/Game/SimpleVehicle/Blueprints/Components/Attachments/Trunk.Trunk_C')
+        local Comps = GetComponentsByClass(ClosestVehicle, trunkClass)
         if Comps:ToTable()[1] then
             local Trunk = Comps[1]
             Trunk['Animate Trunk'](Trunk, UE.EOpenableState.Open)
@@ -237,10 +238,10 @@ RegisterCallback('server.createDrop', function(source, item)
                     TriggerClientEvent(source, 'qb-inventory:client:holdDrop', newDropId)
                     AttachActorToComponent(Drop.InteractableProp, mesh, Vector(-35, 0, 10), Rotator(-95, 0, 0), 'hand_r', nil, true)
                     Drop.InteractableProp:SetActorScale3D(Vector(0.8, 0.8, 0.8))
-                    AttachActorToActor(Drop, Drop.InteractableProp, nil, nil, nil, { 
-                        Location = AttachmentRule.SnapToTarget, 
-                        Rotation = AttachmentRule.SnapToTarget, 
-                        Scale = AttachmentRule.SnapToTarget 
+                    AttachActorToActor(Drop, Drop.InteractableProp, nil, nil, nil, {
+                        Location = AttachmentRule.SnapToTarget,
+                        Rotation = AttachmentRule.SnapToTarget,
+                        Scale = AttachmentRule.SnapToTarget
                     })
                     DropData.isHeld = Instigator
                     if Drop.BoxCollision then Drop.BoxCollision:SetCollisionProfileName('HandAttachedMesh', true) end
