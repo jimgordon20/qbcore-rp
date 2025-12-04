@@ -88,3 +88,19 @@ RegisterClientEvent('qb-multicharacter:client:closeNUIdefault', function()
     TriggerServerEvent('qb-houses:server:SetInsideMeta', 0, false)
     TriggerServerEvent('qb-apartments:server:SetInsideMeta', 0, 0, false)
 end)
+
+-- Hot Reload Support
+local CurrentInputMode = HPlayer:GetInputMode()
+if CurrentInputMode == 2 then
+    -- Check for when UI is closed
+    local InputCheck
+    InputCheck = Timer.SetInterval(function()
+        if HPlayer:GetInputMode() ~= 2 then
+            TriggerServerEvent('qb-multicharacter:server:chooseChar')
+            Timer.ClearInterval(InputCheck)
+        end
+    end, 1000)
+else
+    -- No UI open
+    TriggerServerEvent('qb-multicharacter:server:chooseChar')
+end
