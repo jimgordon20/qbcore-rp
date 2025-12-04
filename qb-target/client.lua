@@ -122,7 +122,7 @@ end
 
 -- Post Process Setup
 local OutlinePPPath = '/Game/Effects/Materials/PostProcess/MPP_Outline_Inst.MPP_Outline_Inst'
-local OutlinePPMaterial = LoadObject(OutlinePPPath)
+local OutlinePPMaterial = UE.UObject.Load(OutlinePPPath)
 
 -- Scalar Parameters
 local scalarParams = OutlinePPMaterial.ScalarParameterValues
@@ -144,43 +144,47 @@ vectorParams[1] = highlight
 vectorParams[2] = select
 OutlinePPMaterial.VectorParameterValues = vectorParams
 
+local OutlinePPIndex = nil
 local function ToggleOutlinePP(enable)
     local pawn = GetPlayerPawn()
     if not pawn then return end
-
     local camera = pawn:GetComponentByClass(UE.UCameraComponent)
     if not camera then return end
-
     local settings = camera.PostProcessSettings
     local array = settings.WeightedBlendables.Array
-
+    if not array then return end
+    local newWeight = enable and 1.0 or 0.0
+    if OutlinePPIndex ~= nil then
+        local blend = array[OutlinePPIndex]
+        if blend and blend.Object == OutlinePPMaterial then
+            blend.Weight = newWeight
+            return
+        else
+            OutlinePPIndex = nil
+        end
+    end
     local foundIndex = nil
-
     for i, blend in ipairs(array) do
         if blend.Object == OutlinePPMaterial then
             foundIndex = i
             break
         end
     end
-
     if not foundIndex then
         local newBlend = UE.FWeightedBlendable()
         newBlend.Object = OutlinePPMaterial
-        newBlend.Weight = enable and 1.0 or 0.0
+        newBlend.Weight = newWeight
         table.insert(array, newBlend)
+        OutlinePPIndex = #array
         settings.WeightedBlendables.Array = array
         return
     end
-
     local blend = array[foundIndex]
-    blend.Weight = enable and 1.0 or 0.0
-
+    blend.Weight = newWeight
     array[foundIndex] = blend
-    settings.WeightedBlendables.Array = array
+    OutlinePPIndex = foundIndex
 end
 
--- Enhanced stencil function with two states
--- stencilValue: 0 = disabled, 1 = nearby/discoverable, 2 = actively targeted
 local function ShowPostProcessOnComponent(comp, stencilValue)
     if not comp then return end
     local enable = stencilValue > 0
@@ -327,8 +331,6 @@ local function AddMeshTarget(name, location, rotation, meshPath, meshOptions, ta
 end
 exports('qb-target', 'AddMeshTarget', AddMeshTarget)
 
--- Nearby Interactables System (Stencil 1)
-
 local function GetPrimitiveComponents(actor)
     if not actor then return {} end
     local components = {}
@@ -353,17 +355,11 @@ local function UpdateNearbyInteractables()
 
     local playerPos = GetEntityCoords(GetPlayerPawn())
     if not playerPos then return end
-
-    -- Track which components should still be highlighted
     local stillNearby = {}
-
-    -- Scan all registered entities
     for entity, options in pairs(Entities) do
         if entity and entity:IsValid() then
             local entityPos = GetEntityCoords(entity)
             local distance = GetDistanceBetweenCoords(playerPos, entityPos)
-
-            -- Check if entity has valid options within range
             local hasValidOptions = false
             for _, data in pairs(options) do
                 if checkOptions(data, entity, distance) then
@@ -371,14 +367,11 @@ local function UpdateNearbyInteractables()
                     break
                 end
             end
-
             if hasValidOptions then
                 local components = GetPrimitiveComponents(entity)
                 for _, comp in ipairs(components) do
                     if comp and comp:IsValid() then
-                        -- Don't override the actively targeted component (stencil 2)
                         if comp ~= target_component then
-                            -- Only set stencil if not already set to avoid redundant calls
                             if not nearby_components[comp] then
                                 ShowPostProcessOnComponent(comp, 1)
                             end
@@ -389,30 +382,21 @@ local function UpdateNearbyInteractables()
             end
         end
     end
-
-    -- Clear components that are no longer nearby
     for comp, _ in pairs(nearby_components) do
         if not stillNearby[comp] and comp ~= target_component then
             ShowPostProcessOnComponent(comp, 0)
         end
     end
-
     nearby_components = stillNearby
 end
 
--- Targeted Entity System (Stencil 2)
-
 local function clearTarget()
     if not target_entity then return end
-
-    -- Downgrade target component from stencil 2 to stencil 1 if still nearby
     if target_component then
         local playerPos = GetEntityCoords(GetPlayerPawn())
         if playerPos and target_entity:IsValid() then
             local entityPos = GetEntityCoords(target_entity)
             local distance = GetDistanceBetweenCoords(playerPos, entityPos)
-
-            -- Check if still has valid options
             local hasValidOptions = false
             local options = Entities[target_entity]
             if options then
@@ -423,7 +407,6 @@ local function clearTarget()
                     end
                 end
             end
-
             if hasValidOptions then
                 ShowPostProcessOnComponent(target_component, 1)
                 nearby_components[target_component] = true
@@ -435,7 +418,6 @@ local function clearTarget()
         end
         target_component = nil
     end
-
     target_entity = nil
     nui_data = {}
     if my_webui then
@@ -465,38 +447,27 @@ local function handleEntity(trace_result)
         clearTarget()
         return
     end
-
     local entity_has_options = Entities[trace_result.Entity]
     local type_has_options = Types[tostring(trace_result.ActorName)]
     local model_has_options = Models[tostring(trace_result.MeshName)]
-
     if not entity_has_options and not type_has_options and not model_has_options then
         clearTarget()
         return
     end
-
     if target_entity ~= trace_result.Entity then
         clearTarget()
         target_entity = trace_result.Entity
         target_component = trace_result.ComponentName
         nui_data = {}
-
-        -- Upgrade to stencil 2 (actively targeted)
         ShowPostProcessOnComponent(target_component, 2)
-
-        -- Remove from nearby tracking since it's now actively targeted
         nearby_components[target_component] = nil
-
         local distance = trace_result.Distance
         local entity_options = Entities[target_entity]
         local type_options = Types[tostring(trace_result.ActorName)]
         local model_options = Models[tostring(trace_result.MeshName)]
-
         if entity_options then setupOptions(entity_options, target_entity, distance) end
         if type_options then setupOptions(type_options, target_entity, distance) end
         if model_options then setupOptions(model_options, target_entity, distance) end
-
-        -- Send to UI once after all options are collected
         if #nui_data > 0 then
             local target_icon = nui_data[1] and nui_data[1].targeticon or ''
             if my_webui then
@@ -509,18 +480,15 @@ end
 local function handleRaycast()
     if not target_active then return end
     if not playerController then return end
-
     local w, h = playerController:GetViewportSize()
     local sp = UE.FVector2D(w * 0.5, h * 0.5)
     local pos, dir = UE.FVector(), UE.FVector()
     if not UE.UGameplayStatics.DeprojectScreenToWorld(playerController, sp, pos, dir) then return end
-
     local startOffset = Config.RaycastStartOffset or 25.0
     local start = pos + dir * startOffset
     local stop = start + dir * Config.MaxDistance
     local hit = Trace:LineSingle(start, stop, UE.ETraceTypeQuery.Visibility, UE.EDrawDebugTrace.None)
     local trace_result = nil
-
     if hit then
         local _, _, _, distance, location, _, _, _, _, hitActor, hitComp = UE.UGameplayStatics.BreakHitResult(hit)
         local actor = hitActor
@@ -545,20 +513,13 @@ end
 function enableTarget()
     if target_active then return end
     target_active = true
-
-    -- Enable post-process effect
     ToggleOutlinePP(true)
-
     my_webui:SendEvent('openTarget')
-
-    -- Start raycast for active targeting (stencil 2)
     local raycastInterval = Config.RaycastInterval or 100
     raycast_timer = Timer.SetInterval(function()
         local trace_result = handleRaycast()
         handleEntity(trace_result)
     end, raycastInterval)
-
-    -- Start nearby scan for discoverable objects (stencil 1)
     local nearbyScanInterval = Config.NearbyScanInterval or 500
     nearby_scan_timer = Timer.SetInterval(function()
         UpdateNearbyInteractables()
@@ -567,32 +528,22 @@ end
 
 function disableTarget()
     if not target_active then return end
-
-    -- Clear active target
     if target_component then
         ShowPostProcessOnComponent(target_component, 0)
         target_component = nil
     end
-
-    -- Clear all nearby highlights
     ClearAllNearbyHighlights()
-
-    -- Disable post-process effect
     ToggleOutlinePP(false)
-
     target_active, target_entity = false, nil
     nui_data, send_data = {}, {}
-
     if my_webui then
         my_webui:SendEvent('closeTarget')
         my_webui:SetInputMode(0)
     end
-
     if raycast_timer then
         Timer.ClearInterval(raycast_timer)
         raycast_timer = nil
     end
-
     if nearby_scan_timer then
         Timer.ClearInterval(nearby_scan_timer)
         nearby_scan_timer = nil
