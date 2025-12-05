@@ -21,13 +21,17 @@ Config = {
 
     Locations = {
         duty = {
-            { coords = Vector(-340540.36, -147839.66, -2884.60),  heading = 132 },
+            { coords = Vector(-340320.0, -147790.0, -2840.0), rotation = Rotator(0, 90, 90) },
         },
         vehicle = {
-            { coords = Vector(93790.6, -162365.5, 198.6),  heading = 132 },
+            {
+                coords = Vector(-339350.0, -145760.0, -2970.0),
+                rotation = Rotator(0, 0, 0),
+                spawn = { coords = Vector(-339358.10, -144656.62, -2980.06), rotation = Rotator(0, 90, 0) },
+            },
         },
         stash = {
-            { coords = Vector(93471.0, -162573.3, 198.6),  heading = 132 },
+            { coords = Vector(-339520.0, -148650.0, -2930.0),  rotation = Rotator(0, 90, 0) },
         },
         impound = {
             Vector(0, 0, 0)
@@ -47,6 +51,19 @@ Config = {
         stations = {
             { label = 'Police Station', coords = Vector(-340540.36, -147839.66, -2884.60) },
         },
+        
+    },
+
+    AuthorizedVehicles = { -- Grade is key, don't add same vehicle in multiple grades. Higher rank can see lower
+        [0] = {
+            ['bp_police'] = 'Police Car'
+        },
+    },
+
+    AuthorizedHelicopters = { -- Grade is key, don't add same vehicle in multiple grades. Higher rank can see lower
+        [0] = {
+            ['bp_pheli'] = 'Police Heli'
+        }
     },
 
     SpeedCamera = {
