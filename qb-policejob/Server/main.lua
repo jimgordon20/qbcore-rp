@@ -52,7 +52,7 @@ for i = 1, #Config.Locations['fingerprint'] do
         distance = 400,
     }
 end
-
+]]
 -- Callbacks
 
 QBCore.Functions.CreateCallback('qb-policejob:server:getPeds', function(_, cb)
@@ -61,7 +61,7 @@ end)
 
 -- Events
 
-Events.SubscribeRemote('qb-policejob:server:stash', function(source)
+RegisterServerEvent('qb-policejob:server:openStash', function(source)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
     if Player.PlayerData.job.type ~= 'leo' then return end
