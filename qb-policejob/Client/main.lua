@@ -151,6 +151,39 @@ RegisterClientEvent('qb-policejob:client:evidence', function()
     end
 end)
 
+RegisterClientEvent('qb-policejob:client:vehicleMenu', function(data)
+    local vehicleMenu = {
+        {
+            header = Lang:t('menu.garage_title')
+        }
+    }
+
+    local AuthorizedVehicles = getAuthorizedVehicles(exports['qb-core']:GetPlayerData().job.grade.level)
+    for vehicleName, label in pairs(AuthorizedVehicles) do
+        vehicleMenu[#vehicleMenu + 1] = {
+            header = label,
+            txt = '',
+            params = {
+                isServer = true,
+                event = 'qb-policejob:server:retrieveVehicle',
+                args = {
+                    vehicle = vehicleName,
+                    locationIndex = data.locationIndex,
+                }
+            }
+        }
+    end
+
+    vehicleMenu[#vehicleMenu + 1] = {
+        header = Lang:t('menu.close'),
+        txt = '',
+        params = {
+            event = 'qb-menu:client:closeMenu',
+        }
+    }
+    exports['qb-menu']:openMenu(vehicleMenu)
+end)
+
 local police_alert = 0
 --[[ Events.SubscribeRemote('qb-policejob:client:policeAlert', function(coords, text)
     police_alert = police_alert + 1
@@ -238,3 +271,65 @@ Events.SubscribeRemote('qb-policejob:client:info', function(data)
     info_menu:Open(false, true)
 end)
  ]]
+
+--- Target Setup
+
+-- Duty
+for i = 1, #Config.Locations['duty'] do
+    local pos = Config.Locations['duty'][i]
+    exports['qb-target']:AddMeshTarget(
+        'polduty_' .. i,
+        pos.coords,
+        pos.rotation or Rotator(0, 0, 0),
+        '/Game/QBCore/Meshes/SM_Clipboard.SM_Clipboard', { collision = CollisionType.Normal, stationary = true, distance = 1000 },
+        {
+            {
+                type = 'server',
+                event = 'QBCore:ToggleDuty',
+                label = 'Toggle Duty',
+                icon = 'fas fa-clipboard',
+                --jobType = 'leo'
+            },
+        }
+    )
+end
+
+-- Vehicle
+for i = 1, #Config.Locations['vehicle'] do
+    local pos = Config.Locations['vehicle'][i]
+    exports['qb-target']:AddMeshTarget(
+        'polveh_' .. i,
+        pos.coords,
+        pos.rotation or Rotator(0, 0, 0),
+        '/Game/QBCore/Meshes/SM_BusStop.SM_BusStop', { collision = CollisionType.Normal, stationary = true, distance = 1000 },
+        {
+            {
+                event = 'qb-policejob:client:vehicleMenu',
+                label = Lang:t('menu.pol_garage'),
+                icon = 'fas fa-car',
+                locationIndex = i,
+                --jobType = 'leo'
+            },
+        }
+    )
+end
+
+-- Stash
+for i = 1, #Config.Locations['stash'] do
+    local pos = Config.Locations['stash'][i]
+    exports['qb-target']:AddMeshTarget(
+        'polstash_' .. i,
+        pos.coords,
+        pos.rotation or Rotator(0, 0, 0),
+        '/Game/QBCore/Meshes/SM_DuffelBag.SM_DuffelBag', { collision = CollisionType.Normal, stationary = true, distance = 1000 },
+        {
+            {
+                type = 'server',
+                event = 'qb-policejob:server:openStash',
+                label = Lang:t('target.open_personal_stash'),
+                icon = 'fas fa-box',
+                --jobType = 'leo'
+            },
+        }
+    )
+end
