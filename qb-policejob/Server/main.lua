@@ -55,10 +55,6 @@ end
 ]]
 -- Callbacks
 
-QBCore.Functions.CreateCallback('qb-policejob:server:getPeds', function(_, cb)
-    cb(peds)
-end)
-
 -- Events
 
 RegisterServerEvent('qb-policejob:server:openStash', function(source)
@@ -70,6 +66,34 @@ RegisterServerEvent('qb-policejob:server:openStash', function(source)
     OpenInventory(source, stashName)
 end)
 
+RegisterServerEvent('qb-policejob:server:retrieveVehicle', function(source, data)
+    local Player = exports['qb-core']:GetPlayer(source)
+    if not Player then return end
+    if Player.PlayerData.job.type ~= 'leo' then return end
+
+    -- Check player grade and vehicle grade
+    local PlayerGrade = Player.PlayerData.job.grade.level
+    local VehicleName = data.vehicle
+    local authorized = false
+    for i = 0, PlayerGrade do
+        if Config.AuthorizedVehicles[i] and Config.AuthorizedVehicles[i][VehicleName] then
+            authorized = true
+            break
+        end
+    end
+    if not authorized then return end
+
+    local VehicleData = Vehicles[VehicleName]
+    if not VehicleData then return end
+
+    -- Spawn Vehicle
+    local SpawnLocation = Config.Locations.vehicle[data.locationIndex].spawn
+    print('Spawning Vehicle at:', SpawnLocation.coords, SpawnLocation.rotation, VehicleData.asset_name)
+    local Vehicle = HVehicle(SpawnLocation.coords, SpawnLocation.rotation, VehicleData.asset_name)
+    Vehicle:SetPlate(Lang:t('info.police_plate') .. tostring(math.random(1000, 9999)))
+end)
+
+--[[
 Events.SubscribeRemote('qb-policejob:server:evidence', function(source, drawer)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
@@ -172,10 +196,6 @@ Events.SubscribeRemote('qb-policejob:server:handcuff', function(source, data)
             target_ped:SetValue('handcuffs', handcuffs, true)
         end
     end, 5000)
-end)
-
-Events.SubscribeRemote('qb-policejob:server:vehicle', function(source)
-
 end)
 
 Events.SubscribeRemote('qb-policejob:server:putvehicle', function(source, data)
