@@ -58,12 +58,12 @@ end
 -- Events
 
 RegisterServerEvent('qb-policejob:server:openStash', function(source)
-    local Player = QBCore.Functions.GetPlayer(source)
+    local Player = exports['qb-core']:GetPlayer(source)
     if not Player then return end
     if Player.PlayerData.job.type ~= 'leo' then return end
     local citizenId = Player.PlayerData.citizenid
     local stashName = 'policestash_' .. citizenId
-    OpenInventory(source, stashName)
+    exports['qb-inventory']:OpenInventory(source, stashName)
 end)
 
 RegisterServerEvent('qb-policejob:server:retrieveVehicle', function(source, data)
