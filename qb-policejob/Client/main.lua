@@ -3,23 +3,16 @@ local player_data = {}
 require('locales/en')
 
 -- Functions
-
-local function setupPeds()
-    QBCore.Functions.TriggerCallback('qb-policejob:server:getPeds', function(peds)
-        for ped, data in pairs(peds) do
-            exports['qb-target']:AddTargetEntity(ped, { options = data.options, distance = data.distance })
+local function getAuthorizedVehicles(grade)
+    local authorizedVehicles = {}
+    for minimumGrade, vehicles in pairs(Config.AuthorizedVehicles) do
+        if grade >= minimumGrade then
+            for vehicleName, vehicleLabel in pairs(vehicles) do
+                authorizedVehicles[vehicleName] = vehicleLabel
+            end
         end
-    end)
-end
-
-for _, v in pairs(Config.Locations.stations) do
-    local coords = v.coords
---[[     Events.Call('Map:AddBlip', {
-        name = v.label,
-        coords = { x = coords.X, y = coords.Y, z = coords.Z },
-        imgUrl = './media/map-icons/Police-icon.svg',
-        group = 'police'
-    }) ]]
+    end
+    return authorizedVehicles
 end
 
 exports['qb-target']:AddGlobalPlayer({
@@ -106,8 +99,7 @@ setupPeds()
 ]]
 
 RegisterClientEvent('QBCore:Client:OnPlayerLoaded', function()
-    player_data = QBCore.Functions.GetPlayerData()
-    setupPeds()
+    player_data = exports['qb-core']:GetPlayerData()
 end)
 
 RegisterClientEvent('QBCore:Client:OnPlayerUnload', function()
