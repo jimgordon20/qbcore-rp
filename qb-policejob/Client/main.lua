@@ -1,6 +1,6 @@
 local my_webui = WebUI('Fingerprint', 'qb-policejob/html/index.html')
 local player_data = {}
-require('Shared/locales/en')
+require('locales/en')
 
 -- Functions
 
